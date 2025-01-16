@@ -1,0 +1,140 @@
+/* General Container for Centering */
+.container-body {
+  width: 100%;
+  /* margin: 0 auto; */
+  /* Center the content horizontally */
+  /* padding: 0 20px; */
+  /* Add some padding to the sides */
+}
+
+.container-body .hero {
+  background: url('hero-bg.jpg') no-repeat center center;
+  background-size: cover;
+  padding: 50px 0;
+  text-align: center;
+  /* Vertically and horizontally center the content */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-body .hero h1 {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.container-body .hero p {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+.container-body .btn {
+  background-color: #FF6347;
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+/* Services Section */
+.container-body .services {
+  padding: 40px 0;
+  text-align: center;
+}
+
+.container-body .services h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.container-body .services .service-cards {
+  display: flex;
+  justify-content: center;
+  /* Center the cards horizontally */
+  gap: 20px;
+  /* Add space between the cards */
+  flex-wrap: wrap;
+  /* Allow wrapping if the screen size is too small */
+}
+
+.container-body .services .service-card {
+  width: 30%;
+  text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+
+  /* Ensure card doesn't stretch too much */
+}
+
+.container-body .services .service-icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.container-body .services .service-card h3 {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.container-body .services .service-card p {
+  font-size: 16px;
+}
+
+/* Testimonials Section */
+.container-body .testimonials {
+  background-color: #f4f4f4;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.container-body .testimonials .testimonial {
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container-body .testimonials .testimonial p {
+  font-style: italic;
+  font-size: 18px;
+}
+
+.container-body .testimonials .testimonial h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* About Us Section */
+.container-body .about {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.container-body .about p {
+  font-size: 18px;
+  margin: 20px 0;
+}
+
+/* CTA Section */
+.container-body .cta {
+  background-color: #FF6347;
+  color: white;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.container-body .cta h2 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.container-body .cta p {
+  font-size: 18px;
+  margin: 20px 0;
+}
