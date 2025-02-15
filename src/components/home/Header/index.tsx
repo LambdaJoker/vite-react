@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: my learn note of react
  * @Date: 2025-01-16 16:13:12
- * @LastEditTime: 2025-02-15 15:26:44
+ * @LastEditTime: 2025-02-15 19:13:13
  */
 
 import React from 'react';
@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           <Link to="/articles" className="nav-link">文章</Link>
           <Link to="/skills" className="nav-link">技术栈</Link>
           <Link to="/projects" className="nav-link">项目</Link>
-          <Link to="/about" className="nav-link">关于</Link>
+          <Link to="/about" className="nav-link">个人简介</Link>
         </nav>
       </div>
     </header>

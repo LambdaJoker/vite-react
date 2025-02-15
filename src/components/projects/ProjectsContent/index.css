@@ -63,7 +63,7 @@
   background: white;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   position: relative;
   width: 100%;
@@ -75,6 +75,7 @@
 
 .project-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .project-image {
@@ -261,12 +262,21 @@
   animation-delay: 0.3s;
 }
 
+.search-filter-container {
+  max-width: 900px;
+  /* 与卡片宽度一致 */
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
 .filter-options {
+  max-width: 900px;
+  /* 与卡片宽度一致 */
+  margin: 1.5rem auto;
+  padding: 0 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1.5rem 0;
-  padding: 0 1rem;
 }
 
 .sort-options {
@@ -307,17 +317,13 @@
 }
 
 .tech-filter-panel {
-  background: white;
+  max-width: 900px;
+  /* 与卡片宽度一致 */
+  margin: 1rem auto 2rem;
   padding: 1.5rem;
+  background: white;
   border-radius: 15px;
-  margin: 1rem 0 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  animation: slideDown 0.3s ease-out;
-  justify-content: flex-start;
-  /* 确保 tech-checkbox 左对齐 */
 }
 
 .tech-checkbox {

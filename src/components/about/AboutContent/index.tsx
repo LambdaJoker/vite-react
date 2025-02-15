@@ -45,7 +45,7 @@ const AboutContent: FC = () => {
 
   return (
     <div className={`about-container ${isAnimated ? 'animated' : ''}`}>
-      {/* 个人简介部分 */}
+      {/* 个人简介*/}
       <section className="about-header">
         <h1>关于我</h1>
         <p className="subtitle">热爱技术，追求创新</p>
@@ -89,11 +89,11 @@ const AboutContent: FC = () => {
       <section className="education-section">
         <h2>教育背景</h2>
         <div className="education-card">
-          <h3>计算机科学与技术</h3>
-          <p className="school">某某大学</p>
-          <p className="period">2019 - 2023</p>
+          <h3>数据科学与大数据技术</h3>
+          <p className="school">东华理工大学</p>
+          <p className="period">2022 - 2026</p>
           <p className="description">
-            主修课程：数据结构、算法分析、计算机网络、操作系统、数据库系统等
+            主修课程：数据结构、算法分析、计算机网络、操作系统、数据库系统、爬虫、HBase、Hive、Hadoop等
           </p>
         </div>
       </section>

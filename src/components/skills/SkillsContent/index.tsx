@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, JSX } from 'react';
 import './index.css';
 import Loading from '../../common/Loading';
 

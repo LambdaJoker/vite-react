@@ -23,7 +23,7 @@ const projects: Project[] = [
     description: "基于 React + TypeScript 的现代化博客系统，支持文章管理、技术栈展示等功能",
     category: "Web开发",
     technologies: ["React", "TypeScript", "Node.js", "MongoDB"],
-    image: "/src/assets/project1.jpg",
+    image: "/src/assets/img/project/project1.jpg",
     demoUrl: "https://blog.example.com",
     githubUrl: "https://github.com/example/blog",
     highlights: [
@@ -41,7 +41,7 @@ const projects: Project[] = [
     description: "企业级大数据处理和分析平台，支持数据采集、处理、分析和可视化",
     category: "大数据",
     technologies: ["Hadoop", "Spark", "Python", "React"],
-    image: "/src/assets/project2.jpg",
+    image: "/src/assets/img/project/project2.jpg",
     demoUrl: "https://bigdata.example.com",
     githubUrl: "https://github.com/example/bigdata",
     highlights: [
@@ -59,7 +59,7 @@ const projects: Project[] = [
     description: "基于机器学习的个性化推荐系统，提供精准的用户兴趣匹配",
     category: "人工智能",
     technologies: ["Python", "TensorFlow", "FastAPI", "Redis"],
-    image: "/src/assets/project3.jpg",
+    image: "/src/assets/img/project/project3.jpg",
     demoUrl: "https://recommend.example.com",
     githubUrl: "https://github.com/example/recommend",
     highlights: [
@@ -77,7 +77,7 @@ const projects: Project[] = [
     description: "基于 Spring Cloud 的微服务架构系统，支持高并发和分布式部署",
     category: "后端开发",
     technologies: ["Spring Cloud", "Docker", "Kubernetes", "MySQL"],
-    image: "/src/assets/project4.jpg",
+    image: "/src/assets/img/project/project4.jpg",
     demoUrl: "https://microservice.example.com",
     githubUrl: "https://github.com/example/microservice",
     highlights: [

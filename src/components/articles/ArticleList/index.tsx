@@ -22,7 +22,7 @@ const articles: Article[] = [
     description: "分享在实际项目中使用 React 的经验和最佳实践，包括性能优化、状态管理等内容...",
     date: "2024-02-15",
     category: "前端开发",
-    image: "/src/assets/article1.jpg",
+    image: "/src/assets/img/article/article1.jpg",
     readTime: "10 次",
     author: "TAO",
     tags: ["React", "性能优化", "状态管理"]

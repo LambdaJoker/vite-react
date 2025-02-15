@@ -77,52 +77,194 @@
 .timeline::before {
   content: '';
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
+  left: 0;
+  top: 0;
   height: 100%;
-  background: #eee;
+  width: 2px;
+  background: linear-gradient(to bottom, #007bff, #00ff88);
 }
 
 .timeline-item {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  position: relative;
+  padding-left: 2.5rem;
   margin-bottom: 3rem;
 }
 
-.timeline-date {
-  flex: 1;
-  text-align: right;
-  padding-right: 2rem;
-  font-weight: 500;
-  color: #007bff;
-}
-
-.timeline-content {
-  flex: 1;
-  padding-left: 2rem;
-  position: relative;
-}
-
-.timeline-content::before {
+.timeline-item::before {
   content: '';
   position: absolute;
   left: -6px;
   top: 0;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #007bff;
+  background: linear-gradient(135deg, #007bff, #00ff88);
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
 }
 
-/* 教育背景样式 */
+.timeline-date {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: linear-gradient(135deg, #007bff, #00ff88);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.timeline-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.timeline-content h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.company {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.achievements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.achievements li {
+  color: #666;
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.achievements li::before {
+  content: '→';
+  color: #007bff;
+  position: absolute;
+  left: 0;
+  transform: translateY(-2px);
+}
+
+/* 添加悬停效果 */
+.timeline-content:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* 添加动画效果 */
+.timeline-item {
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 教育背景样式优化 */
 .education-card {
   background: white;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.education-card::before {
+  content: '🎓';
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  font-size: 5rem;
+  opacity: 0.1;
+  transform: rotate(15deg);
+}
+
+.education-card h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #007bff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.education-card .school {
+  font-weight: 600;
+  color: #444;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.education-card .period {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.education-card .description {
+  text-align: left;
+  color: #666;
+  line-height: 1.8;
+  font-size: 1rem;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.education-card .description::before {
+  content: '📚';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 0.9rem;
+}
+
+.education-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 添加动画效果 */
+.education-card {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 特长和兴趣样式 */
@@ -295,101 +437,6 @@
   transition: all 0.3s ease;
 }
 
-/* 添加时间线内容样式 */
-.timeline-content h3 {
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.company {
-  color: #666;
-  font-style: italic;
-  margin-bottom: 1rem;
-}
-
-.achievements {
-  list-style: none;
-  padding: 0;
-}
-
-.achievements li {
-  color: #666;
-  margin-bottom: 0.5rem;
-  padding-left: 1.5rem;
-  position: relative;
-}
-
-.achievements li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  color: #007bff;
-}
-
-/* 教育卡片样式补充 */
-.education-card h3 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.school {
-  color: #007bff;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.period {
-  color: #666;
-  font-style: italic;
-  margin-bottom: 1rem;
-}
-
-.description {
-  color: #666;
-  line-height: 1.6;
-}
-
-/* 添加更多动画效果 */
-@keyframes slideIn {
-  from {
-    transform: translateX(-20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.achievements li {
-  animation: slideIn 0.5s ease-out forwards;
-  opacity: 0;
-}
-
-.achievements li:nth-child(1) {
-  animation-delay: 0.2s;
-}
-
-.achievements li:nth-child(2) {
-  animation-delay: 0.4s;
-}
-
-.achievements li:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
-/* 添加图标悬浮效果 */
-.strength-icon,
-.interest-icon {
-  transition: transform 0.3s ease;
-}
-
-.strength-card:hover .strength-icon,
-.interest-item:hover .interest-icon {
-  transform: scale(1.2);
-}
-
 /* 添加滚动动画效果 */
 .about-container section {
   opacity: 0;
@@ -430,3 +477,32 @@
 }
 
 /* 添加滚动监听 */
+
+/* 调整工作经历和教育背景的间距 */
+.experience-section {
+  margin-bottom: 5rem;
+  /* 从默认的 4rem 增加到 5rem */
+}
+
+/* 调整教育背景和个人特长的间距 */
+.education-section {
+  margin-bottom: 5rem;
+  /* 从默认的 4rem 增加到 5rem */
+}
+
+/* 调整个人特长和兴趣爱好的间距 */
+.strengths-section {
+  margin-bottom: 5rem;
+  /* 从默认的 4rem 增加到 5rem */
+}
+
+/* 为了视觉平衡，可以给每个section添加一些渐变背景 */
+.experience-section,
+.education-section,
+.strengths-section,
+.interests-section {
+  padding: 3rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

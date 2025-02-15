@@ -63,13 +63,14 @@
   background: white;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
   position: relative;
 }
 
 .article-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .article-image {
@@ -91,7 +92,7 @@
 }
 
 .article-content {
-  padding: 2rem;
+  padding: 1.8rem;
 }
 
 .article-meta {
@@ -181,4 +182,21 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.search-filter-container {
+  max-width: 900px;
+  /* 与卡片宽度一致 */
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+.filter-options {
+  max-width: 900px;
+  /* 与卡片宽度一致 */
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
