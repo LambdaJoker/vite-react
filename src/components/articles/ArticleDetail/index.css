@@ -1,0 +1,232 @@
+.article-detail-container {
+  max-width: 900px;
+  margin: 60px auto 2rem;
+  padding: 0 2rem 3rem;
+  min-height: calc(100vh - 60px - 5rem);
+}
+
+.article-header {
+  margin-top: 1rem;
+  margin-bottom: 2.5rem;
+  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.article-cover {
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-info h1 {
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  color: #666;
+  font-size: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.article-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.article-content {
+  background: white;
+  padding: 3rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #444;
+  position: relative;
+  border: 1px solid #eee;
+  margin: 0 1rem;
+  /* 两边留白 */
+}
+
+/* 添加装饰性边角 */
+.article-content::before,
+.article-content::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #007bff;
+  border-style: solid;
+  pointer-events: none;
+}
+
+.article-content::before {
+  top: 15px;
+  left: 15px;
+  border-width: 2px 0 0 2px;
+  border-radius: 4px 0 0 0;
+}
+
+.article-content::after {
+  bottom: 15px;
+  right: 15px;
+  border-width: 0 2px 2px 0;
+  border-radius: 0 0 4px 0;
+}
+
+.article-content h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 2.5rem 0 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #f0f0f0;
+  position: relative;
+}
+
+.article-content h2::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: #007bff;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+  letter-spacing: 0.5px;
+}
+
+.article-footer {
+  margin-top: 4rem;
+  padding: 2rem;
+  border-top: 1px solid #eee;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+}
+
+.tags {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tag {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  color: #555;
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+}
+
+.share-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.share-button {
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.share-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.article-not-found {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  margin: 2rem auto;
+  max-width: 600px;
+  color: #666;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width: 768px) {
+  .article-detail-container {
+    padding: 0 1rem 2rem;
+    margin: 60px auto 1rem;
+  }
+
+  .article-header,
+  .article-content,
+  .article-footer {
+    padding: 1.5rem;
+  }
+
+  .article-cover {
+    height: 250px;
+  }
+
+  .article-info h1 {
+    font-size: 2rem;
+  }
+
+  .article-meta {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .article-content {
+    padding: 2rem;
+    margin: 0 0.5rem;
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

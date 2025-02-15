@@ -1,0 +1,432 @@
+.about-container {
+  max-width: 1200px;
+  margin: 60px auto 2rem;
+  padding: 0 2rem;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+/* 头部样式 */
+.about-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* 时间线样式 */
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: #eee;
+}
+
+.timeline-item {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+}
+
+.timeline-date {
+  flex: 1;
+  text-align: right;
+  padding-right: 2rem;
+  font-weight: 500;
+  color: #007bff;
+}
+
+.timeline-content {
+  flex: 1;
+  padding-left: 2rem;
+  position: relative;
+}
+
+.timeline-content::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #007bff;
+}
+
+/* 教育背景样式 */
+.education-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+/* 特长和兴趣样式 */
+.strengths-grid,
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.strength-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.strength-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.interest-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.interest-icon {
+  font-size: 1.5rem;
+}
+
+/* 动画效果 */
+.animated .about-header,
+.animated .experience-section,
+.animated .education-section,
+.animated .strengths-section,
+.animated .interests-section {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animated .about-header {
+  animation-delay: 0.1s;
+}
+
+.animated .experience-section {
+  animation-delay: 0.3s;
+}
+
+.animated .education-section {
+  animation-delay: 0.5s;
+}
+
+.animated .strengths-section {
+  animation-delay: 0.7s;
+}
+
+.animated .interests-section {
+  animation-delay: 0.9s;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+  .about-container {
+    padding: 0 1rem;
+  }
+
+  .profile-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .timeline::before {
+    left: 0;
+  }
+
+  .timeline-item {
+    flex-direction: column;
+  }
+
+  .timeline-date {
+    text-align: left;
+    padding-right: 0;
+    padding-left: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-content {
+    padding-left: 2rem;
+  }
+
+  .about-header h1 {
+    font-size: 2rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .strengths-grid,
+  .interests-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .education-card {
+    padding: 1.5rem;
+  }
+
+  .experience-section h2,
+  .education-section h2,
+  .strengths-section h2,
+  .interests-section h2 {
+    font-size: 1.8rem;
+    text-align: center;
+    display: block;
+  }
+
+  .experience-section h2::after,
+  .education-section h2::after,
+  .strengths-section h2::after,
+  .interests-section h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* 添加通用的标题样式 */
+.experience-section h2,
+.education-section h2,
+.strengths-section h2,
+.interests-section h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.experience-section h2::after,
+.education-section h2::after,
+.strengths-section h2::after,
+.interests-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #007bff, #00ff88);
+  border-radius: 3px;
+}
+
+/* 添加卡片悬浮效果 */
+.strength-card:hover,
+.interest-item:hover,
+.education-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* 添加时间线内容样式 */
+.timeline-content h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.company {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.achievements {
+  list-style: none;
+  padding: 0;
+}
+
+.achievements li {
+  color: #666;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.achievements li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #007bff;
+}
+
+/* 教育卡片样式补充 */
+.education-card h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.school {
+  color: #007bff;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.period {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.description {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 添加更多动画效果 */
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.achievements li {
+  animation: slideIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.achievements li:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.achievements li:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.achievements li:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* 添加图标悬浮效果 */
+.strength-icon,
+.interest-icon {
+  transition: transform 0.3s ease;
+}
+
+.strength-card:hover .strength-icon,
+.interest-item:hover .interest-icon {
+  transform: scale(1.2);
+}
+
+/* 添加滚动动画效果 */
+.about-container section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.about-container section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 添加渐变背景 */
+.about-header {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.education-card,
+.strength-card,
+.interest-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* 添加时间线动画 */
+.timeline::before {
+  animation: growLine 1s ease-out forwards;
+  transform-origin: top;
+}
+
+@keyframes growLine {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* 添加滚动监听 */

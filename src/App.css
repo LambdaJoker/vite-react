@@ -46,3 +46,9 @@
 .read-the-docs {
   color: #888;
 }
+
+.main-content {
+  margin-top: 60px;
+  /* 根据新的 header 高度调整 */
+  min-height: calc(100vh - 60px);
+}

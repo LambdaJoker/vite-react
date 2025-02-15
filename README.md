@@ -1,21 +1,76 @@
-# React + TypeScript + Vite
+# 个人博客网站
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+基于 React + TypeScript + Vite 构建的现代化个人博客系统，展示个人作品、技术文章和专业技能。
 
-While this project uses React, Vite supports many popular JS frameworks. [See all the supported frameworks](https://vitejs.dev/guide/#scaffolding-your-first-vite-project).
+## 🌟 特点
 
-## Deploy Your Own
+### 设计理念
+- 简约现代的界面设计
+- 响应式布局，支持多端适配
+- 统一的视觉风格和交互体验
+- 渐进式动画效果
 
-Deploy your own Vite project with Vercel.
+### 功能模块
+- **首页**: 个人介绍、技能概览、最新文章预览
+- **文章**: 技术博客展示，支持分类、搜索和排序
+- **技术栈**: 可视化展示技术能力，包含技能分类和熟练度
+- **项目**: 个人项目展示，包含详细描述和技术栈说明
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/vite-react&template=vite-react)
+## 🛠️ 技术栈
 
-_Live Example: https://vite-react-example.vercel.app_
+- **前端框架**: React 18
+- **开发语言**: TypeScript
+- **构建工具**: Vite
+- **路由管理**: React Router v6
+- **样式方案**: CSS Modules
+- **代码规范**: ESLint + Prettier
 
-### Deploying From Your Terminal
+## 💡 核心功能
 
-You can deploy your new Vite project with a single command from your terminal using [Vercel CLI](https://vercel.com/download):
+### 文章系统
+- 分类浏览
+- 搜索功能
+- 阅读量统计
+- 标签系统
+- 时间排序
 
-```shell
-$ vercel
-```
+### 项目展示
+- 项目分类
+- 技术标签
+- 详细描述
+- 源码链接
+- 在线演示
+
+### 技能展示
+- 技能分类
+- 熟练度评估
+- 项目关联
+- 技能统计
+
+## 🎨 设计细节
+
+### 色彩系统
+- 主色调: #007bff
+- 辅助色: #f5f7fa, #c3cfe2
+- 文字色: #333, #666
+- 强调色: 渐变设计
+
+### 布局系统
+- 响应式网格布局
+- 卡片式设计
+- 固定导航栏
+- 合理的留白
+
+### 交互设计
+- 平滑过渡动画
+- 悬停效果
+- 渐入渐出
+- 滚动优化
+
+### 组件复用
+- 统一的卡片组件
+- 通用搜索框
+- 分类过滤器
+- 标签系统
+
+## 🚀 启动项目
