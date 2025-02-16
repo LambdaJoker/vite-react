@@ -5,7 +5,6 @@
  * @Date: 2025-01-16 15:54:52
  * @LastEditTime: 2025-02-15 14:17:33
  */
-import * as React from 'react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'

@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import './index.css';
-import Loading from '../../common/Loading';
 
 interface Project {
   id: number;

@@ -1,10 +1,9 @@
-import React, { FC, useState, useEffect, JSX } from 'react';
+import { FC, useState, useEffect, useRef } from 'react';
 import './index.css';
-import Loading from '../../common/Loading';
 
 interface Skill {
   id: number;
-  category: string;
+  categories: string[];
   name: string;
   level: number;
   icon: string;
@@ -15,7 +14,95 @@ interface Skill {
 const skills: Skill[] = [
   {
     id: 1,
-    category: "前端开发",
+    categories: ["后端开发", "人工智能", "数据处理", "编程语言"],
+    name: "Python",
+    level: 89,
+    icon: "🐍",
+    description: "熟练使用 Python 进行后端开发、数据处理和机器学习应用开发"
+  },
+  {
+    id: 2,
+    categories: ["后端开发"],
+    name: "SpringBoot",
+    level: 75,
+    icon: "☕",
+    description: "熟悉 SpringBoot 框架，能够开发企业级 Java 应用"
+  },
+  {
+    id: 3,
+    categories: ["后端开发", "编程语言"],
+    name: "Go",
+    level: 70,
+    icon: "🔵",
+    description: "掌握 Go 语言开发，了解并发编程和微服务架构"
+  },
+  {
+    id: 4,
+    categories: ["前端开发"],
+    name: "JavaScript",
+    level: 80,
+    icon: "💛",
+    description: "精通 JavaScript，熟悉现代 ES6+ 特性和异步编程"
+  },
+  {
+    id: 5,
+    categories: ["前端开发"],
+    name: "vue.js",
+    level: 75,
+    icon: "🔷",
+    description: "熟练使用 vue.js 进行前端开发，掌握组件化开发和状态管理"
+  },
+  {
+    id: 6,
+    categories: ["前端开发"],
+    name: "HTML/CSS",
+    level: 80,
+    icon: "🎨",
+    description: "掌握前端基础技术，能够构建响应式和现代化的用户界面"
+  },
+  {
+    id: 7,
+    categories: ["人工智能"],
+    name: "机器学习",
+    level: 75,
+    icon: "🤖",
+    description: "熟悉机器学习算法和框架，能够开发智能化应用"
+  },
+  {
+    id: 8,
+    categories: ["人工智能", "计算机视觉"],
+    name: "YOLO",
+    level: 70,
+    icon: "👁️",
+    description: "掌握 YOLO 目标检测算法，能够进行计算机视觉应用开发"
+  },
+  {
+    id: 9,
+    categories: ["系统与工具", "运维"],
+    name: "Linux",
+    level: 80,
+    icon: "🐧",
+    description: "熟练使用 Linux 系统，掌握系统管理和服务器运维"
+  },
+  {
+    id: 10,
+    categories: ["系统与工具", "机器人"],
+    name: "ROS",
+    level: 70,
+    icon: "🤖",
+    description: "了解机器人操作系统，能够进行机器人应用开发"
+  },
+  {
+    id: 11,
+    categories: ["编程语言"],
+    name: "C语言",
+    level: 75,
+    icon: "⚡",
+    description: "掌握 C 语言开发，了解底层系统编程"
+  },
+  {
+    id: 12,
+    categories: ["前端开发"],
     name: "React",
     level: 90,
     icon: "🔵",
@@ -23,112 +110,149 @@ const skills: Skill[] = [
     projects: ["个人博客系统", "企业管理平台"]
   },
   {
-    id: 2,
-    category: "前端开发",
+    id: 13,
+    categories: ["前端开发"],
     name: "TypeScript",
-    level: 85,
+    level: 90,
     icon: "💻",
     description: "深入理解 TypeScript 类型系统，能够构建类型安全的应用",
     projects: ["个人博客系统", "企业管理平台"]
   },
   {
-    id: 3,
-    category: "后端开发",
+    id: 14,
+    categories: ["后端开发"],
     name: "Node.js",
     level: 80,
     icon: "🟢",
     description: "熟练使用 Node.js 进行服务器端开发，包括 Express、Nest.js 框架"
   },
   {
-    id: 4,
-    category: "大数据",
+    id: 15,
+    categories: ["大数据"],
     name: "Hadoop",
-    level: 85,
+    level: 80,
     icon: "🐘",
     description: "精通 Hadoop 生态系统，包括 HDFS、MapReduce、YARN 等组件"
   },
   {
-    id: 5,
-    category: "大数据",
+    id: 16,
+    categories: ["大数据"],
     name: "Spark",
     level: 80,
     icon: "🔥",
     description: "熟练使用 Spark 进行大数据处理，包括 RDD、DataFrame、Dataset 等"
   },
   {
-    id: 6,
-    category: "数据库",
+    id: 17,
+    categories: ["数据库"],
     name: "MySQL",
-    level: 85,
+    level: 80,
     icon: "🐬",
     description: "熟练使用 MySQL 进行数据库管理，包括索引优化、查询优化等"
   },
   {
-    id: 7,
-    category: "数据库",
+    id: 18,
+    categories: ["数据库"],
     name: "Redis",
     level: 80,
     icon: "🔑",
     description: "熟练使用 Redis 进行缓存和数据存储，包括 Redis 集群、Redis 持久化等"
   },
   {
-    id: 8,
-    category: "数据库",
+    id: 19,
+    categories: ["数据库"],
     name: "MongoDB",
     level: 75,
     icon: "🍃",
     description: "熟练使用 MongoDB 进行 NoSQL 数据库管理，包括索引优化、查询优化等"
   },
   {
-    id: 9,
-    category: "云计算",
+    id: 20,
+    categories: ["大数据", "数据库"],
+    name: "HBase",
+    level: 75,
+    icon: "📊",
+    description: "熟练使用 HBase 进行大规模数据存储和处理，了解分布式数据库架构"
+  },
+  {
+    id: 21,
+    categories: ["大数据", "数据处理"],
+    name: "Hive",
+    level: 75,
+    icon: "🐝",
+    description: "熟练使用 Hive 进行数据仓库管理和大规模数据分析"
+  },
+  {
+    id: 22,
+    categories: ["云计算", "系统与工具"],
+    name: "Docker",
+    level: 35,
+    icon: "🐳",
+    description: "熟练使用 Docker 进行容器化部署和管理，了解容器编排技术"
+  },
+  {
+    id: 23,
+    categories: ["云计算", "系统与工具"],
+    name: "Kubernetes",
+    level: 30,
+    icon: "☸️",
+    description: "了解 Kubernetes 容器编排平台，能够进行集群部署和管理"
+  },
+  {
+    id: 24,
+    categories: ["云计算"],
     name: "AWS",
-    level: 70,
-    icon: "🌤️",
-    description: "熟练使用 AWS 进行云计算服务管理，包括 EC2、ECS、S3 等"
+    level: 0,
+    icon: "☁️",
+    description: "熟悉 AWS 云服务，包括 EC2、S3、Lambda 等核心服务的使用"
   },
   {
-    id: 10,
-    category: "云计算",
-    name: "Azure",
-    level: 65,
-    icon: "🌐",
-    description: "熟练使用 Azure 进行云计算服务管理，包括 VM、Storage、SQL 等"
-  },
-  {
-    id: 11,
-    category: "云计算",
+    id: 25,
+    categories: ["云计算"],
     name: "阿里云",
-    level: 60,
-    icon: "🌐",
-    description: "熟练使用阿里云进行云计算服务管理，包括 ECS、RDS、OSS 等"
+    level: 30,
+    icon: "☁️",
+    description: "熟悉阿里云服务，能够使用 ECS、OSS、函数计算等服务进行应用部署"
   },
   {
-    id: 12,
-    category: "人工智能",
-    name: "PyTorch",
-    level: 55,
-    icon: "🌐",
-    description: "熟练使用 PyTorch 进行深度学习模型开发，包括卷积神经网络、循环神经网络等"
-  },
-
-  // ... 可以添加更多技能
+    id: 26,
+    categories: ["后端开发", "编程语言"],
+    name: "Java",
+    level: 80,
+    icon: "☕",
+    description: "熟练使用 Java 进行企业级应用开发，掌握 JVM 调优、多线程编程等核心技术"
+  }
 ];
 
 const SkillsContent: FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("全部");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAnimated, setIsAnimated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const categories = ["全部", ...new Set(skills.map(skill => skill.category))];
+  const categories = ["全部", ...new Set(skills.flatMap(skill => skill.categories))];
+  const searchTimeout = useRef<number | undefined>(undefined);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     setIsAnimated(true);
-    // 模拟数据加载
     setTimeout(() => {
       setIsLoading(false);
     }, 800);
+
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      setSearchTerm(value);
+    }, 300);
+  };
 
   if (isLoading) {
     return (
@@ -142,12 +266,13 @@ const SkillsContent: FC = () => {
   // 搜索和过滤逻辑
   const filteredSkills = skills
     .filter(skill => {
-      const matchesCategory = activeCategory === "全部" || skill.category === activeCategory;
+      const matchesCategory = activeCategory === "全部" ||
+        skill.categories.includes(activeCategory);
       const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         skill.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesCategory && matchesSearch;
     })
-    .sort((a, b) => b.level - a.level); // 按技能水平排序
+    .sort((a, b) => b.level - a.level);
 
   // 技能统计
   const skillStats = {
@@ -183,7 +308,7 @@ const SkillsContent: FC = () => {
             type="text"
             placeholder="搜索技能..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearch}
             className="search-input"
           />
         </div>
@@ -197,7 +322,7 @@ const SkillsContent: FC = () => {
               {category}
               <span className="category-count">
                 {category === "全部" ? skills.length :
-                  skills.filter(skill => skill.category === category).length}
+                  skills.filter(skill => skill.categories.includes(category)).length}
               </span>
             </button>
           ))}
@@ -251,6 +376,15 @@ const SkillsContent: FC = () => {
           </div>
         </div>
       </div>
+
+      {showScrollTop && (
+        <button
+          className="scroll-top-button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 };

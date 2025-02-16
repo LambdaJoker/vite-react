@@ -1,8 +1,7 @@
 /** @jsx React.createElement */
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './index.css';
-import Loading from '../../common/Loading';
 
 interface ArticleParams {
   id: string;
