@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import './index.css';
 
 interface Props {
   children: ReactNode;

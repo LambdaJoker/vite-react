@@ -1,5 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import './index.css';
+import SEO from '../../common/SEO';
 
 interface Project {
   id: number;
@@ -152,137 +153,144 @@ const ProjectsContent: FC = () => {
   }
 
   return (
-    <div className={`projects-container ${isAnimated ? 'animated' : ''}`}>
-      <div className="projects-header">
-        <h1>项目展示</h1>
-        <p className="subtitle">探索我的项目经历和技术实践</p>
-        <div className="project-stats">
-          <div className="stat-item">
-            <span className="stat-number">{projects.length}</span>
-            <span className="stat-label">项目总数</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{categories.length - 1}</span>
-            <span className="stat-label">项目类型</span>
+    <>
+      <SEO
+        title="项目展示 - 我的个人博客"
+        description="展示我的个人项目和作品集"
+        keywords="项目展示,作品集,Web开发,应用开发"
+      />
+      <div className={`projects-container ${isAnimated ? 'animated' : ''}`}>
+        <div className="projects-header">
+          <h1>项目展示</h1>
+          <p className="subtitle">探索我的项目经历和技术实践</p>
+          <div className="project-stats">
+            <div className="stat-item">
+              <span className="stat-number">{projects.length}</span>
+              <span className="stat-label">项目总数</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{categories.length - 1}</span>
+              <span className="stat-label">项目类型</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="search-filter-container">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="搜索项目..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm((e.target as HTMLInputElement).value)}
-            className="search-input"
-          />
-        </div>
-        <div className="category-filter">
-          {categories.map(category => (
+        <div className="search-filter-container">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="搜索项目..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm((e.target as HTMLInputElement).value)}
+              className="search-input"
+            />
+          </div>
+          <div className="category-filter">
+            {categories.map(category => (
+              <button
+                key={category}
+                className={`category-button ${activeCategory === category ? 'active' : ''}`}
+                onClick={() => setActiveCategory(category)}
+              >
+                {category}
+                <span className="category-count">
+                  {category === "全部" ? projects.length :
+                    projects.filter(project => project.category === category).length}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="filter-options">
+            <div className="sort-options">
+              <span>排序方式：</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'date' | 'name')}
+                className="sort-select"
+              >
+                <option value="date">按时间</option>
+                <option value="name">按名称</option>
+              </select>
+            </div>
+
             <button
-              key={category}
-              className={`category-button ${activeCategory === category ? 'active' : ''}`}
-              onClick={() => setActiveCategory(category)}
+              className="tech-filter-toggle"
+              onClick={() => setShowTechFilter(!showTechFilter)}
             >
-              {category}
-              <span className="category-count">
-                {category === "全部" ? projects.length :
-                  projects.filter(project => project.category === category).length}
-              </span>
+              技术筛选 {showTechFilter ? '↑' : '↓'}
             </button>
+          </div>
+
+          {showTechFilter && (
+            <div className="tech-filter-panel">
+              {allTechnologies.map(tech => (
+                <label key={tech} className="tech-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedTechs.includes(tech)}
+                    onChange={() => handleTechSelect(tech)}
+                  />
+                  <span>{tech}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="projects-grid">
+          {filteredProjects.map(project => (
+            <div key={project.id} className="project-card">
+              <div className="project-image" style={{ backgroundImage: `url(${project.image})` }}>
+                <div className="project-category">{project.category}</div>
+              </div>
+              <div className="project-content">
+                <div className="project-header">
+                  <h3>{project.title}</h3>
+                  <span className="project-period">{project.period}</span>
+                </div>
+                <p className="project-description">{project.description}</p>
+                <div className="project-role">
+                  <span className="role-badge">{project.role}</span>
+                </div>
+                <div className="project-highlights">
+                  <h4>项目亮点:</h4>
+                  <ul>
+                    {project.highlights.map((highlight, index) => (
+                      <li key={index}>{highlight}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="project-tech">
+                  {project.technologies.map((tech, index) => (
+                    <span key={index} className="tech-tag">{tech}</span>
+                  ))}
+                </div>
+                <div className="project-links">
+                  {project.demoUrl && (
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="project-link demo">
+                      查看演示
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link github">
+                      源代码
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="filter-options">
-          <div className="sort-options">
-            <span>排序方式：</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'date' | 'name')}
-              className="sort-select"
-            >
-              <option value="date">按时间</option>
-              <option value="name">按名称</option>
-            </select>
-          </div>
-
-          <button
-            className="tech-filter-toggle"
-            onClick={() => setShowTechFilter(!showTechFilter)}
-          >
-            技术筛选 {showTechFilter ? '↑' : '↓'}
-          </button>
-        </div>
-
-        {showTechFilter && (
-          <div className="tech-filter-panel">
-            {allTechnologies.map(tech => (
-              <label key={tech} className="tech-checkbox">
-                <input
-                  type="checkbox"
-                  checked={selectedTechs.includes(tech)}
-                  onChange={() => handleTechSelect(tech)}
-                />
-                <span>{tech}</span>
-              </label>
-            ))}
+        {filteredProjects.length === 0 && (
+          <div className="no-results">
+            <h3>未找到匹配的项目</h3>
+            <p>请尝试调整筛选条件</p>
           </div>
         )}
       </div>
-
-      <div className="projects-grid">
-        {filteredProjects.map(project => (
-          <div key={project.id} className="project-card">
-            <div className="project-image" style={{ backgroundImage: `url(${project.image})` }}>
-              <div className="project-category">{project.category}</div>
-            </div>
-            <div className="project-content">
-              <div className="project-header">
-                <h3>{project.title}</h3>
-                <span className="project-period">{project.period}</span>
-              </div>
-              <p className="project-description">{project.description}</p>
-              <div className="project-role">
-                <span className="role-badge">{project.role}</span>
-              </div>
-              <div className="project-highlights">
-                <h4>项目亮点:</h4>
-                <ul>
-                  {project.highlights.map((highlight, index) => (
-                    <li key={index}>{highlight}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="project-tech">
-                {project.technologies.map((tech, index) => (
-                  <span key={index} className="tech-tag">{tech}</span>
-                ))}
-              </div>
-              <div className="project-links">
-                {project.demoUrl && (
-                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="project-link demo">
-                    查看演示
-                  </a>
-                )}
-                {project.githubUrl && (
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link github">
-                    源代码
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredProjects.length === 0 && (
-        <div className="no-results">
-          <h3>未找到匹配的项目</h3>
-          <p>请尝试调整筛选条件</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

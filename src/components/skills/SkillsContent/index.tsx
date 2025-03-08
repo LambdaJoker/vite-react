@@ -1,5 +1,15 @@
+/*
+ * @Author: taotao
+ * @LastEditors: taotao
+ * @Description: my learn note of react
+ * @Date: 2025-02-15 13:43:50
+ * @LastEditTime: 2025-03-08 13:50:56
+ */
 import { FC, useState, useEffect, useRef } from 'react';
 import './index.css';
+import SkeletonLoader from '../../skeletonLoader';
+import Notification from '../../notification';
+import SEO from '../../common/SEO';
 
 interface Skill {
   id: number;
@@ -232,6 +242,8 @@ const SkillsContent: FC = () => {
   const categories = ["全部", ...new Set(skills.flatMap(skill => skill.categories))];
   const searchTimeout = useRef<number | undefined>(undefined);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   useEffect(() => {
     setIsAnimated(true);
@@ -242,6 +254,10 @@ const SkillsContent: FC = () => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
     };
+
+    // 初始检查滚动位置
+    handleScroll();
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -252,6 +268,12 @@ const SkillsContent: FC = () => {
     searchTimeout.current = setTimeout(() => {
       setSearchTerm(value);
     }, 300);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setShowNotification(true);
+    setNotificationMessage(`已选择 ${category} 类别`);
+    setActiveCategory(category);
   };
 
   if (isLoading) {
@@ -282,110 +304,129 @@ const SkillsContent: FC = () => {
   };
 
   return (
-    <div className={`skills-container ${isAnimated ? 'animated' : ''}`}>
-      <div className="skills-header">
-        <h1>技术栈</h1>
-        <p className="subtitle">探索我的技术领域和专长</p>
-        <div className="skill-stats">
-          <div className="stat-item">
-            <span className="stat-number">{skillStats.totalSkills}</span>
-            <span className="stat-label">技能总数</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{skillStats.averageLevel}%</span>
-            <span className="stat-label">平均掌握度</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{skillStats.expertiseAreas}</span>
-            <span className="stat-label">专业领域</span>
+    <>
+      <SEO
+        title="技能栈 - 我的个人博客"
+        description="查看我的技术栈和专业技能"
+        keywords="技术栈,前端开发,后端开发,全栈开发"
+      />
+      <div className={`skills-container ${isAnimated ? 'animated' : ''}`}>
+        <div className="skills-header">
+          <h1>技术栈</h1>
+          <p className="subtitle">探索我的技术领域和专长</p>
+          <div className="skill-stats">
+            <div className="stat-item">
+              <span className="stat-number">{skillStats.totalSkills}</span>
+              <span className="stat-label">技能总数</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{skillStats.averageLevel}%</span>
+              <span className="stat-label">平均掌握度</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{skillStats.expertiseAreas}</span>
+              <span className="stat-label">专业领域</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="search-filter-container">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="搜索技能..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
+        <div className="search-filter-container">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="搜索技能..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="search-input"
+              aria-label="搜索技能"
+            />
+          </div>
+          <div className="category-filter">
+            {categories.map(category => (
+              <button
+                key={category}
+                className={`category-button ${activeCategory === category ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(category)}
+                aria-pressed={activeCategory === category}
+                aria-label={`过滤${category}类别的技能`}
+              >
+                {category}
+                <span className="category-count" aria-hidden="true">
+                  {category === "全部" ? skills.length :
+                    skills.filter(skill => skill.categories.includes(category)).length}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="category-filter">
-          {categories.map(category => (
-            <button
-              key={category}
-              className={`category-button ${activeCategory === category ? 'active' : ''}`}
-              onClick={() => setActiveCategory(category)}
-            >
-              {category}
-              <span className="category-count">
-                {category === "全部" ? skills.length :
-                  skills.filter(skill => skill.categories.includes(category)).length}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
 
-      <div className="skills-grid">
-        {filteredSkills.map(skill => (
-          <div key={skill.id} className="skill-card" data-level={skill.level >= 85 ? 'expert' : skill.level >= 70 ? 'advanced' : 'intermediate'}>
-            <div className="skill-header">
-              <span className="skill-icon">{skill.icon}</span>
-              <h3>{skill.name}</h3>
-              <div className="skill-level">
-                <div
-                  className="level-bar"
-                  style={{ width: `${skill.level}%` }}
-                >
-                  <span className="level-text">{skill.level}%</span>
+        <div className="skills-grid">
+          {filteredSkills.map(skill => (
+            <div key={skill.id} className="skill-card" data-level={skill.level >= 85 ? 'expert' : skill.level >= 70 ? 'advanced' : 'intermediate'}>
+              <div className="skill-header">
+                <span className="skill-icon">{skill.icon}</span>
+                <h3>{skill.name}</h3>
+                <div className="skill-level">
+                  <div
+                    className="level-bar"
+                    style={{ width: `${skill.level}%` }}
+                  >
+                    <span className="level-text">{skill.level}%</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p className="skill-description">{skill.description}</p>
-            {skill.projects && (
-              <div className="skill-projects">
-                <h4>相关项目:</h4>
-                <ul>
-                  {skill.projects.map((project, index) => (
-                    <li key={index}>{project}</li>
-                  ))}
-                </ul>
+              <p className="skill-description">{skill.description}</p>
+              {skill.projects && (
+                <div className="skill-projects">
+                  <h4>相关项目:</h4>
+                  <ul>
+                    {skill.projects.map((project, index) => (
+                      <li key={index}>{project}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="skill-level-badge">
+                {skill.level >= 85 ? '专家' : skill.level >= 70 ? '熟练' : '进阶'}
               </div>
-            )}
-            <div className="skill-level-badge">
-              {skill.level >= 85 ? '专家' : skill.level >= 70 ? '熟练' : '进阶'}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="skills-footer">
-        <div className="experience-summary">
-          <h2>技术经验总结</h2>
-          <p>3年+全栈开发经验，专注于现代Web技术和大数据处理。持续学习新技术，追求代码质量和性能优化。</p>
-          <div className="learning-status">
-            <h3>当前学习中</h3>
-            <div className="learning-tags">
-              <span className="learning-tag">Docker</span>
-              <span className="learning-tag">Kubernetes</span>
-              <span className="learning-tag">GraphQL</span>
+        <div className="skills-footer">
+          <div className="experience-summary">
+            <h2>技术经验总结</h2>
+            <p>3年+全栈开发经验，专注于现代Web技术和大数据处理。持续学习新技术，追求代码质量和性能优化。</p>
+            <div className="learning-status">
+              <h3>当前学习中</h3>
+              <div className="learning-tags">
+                <span className="learning-tag">Docker</span>
+                <span className="learning-tag">MongoDB</span>
+                <span className="learning-tag">GraphQL</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {showScrollTop && (
-        <button
-          className="scroll-top-button"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          ↑
-        </button>
-      )}
-    </div>
+        {showScrollTop && (
+          <button
+            className="scroll-top-button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            ↑
+          </button>
+        )}
+
+        {showNotification && (
+          <Notification
+            message={notificationMessage}
+            type="info"
+            duration={2000}
+            onClose={() => setShowNotification(false)}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

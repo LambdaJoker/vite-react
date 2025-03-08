@@ -230,3 +230,62 @@
     transform: rotate(360deg);
   }
 }
+
+/* 优化深色模式下的代码块 */
+pre {
+  background-color: var(--code-bg);
+  color: var(--text-color);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-color);
+}
+
+code {
+  font-family: 'Fira Code', monospace;
+  color: var(--code-color);
+  background-color: var(--code-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+pre code {
+  color: inherit;
+  background: none;
+  padding: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* 深色模式下的语法高亮调整 */
+[data-theme="dark"] .token.comment,
+[data-theme="dark"] .token.prolog,
+[data-theme="dark"] .token.doctype,
+[data-theme="dark"] .token.cdata {
+  color: #6a9955;
+}
+
+[data-theme="dark"] .token.punctuation {
+  color: #d4d4d4;
+}
+
+[data-theme="dark"] .token.property,
+[data-theme="dark"] .token.tag,
+[data-theme="dark"] .token.boolean,
+[data-theme="dark"] .token.number,
+[data-theme="dark"] .token.constant,
+[data-theme="dark"] .token.symbol,
+[data-theme="dark"] .token.deleted {
+  color: #b5cea8;
+}
+
+[data-theme="dark"] .token.selector,
+[data-theme="dark"] .token.attr-name,
+[data-theme="dark"] .token.string,
+[data-theme="dark"] .token.char,
+[data-theme="dark"] .token.builtin,
+[data-theme="dark"] .token.inserted {
+  color: #ce9178;
+}

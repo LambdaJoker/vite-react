@@ -1,7 +1,9 @@
 /** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './index.css';
+import SEO from '../../common/SEO';
 
 interface ArticleParams {
   id: string;
@@ -71,34 +73,43 @@ const ArticleDetail: FC = () => {
   }
 
   return (
-    <div className="article-detail-container">
-      <div className="article-header">
-        {/* <div className="article-cover" style={{ backgroundImage: `url(${article.image})` }}></div> */}
-        <div className="article-info">
-          <h1>{article.title}</h1>
-          <div className="article-meta">
-            <span className="author">作者：{article.author}</span>
-            <span className="date">发布于：{article.date}</span>
-            <span className="category">{article.category}</span>
-            <span className="read-time">阅读次数：{article.readTime}</span>
+    <>
+      <SEO
+        title={`${article.title} - 我的博客`}
+        description={article.content}
+        keywords={article.category}
+        type="article"
+        image={article.image}
+      />
+      <div className="article-detail-container">
+        <div className="article-header">
+          {/* <div className="article-cover" style={{ backgroundImage: `url(${article.image})` }}></div> */}
+          <div className="article-info">
+            <h1>{article.title}</h1>
+            <div className="article-meta">
+              <span className="author">作者：{article.author}</span>
+              <span className="date">发布于：{article.date}</span>
+              <span className="category">{article.category}</span>
+              <span className="read-time">阅读次数：{article.readTime}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }}></div>
+
+        <div className="article-footer">
+          <div className="tags">
+            <span className="tag">React</span>
+            <span className="tag">前端开发</span>
+            <span className="tag">性能优化</span>
+          </div>
+          <div className="share-buttons">
+            <button className="share-button">分享到微信</button>
+            <button className="share-button">分享到微博</button>
           </div>
         </div>
       </div>
-
-      <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }}></div>
-
-      <div className="article-footer">
-        <div className="tags">
-          <span className="tag">React</span>
-          <span className="tag">前端开发</span>
-          <span className="tag">性能优化</span>
-        </div>
-        <div className="share-buttons">
-          <button className="share-button">分享到微信</button>
-          <button className="share-button">分享到微博</button>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

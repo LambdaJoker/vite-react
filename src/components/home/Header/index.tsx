@@ -6,8 +6,8 @@
  * @LastEditTime: 2025-02-15 19:13:13
  */
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './index.css';
 import logo from '../../../assets/logo.png';
 
@@ -17,6 +17,23 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 50) {
+        header?.classList.add('scrolled');
+      } else {
+        header?.classList.remove('scrolled');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <header className="header-container">
       <div className="header-content">
@@ -25,11 +42,11 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           <h1 className="logo">{title}</h1>
         </div>
         <nav className="navigation">
-          <Link to="/" className="nav-link">首页</Link>
-          <Link to="/articles" className="nav-link">文章</Link>
-          <Link to="/skills" className="nav-link">技术栈</Link>
-          <Link to="/projects" className="nav-link">项目</Link>
-          <Link to="/about" className="nav-link">个人简介</Link>
+          <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>首页</Link>
+          <Link to="/articles" className={`nav-link ${isActive('/articles') ? 'active' : ''}`}>文章</Link>
+          <Link to="/skills" className={`nav-link ${isActive('/skills') ? 'active' : ''}`}>技术栈</Link>
+          <Link to="/projects" className={`nav-link ${isActive('/projects') ? 'active' : ''}`}>项目</Link>
+          <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>个人简介</Link>
         </nav>
       </div>
     </header>

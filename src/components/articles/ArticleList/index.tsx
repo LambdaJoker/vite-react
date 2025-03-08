@@ -2,6 +2,8 @@
 import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
+import SkeletonLoader from '../../skeletonLoader';
+import LazyImage from '../../lazyImage';
 
 interface Article {
   id: number;
@@ -83,9 +85,14 @@ const ArticleList: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className="articles-container">
+        <div className="articles-header">
+          <SkeletonLoader type="title" />
+          <SkeletonLoader type="text" count={2} />
+        </div>
+        <div className="articles-grid">
+          <SkeletonLoader type="card" count={3} />
+        </div>
       </div>
     );
   }

@@ -1,0 +1,17 @@
+/* 深色模式下的表单元素 */
+.contact-form input,
+.contact-form textarea {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  transition: all 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  background-color: var(--input-bg);
+}
+
+/* 删除所有 [data-theme="dark"] 相关样式 */
