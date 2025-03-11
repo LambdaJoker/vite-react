@@ -59,6 +59,7 @@ const ArticleList: FC = () => {
   const [isAnimated, setIsAnimated] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
   const [isLoading, setIsLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const categories = ["全部", ...new Set(articles.map(article => article.category))];
 
   const filteredArticles = articles
@@ -81,6 +82,15 @@ const ArticleList: FC = () => {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   if (isLoading) {
@@ -186,6 +196,14 @@ const ArticleList: FC = () => {
           <h3>未找到匹配的文章</h3>
           <p>请尝试调整筛选条件</p>
         </div>
+      )}
+      {showScrollTop && (
+        <button
+          className="scroll-top-button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          ↑
+        </button>
       )}
     </div>
   );

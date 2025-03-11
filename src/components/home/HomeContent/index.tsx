@@ -1,15 +1,19 @@
 /*
  * @Author: taotao
  * @LastEditors: taotao
- * @Description: my learn note of react
+ * @Description: homeContent
  * @Date: 2025-02-15 13:04:41
- * @LastEditTime: 2025-03-08 14:02:26
+ * @LastEditTime: 2025-03-11 15:25:33
  */
+/** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import { FC, useState, useEffect } from 'react';
 import './index.css';
 import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
 import SEO from '../../common/SEO';
+import article1 from '../../../assets/img/article/article1.jpg';
+import project1 from '../../../assets/img/project/project1.jpg';
 
 const HomeContent: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +73,8 @@ const HomeContent: FC = () => {
       <div className={`home-container ${isAnimated ? 'animated' : ''}`}>
         <section className="hero-section">
           <h1>欢迎来到我的个人网站</h1>
-          <p className="subtitle">全栈开发工程师 | 人工智能爱好者</p>
+          <br />
+          <p className="subtitle">前端开发工程师 | 人工智能爱好者</p>
           <div className="cta-buttons">
             <Link to="/about" className="cta-button primary">了解更多</Link>
             <Link to="/skills" className="cta-button secondary">查看技能</Link>
@@ -81,7 +86,7 @@ const HomeContent: FC = () => {
           <div className="posts-grid">
             <div className="post-card">
               <div className="post-image">
-                <img src="/assets/images/article1.jpg" alt="React开发实践" loading="lazy" />
+                <img src={article1} alt="React开发实践" />
               </div>
               <div className="post-content">
                 <h3>React 开发实践</h3>
@@ -92,7 +97,7 @@ const HomeContent: FC = () => {
 
             <div className="post-card">
               <div className="post-image">
-                <img src="/images/article1.jpg" alt="Python机器学习入门" loading="lazy" />
+                <img src={article1} alt="Python机器学习入门" loading="lazy" />
               </div>
               <div className="post-content">
                 <h3>Python 机器学习入门</h3>
@@ -103,7 +108,7 @@ const HomeContent: FC = () => {
 
             <div className="post-card">
               <div className="post-image">
-                <img src="/images/article1.jpg" alt="大数据处理技术" loading="lazy" />
+                <img src={article1} alt="大数据处理技术" loading="lazy" />
               </div>
               <div className="post-content">
                 <h3>大数据处理技术</h3>
@@ -145,7 +150,7 @@ const HomeContent: FC = () => {
           <h2>精选项目</h2>
           <div className="projects-grid">
             <div className="project-card">
-              <div className="project-image" style={{ backgroundImage: "url('/images/project1.jpg')" }}></div>
+              <div className="project-image" style={{ backgroundImage: `url(${project1})` }}></div>
               <div className="project-content">
                 <h3>个人博客系统</h3>
                 <p>基于 React + TypeScript 的现代化博客系统</p>

@@ -1,3 +1,6 @@
+/** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
+
 import React, { useState, useEffect, useRef } from 'react';
 import './index.css';
 

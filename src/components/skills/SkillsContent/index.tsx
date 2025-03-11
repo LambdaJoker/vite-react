@@ -1,13 +1,14 @@
 /*
  * @Author: taotao
  * @LastEditors: taotao
- * @Description: my learn note of react
+ * @Description: 技能栈
  * @Date: 2025-02-15 13:43:50
- * @LastEditTime: 2025-03-08 13:50:56
+ * @LastEditTime: 2025-03-11 15:52:57
  */
+/** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import { FC, useState, useEffect, useRef } from 'react';
 import './index.css';
-import SkeletonLoader from '../../skeletonLoader';
 import Notification from '../../notification';
 import SEO from '../../common/SEO';
 
@@ -310,6 +311,14 @@ const SkillsContent: FC = () => {
         description="查看我的技术栈和专业技能"
         keywords="技术栈,前端开发,后端开发,全栈开发"
       />
+      {showScrollTop && (
+        <button
+          className="scroll-top-button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          ↑
+        </button>
+      )}
       <div className={`skills-container ${isAnimated ? 'animated' : ''}`}>
         <div className="skills-header">
           <h1>技术栈</h1>
@@ -407,15 +416,6 @@ const SkillsContent: FC = () => {
             </div>
           </div>
         </div>
-
-        {showScrollTop && (
-          <button
-            className="scroll-top-button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            ↑
-          </button>
-        )}
 
         {showNotification && (
           <Notification

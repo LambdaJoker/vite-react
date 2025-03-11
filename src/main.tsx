@@ -1,7 +1,7 @@
 /*
  * @Author: taotao
  * @LastEditors: taotao
- * @Description: my learn note of react
+ * @Description: main
  * @Date: 2025-01-16 15:54:52
  * @LastEditTime: 2025-02-15 14:17:33
  */
