@@ -1,10 +1,12 @@
 /*
  * @Author: taotao
  * @LastEditors: taotao
- * @Description: my learn note of react
+ * @Description: skeleton loader
  * @Date: 2025-03-08 13:34:28
- * @LastEditTime: 2025-03-08 13:55:26
+ * @LastEditTime: 2025-03-13 16:02:52
  */
+/** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import React, { FC } from 'react';
 import './index.css';
 

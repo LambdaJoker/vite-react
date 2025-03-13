@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: 技能栈
  * @Date: 2025-02-15 13:43:50
- * @LastEditTime: 2025-03-11 15:52:57
+ * @LastEditTime: 2025-03-13 16:44:09
  */
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
@@ -11,6 +11,7 @@ import { FC, useState, useEffect, useRef } from 'react';
 import './index.css';
 import Notification from '../../notification';
 import SEO from '../../common/SEO';
+import SkeletonLoader from '../../skeletonLoader';
 
 interface Skill {
   id: number;
@@ -243,8 +244,7 @@ const SkillsContent: FC = () => {
   const categories = ["全部", ...new Set(skills.flatMap(skill => skill.categories))];
   const searchTimeout = useRef<number | undefined>(undefined);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notifications, setNotifications] = useState<Array<{ id: number; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
 
   useEffect(() => {
     setIsAnimated(true);
@@ -272,16 +272,42 @@ const SkillsContent: FC = () => {
   };
 
   const handleCategoryClick = (category: string) => {
-    setShowNotification(true);
-    setNotificationMessage(`已选择 ${category} 类别`);
+    const newNotification = {
+      id: Date.now(),
+      message: `已选择 ${category} 类别`,
+      type: 'info' as const
+    };
+    setNotifications(prev => [...prev, newNotification]);
+
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
+    }, 3000);
     setActiveCategory(category);
   };
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className={`skills-container ${isAnimated ? 'animated' : ''}`}>
+        <div className="skills-header">
+          <SkeletonLoader type="title" />
+          <div className="skill-stats">
+            <div className="stat-item">
+              <SkeletonLoader type="text" width="80px" height="40px" />
+              <SkeletonLoader type="text" width="60px" height="20px" />
+            </div>
+            <div className="stat-item">
+              <SkeletonLoader type="text" width="80px" height="40px" />
+              <SkeletonLoader type="text" width="60px" height="20px" />
+            </div>
+            <div className="stat-item">
+              <SkeletonLoader type="text" width="80px" height="40px" />
+              <SkeletonLoader type="text" width="60px" height="20px" />
+            </div>
+          </div>
+        </div>
+        <div className="skills-grid">
+          <SkeletonLoader type="card" count={6} />
+        </div>
       </div>
     );
   }
@@ -311,6 +337,17 @@ const SkillsContent: FC = () => {
         description="查看我的技术栈和专业技能"
         keywords="技术栈,前端开发,后端开发,全栈开发"
       />
+      <div className="notification-container">
+        {notifications.map((notification, index) => (
+          <Notification
+            key={notification.id}
+            message={notification.message}
+            type={notification.type}
+            style={{ top: `${70 + index * 70}px` }}
+            onClose={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
+          />
+        ))}
+      </div>
       {showScrollTop && (
         <button
           className="scroll-top-button"
@@ -416,15 +453,6 @@ const SkillsContent: FC = () => {
             </div>
           </div>
         </div>
-
-        {showNotification && (
-          <Notification
-            message={notificationMessage}
-            type="info"
-            duration={2000}
-            onClose={() => setShowNotification(false)}
-          />
-        )}
       </div>
     </>
   );

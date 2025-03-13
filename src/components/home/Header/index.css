@@ -21,7 +21,7 @@ body {
   /* 设置为页面高度的10% */
   background-color: var(--bg-color);
   color: white;
-  z-index: 1000;
+  z-index: 2000;
   padding: 0 4px;
   /* 调整内边距使得内容不会太贴边 */
   display: flex;

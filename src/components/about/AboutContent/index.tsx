@@ -4,6 +4,7 @@ import React, { FC, useState, useEffect } from 'react';
 import './index.css';
 import { FaGithub } from 'react-icons/fa';
 import SEO from '../../common/SEO';
+import SkeletonLoader from '../../skeletonLoader';
 
 const AboutContent: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,9 +49,17 @@ const AboutContent: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className="about-container">
+        <div className="about-header">
+          <SkeletonLoader type="title" />
+          <SkeletonLoader type="text" count={2} />
+        </div>
+        <div className="timeline">
+          <SkeletonLoader type="card" count={3} />
+        </div>
+        <div className="education-section">
+          <SkeletonLoader type="card" count={2} />
+        </div>
       </div>
     );
   }
@@ -118,10 +127,10 @@ const AboutContent: FC = () => {
             <div className="timeline-item">
               <div className="timeline-date">2026 - 至今</div>
               <div className="timeline-content">
-                <h3>高级全栈开发工程师</h3>
+                <h3>前端开发工程师</h3>
                 <p className="company">某科技公司</p>
                 <ul className="achievements">
-                  <li>负责公司核心业务系统的架构设计和开发</li>
+                  <li>负责公司前端开发</li>
                   <li>带领团队完成多个重要项目的交付</li>
                   <li>优化系统性能，提升用户体验</li>
                 </ul>

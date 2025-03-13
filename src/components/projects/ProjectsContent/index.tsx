@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 import './index.css';
 import SEO from '../../common/SEO';
+import SkeletonLoader from '../../skeletonLoader';
 
 interface Project {
   id: number;
@@ -145,9 +146,14 @@ const ProjectsContent: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className="projects-container">
+        <div className="projects-header">
+          <SkeletonLoader type="title" />
+          <SkeletonLoader type="text" count={2} />
+        </div>
+        <div className="projects-grid">
+          <SkeletonLoader type="card" count={4} />
+        </div>
       </div>
     );
   }

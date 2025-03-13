@@ -14,6 +14,7 @@ import { FaGithub } from 'react-icons/fa';
 import SEO from '../../common/SEO';
 import article1 from '../../../assets/img/article/article1.jpg';
 import project1 from '../../../assets/img/project/project1.jpg';
+import SkeletonLoader from '../../skeletonLoader';
 
 const HomeContent: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -55,9 +56,23 @@ const HomeContent: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className="home-container">
+        <div className="hero-section">
+          <SkeletonLoader type="title" />
+          <SkeletonLoader type="text" count={2} />
+        </div>
+        <div className="featured-posts">
+          <SkeletonLoader type="title" />
+          <div className="posts-grid">
+            <SkeletonLoader type="card" count={3} />
+          </div>
+        </div>
+        <div className="projects-showcase">
+          <SkeletonLoader type="title" />
+          <div className="projects-grid">
+            <SkeletonLoader type="card" count={2} />
+          </div>
+        </div>
       </div>
     );
   }
