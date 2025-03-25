@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: homeContent
  * @Date: 2025-02-15 13:04:41
- * @LastEditTime: 2025-03-11 15:25:33
+ * @LastEditTime: 2025-03-25 23:48:55
  */
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
@@ -17,26 +17,32 @@ import project1 from '../../../assets/img/project/project1.jpg';
 import SkeletonLoader from '../../skeletonLoader';
 
 const HomeContent: FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAnimated, setIsAnimated] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  // 组件状态管理
+  const [isLoading, setIsLoading] = useState(true);      // 控制加载状态
+  const [isAnimated, setIsAnimated] = useState(false);   // 控制动画效果
+  const [showScrollTop, setShowScrollTop] = useState(false); // 控制回到顶部按钮显示
 
+  // 初始化和清理副作用
   useEffect(() => {
+    // 启用动画效果
     setIsAnimated(true);
+    // 模拟内容加载
     setTimeout(() => {
       setIsLoading(false);
     }, 600);
 
+    // 监听滚动事件，控制回到顶部按钮显示
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
     };
 
     window.addEventListener('scroll', handleScroll);
+    // 清理滚动事件监听器
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 预加载关键图片资源
   useEffect(() => {
-    // 预加载重要图片资源
     const preloadImages = ['/images/article1.jpg', '/images/article2.jpg'];
     preloadImages.forEach(src => {
       const link = document.createElement('link');
@@ -47,6 +53,7 @@ const HomeContent: FC = () => {
     });
   }, []);
 
+  // 平滑滚动到页面顶部
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -54,19 +61,23 @@ const HomeContent: FC = () => {
     });
   };
 
+  // 加载状态时显示骨架屏
   if (isLoading) {
     return (
       <div className="home-container">
+        {/* 英雄区域骨架屏 */}
         <div className="hero-section">
           <SkeletonLoader type="title" />
           <SkeletonLoader type="text" count={2} />
         </div>
+        {/* 文章列表骨架屏 */}
         <div className="featured-posts">
           <SkeletonLoader type="title" />
           <div className="posts-grid">
             <SkeletonLoader type="card" count={3} />
           </div>
         </div>
+        {/* 项目展示骨架屏 */}
         <div className="projects-showcase">
           <SkeletonLoader type="title" />
           <div className="projects-grid">
@@ -77,15 +88,19 @@ const HomeContent: FC = () => {
     );
   }
 
+  // 主要内容渲染
   return (
     <>
+      {/* SEO 优化组件 */}
       <SEO
         title="首页 - 我的个人博客"
         description="欢迎访问我的个人博客，这里分享前端开发技术和经验"
         keywords="前端开发,React,TypeScript,个人博客"
       />
 
+      {/* 主容器，支持动画效果 */}
       <div className={`home-container ${isAnimated ? 'animated' : ''}`}>
+        {/* 英雄区域：个人简介和CTA按钮 */}
         <section className="hero-section">
           <h1>欢迎来到我的个人网站</h1>
           <br />
@@ -96,6 +111,7 @@ const HomeContent: FC = () => {
           </div>
         </section>
 
+        {/* 最新文章展示区域 */}
         <section className="featured-posts">
           <h2>最新文章</h2>
           <div className="posts-grid">
@@ -134,6 +150,7 @@ const HomeContent: FC = () => {
           </div>
         </section>
 
+        {/* 技术领域预览 */}
         <section className="skills-preview">
           <h2>技术领域</h2>
           <div className="skills-grid">
@@ -161,6 +178,7 @@ const HomeContent: FC = () => {
           <Link to="/skills" className="view-all-button">查看所有技能</Link>
         </section>
 
+        {/* 精选项目展示 */}
         <section className="projects-showcase">
           <h2>精选项目</h2>
           <div className="projects-grid">
@@ -183,6 +201,7 @@ const HomeContent: FC = () => {
           </div>
         </section>
 
+        {/* 联系方式区域 */}
         <section className="contact-section">
           <h2>联系我</h2>
           <div className="contact-grid">
@@ -209,6 +228,7 @@ const HomeContent: FC = () => {
           </div>
         </section>
 
+        {/* 回到顶部按钮 */}
         {showScrollTop && (
           <button
             className="scroll-top-button"
