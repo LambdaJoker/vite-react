@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: 技能栈
  * @Date: 2025-02-15 13:43:50
- * @LastEditTime: 2025-03-26 20:20:12
+ * @LastEditTime: 2025-03-26 20:58:12
  */
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
@@ -60,8 +60,16 @@ const SkillsContent: FC = () => {
         const response = await axios.get('http://localhost:3000/api/skills');
         console.log('API返回数据:', response.data);
 
+        if (!response.data || !Array.isArray(response.data)) {
+          throw new Error('无效的API响应格式');
+        }
+
         const categoriesRes = await axios.get('http://localhost:3000/api/skill-categories');
         console.log('分类数据:', categoriesRes.data);
+
+        if (!categoriesRes.data || !Array.isArray(categoriesRes.data)) {
+          throw new Error('无效的分类数据格式');
+        }
 
         interface ApiSkill {
           skill_id: number;
@@ -81,7 +89,7 @@ const SkillsContent: FC = () => {
           icon: skill.icon,
           description: skill.description,
           projects: skill.projects,
-          categories: skill.categories
+          categories: Array.isArray(skill.categories) ? skill.categories : []
         }));
 
         setSkills(transformedSkills);
