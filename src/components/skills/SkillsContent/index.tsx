@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: 技能栈
  * @Date: 2025-02-15 13:43:50
- * @LastEditTime: 2025-03-25 23:52:21
+ * @LastEditTime: 2025-03-26 20:20:12
  */
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
@@ -12,6 +12,7 @@ import './index.css';
 import Notification from '../../notification';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader';
+import axios from 'axios';
 
 interface Skill {
   // 技能ID
@@ -30,230 +31,110 @@ interface Skill {
   projects?: string[];
 }
 
-const skills: Skill[] = [
-  {
-    id: 1,
-    categories: ["后端开发", "人工智能", "数据处理", "编程语言"],
-    name: "Python",
-    level: 89,
-    icon: "🐍",
-    description: "熟练使用 Python 进行后端开发、数据处理和机器学习应用开发"
-  },
-  {
-    id: 2,
-    categories: ["后端开发"],
-    name: "SpringBoot",
-    level: 75,
-    icon: "☕",
-    description: "熟悉 SpringBoot 框架，能够开发企业级 Java 应用"
-  },
-  {
-    id: 3,
-    categories: ["后端开发", "编程语言"],
-    name: "Go",
-    level: 70,
-    icon: "🔵",
-    description: "掌握 Go 语言开发，了解并发编程和微服务架构"
-  },
-  {
-    id: 4,
-    categories: ["前端开发"],
-    name: "JavaScript",
-    level: 80,
-    icon: "💛",
-    description: "精通 JavaScript，熟悉现代 ES6+ 特性和异步编程"
-  },
-  {
-    id: 5,
-    categories: ["前端开发"],
-    name: "vue.js",
-    level: 75,
-    icon: "🔷",
-    description: "熟练使用 vue.js 进行前端开发，掌握组件化开发和状态管理"
-  },
-  {
-    id: 6,
-    categories: ["前端开发"],
-    name: "HTML/CSS",
-    level: 80,
-    icon: "🎨",
-    description: "掌握前端基础技术，能够构建响应式和现代化的用户界面"
-  },
-  {
-    id: 7,
-    categories: ["人工智能"],
-    name: "机器学习",
-    level: 75,
-    icon: "🤖",
-    description: "熟悉机器学习算法和框架，能够开发智能化应用"
-  },
-  {
-    id: 8,
-    categories: ["人工智能", "计算机视觉"],
-    name: "YOLO",
-    level: 70,
-    icon: "👁️",
-    description: "掌握 YOLO 目标检测算法，能够进行计算机视觉应用开发"
-  },
-  {
-    id: 9,
-    categories: ["系统与工具", "运维"],
-    name: "Linux",
-    level: 80,
-    icon: "🐧",
-    description: "熟练使用 Linux 系统，掌握系统管理和服务器运维"
-  },
-  {
-    id: 10,
-    categories: ["系统与工具", "机器人"],
-    name: "ROS",
-    level: 70,
-    icon: "🤖",
-    description: "了解机器人操作系统，能够进行机器人应用开发"
-  },
-  {
-    id: 11,
-    categories: ["编程语言"],
-    name: "C语言",
-    level: 75,
-    icon: "⚡",
-    description: "掌握 C 语言开发，了解底层系统编程"
-  },
-  {
-    id: 12,
-    categories: ["前端开发"],
-    name: "React",
-    level: 90,
-    icon: "🔵",
-    description: "熟练使用 React 及其生态系统，包括 Hooks、Redux、React Router 等",
-    projects: ["个人博客系统", "企业管理平台"]
-  },
-  {
-    id: 13,
-    categories: ["前端开发"],
-    name: "TypeScript",
-    level: 90,
-    icon: "💻",
-    description: "深入理解 TypeScript 类型系统，能够构建类型安全的应用",
-    projects: ["个人博客系统", "企业管理平台"]
-  },
-  {
-    id: 14,
-    categories: ["后端开发"],
-    name: "Node.js",
-    level: 80,
-    icon: "🟢",
-    description: "熟练使用 Node.js 进行服务器端开发，包括 Express、Nest.js 框架"
-  },
-  {
-    id: 15,
-    categories: ["大数据"],
-    name: "Hadoop",
-    level: 80,
-    icon: "🐘",
-    description: "精通 Hadoop 生态系统，包括 HDFS、MapReduce、YARN 等组件"
-  },
-  {
-    id: 16,
-    categories: ["大数据"],
-    name: "Spark",
-    level: 80,
-    icon: "🔥",
-    description: "熟练使用 Spark 进行大数据处理，包括 RDD、DataFrame、Dataset 等"
-  },
-  {
-    id: 17,
-    categories: ["数据库"],
-    name: "MySQL",
-    level: 80,
-    icon: "🐬",
-    description: "熟练使用 MySQL 进行数据库管理，包括索引优化、查询优化等"
-  },
-  {
-    id: 18,
-    categories: ["数据库"],
-    name: "Redis",
-    level: 80,
-    icon: "🔑",
-    description: "熟练使用 Redis 进行缓存和数据存储，包括 Redis 集群、Redis 持久化等"
-  },
-  {
-    id: 19,
-    categories: ["数据库"],
-    name: "MongoDB",
-    level: 75,
-    icon: "🍃",
-    description: "熟练使用 MongoDB 进行 NoSQL 数据库管理，包括索引优化、查询优化等"
-  },
-  {
-    id: 20,
-    categories: ["大数据", "数据库"],
-    name: "HBase",
-    level: 75,
-    icon: "📊",
-    description: "熟练使用 HBase 进行大规模数据存储和处理，了解分布式数据库架构"
-  },
-  {
-    id: 21,
-    categories: ["大数据", "数据处理"],
-    name: "Hive",
-    level: 75,
-    icon: "🐝",
-    description: "熟练使用 Hive 进行数据仓库管理和大规模数据分析"
-  },
-  {
-    id: 22,
-    categories: ["云计算", "系统与工具"],
-    name: "Docker",
-    level: 35,
-    icon: "🐳",
-    description: "熟练使用 Docker 进行容器化部署和管理，了解容器编排技术"
-  },
-  {
-    id: 23,
-    categories: ["云计算", "系统与工具"],
-    name: "Kubernetes",
-    level: 30,
-    icon: "☸️",
-    description: "了解 Kubernetes 容器编排平台，能够进行集群部署和管理"
-  },
-  {
-    id: 24,
-    categories: ["云计算"],
-    name: "AWS",
-    level: 0,
-    icon: "☁️",
-    description: "熟悉 AWS 云服务，包括 EC2、S3、Lambda 等核心服务的使用"
-  },
-  {
-    id: 25,
-    categories: ["云计算"],
-    name: "阿里云",
-    level: 30,
-    icon: "☁️",
-    description: "熟悉阿里云服务，能够使用 ECS、OSS、函数计算等服务进行应用部署"
-  },
-  {
-    id: 26,
-    categories: ["后端开发", "编程语言"],
-    name: "Java",
-    level: 80,
-    icon: "☕",
-    description: "熟练使用 Java 进行企业级应用开发，掌握 JVM 调优、多线程编程等核心技术"
-  }
-];
+interface NotificationItem {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'info' | 'warning';
+}
 
 const SkillsContent: FC = () => {
-  // 1. 所有的 useState hooks
+  // 状态管理
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeCategory, setActiveCategory] = useState('全部');
   const [isAnimated, setIsAnimated] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [notifications, setNotifications] = useState<Array<{ id: number; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('全部');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [skillStats, setSkillStats] = useState({
+    totalSkills: 0,
+    averageLevel: 0,
+    expertiseAreas: 0
+  });
 
-  // 2. useRef hooks
-  const searchTimeout = useRef<number | undefined>(undefined);
+  // 获取技能数据
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/skills');
+        console.log('API返回数据:', response.data);
+
+        const categoriesRes = await axios.get('http://localhost:3000/api/skill-categories');
+        console.log('分类数据:', categoriesRes.data);
+
+        interface ApiSkill {
+          skill_id: number;
+          skill_name: string;
+          proficiency: number;
+          icon: string;
+          description: string;
+          projects?: string[];
+          categories: string[];
+        }
+
+        // 转换数据格式
+        const transformedSkills: Skill[] = response.data.map((skill: ApiSkill) => ({
+          id: skill.skill_id,
+          name: skill.skill_name,
+          level: skill.proficiency,
+          icon: skill.icon,
+          description: skill.description,
+          projects: skill.projects,
+          categories: skill.categories
+        }));
+
+        setSkills(transformedSkills);
+        setCategories(['全部', ...categoriesRes.data]);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('获取技能数据失败:', error);
+        setNotifications(prev => [...prev, {
+          id: Date.now(),
+          message: '技能数据加载失败，请稍后重试',
+          type: 'error'
+        }]);
+        setIsLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
+  // 计算统计数据
+  useEffect(() => {
+    if (skills.length > 0) {
+      const total = skills.length;
+      const average = Math.round(skills.reduce((acc, curr) => acc + curr.level, 0) / total);
+      const expertise = new Set(skills.flatMap(skill => skill.categories)).size;
+
+      setSkillStats({
+        totalSkills: total,
+        averageLevel: average,
+        expertiseAreas: expertise
+      });
+    }
+  }, [skills]);
+
+  // 处理分类点击
+  const handleCategoryClick = (category: string) => {
+    setActiveCategory(category);
+
+    // 重置搜索词
+    setSearchTerm('');
+    // 清空搜索输入框
+    const searchInput = document.querySelector('input[name="search"]') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.value = '';
+    }
+
+    // 添加切换通知
+    setNotifications(prev => [...prev, {
+      id: Date.now(),
+      message: `已切换到${category === '全部' ? '所有技能' : category}分类`,
+      type: 'success'
+    }]);
+  };
 
   // 过滤并排序技能列表
   const filteredSkills = skills
@@ -282,34 +163,35 @@ const SkillsContent: FC = () => {
   }, []);
 
   // 处理搜索输入，使用防抖优化
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setSearchTerm(value);
+    // 只更新输入框的值，不触发搜索
+    event.target.value = value;
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
-    searchTimeout.current = window.setTimeout(() => {
-      // 实际搜索逻辑
-    }, 300);
   };
 
-  // 处理分类点击，显示通知
-  const handleCategoryClick = (category: string) => {
-    const newNotification = {
-      id: Date.now(),
-      message: `已选择 ${category} 类别`,
-      type: 'info' as const
-    };
-    setNotifications(prev => [...prev, newNotification]);
+  // 处理搜索提交
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = (event.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
 
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
-    }, 2000);
-    setActiveCategory(category);
+    // 更新搜索词
+    setSearchTerm(value);
+
+    // 添加搜索通知
+    if (value) {
+      setNotifications(prev => [...prev, {
+        id: Date.now(),
+        message: `正在搜索: ${value}`,
+        type: 'info'
+      }]);
+    }
   };
 
-  // 所有技能分类，包括"全部"选项
-  const categories = ["全部", ...new Set(skills.flatMap(skill => skill.categories))];
+  // 2. useRef hooks
+  const searchTimeout = useRef<number | undefined>(undefined);
 
   // 加载状态的骨架屏渲染
   if (isLoading) {
@@ -333,16 +215,6 @@ const SkillsContent: FC = () => {
     );
   }
 
-  // 计算技能统计数据
-  const skillStats = {
-    // 总技能数量
-    totalSkills: skills.length,
-    // 平均掌握程度
-    averageLevel: Math.round(skills.reduce((acc, curr) => acc + curr.level, 0) / skills.length),
-    // 专业领域数量
-    expertiseAreas: categories.length - 1
-  };
-
   // 技能卡片渲染函数
   const renderSkillCard = (skill: Skill) => (
     <div key={skill.id} className="skill-card" data-level={skill.level >= 85 ? 'expert' : skill.level >= 70 ? 'advanced' : 'intermediate'}>
@@ -363,7 +235,7 @@ const SkillsContent: FC = () => {
       {/* 技能描述 */}
       <p className="skill-description">{skill.description}</p>
       {/* 相关项目列表（如果有） */}
-      {skill.projects && (
+      {Array.isArray(skill.projects) && skill.projects.length > 0 && (
         <div className="skill-projects">
           <h4>相关项目:</h4>
           <ul>
@@ -375,7 +247,7 @@ const SkillsContent: FC = () => {
       )}
       {/* 技能等级标签 */}
       <div className="skill-level-badge">
-        {skill.level >= 85 ? '专家' : skill.level >= 70 ? '熟练' : '进阶'}
+        {skill.level >= 85 ? '熟练' : skill.level >= 70 ? '进阶' : '了解'}
       </div>
     </div>
   );
@@ -460,17 +332,19 @@ const SkillsContent: FC = () => {
 
         {/* 搜索和过滤区域 */}
         <div className="search-filter-container">
-          {/* 搜索框组件 */}
-          <div className="search-box">
+          <form className="search-box" onSubmit={handleSearchSubmit}>
             <input
               type="text"
+              name="search"
               placeholder="搜索技能..."
-              value={searchTerm}
-              onChange={handleSearch}
+              onChange={handleSearchInput}
               className="search-input"
               aria-label="搜索技能"
             />
-          </div>
+            <button type="submit" className="search-button">
+              搜索
+            </button>
+          </form>
           {/* 分类过滤按钮组 */}
           <div className="category-filter">
             {categories.map(category => (
