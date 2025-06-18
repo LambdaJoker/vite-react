@@ -1,0 +1,12 @@
+{
+  "name": "my-blog-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter client dev",
+    "dev:server": "pnpm --filter server start",
+    "dev:full": "pnpm --parallel --stream run /^dev/"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

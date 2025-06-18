@@ -1,0 +1,9 @@
+.vercel
+
+# 忽略 node_modules
+node_modules/
+
+# 添加 server 的忽略规则
+vite-react/server/node_modules/
+vite-react/server/.env
+vite-react/server/dist/

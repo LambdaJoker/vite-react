@@ -1,0 +1,137 @@
+.notification {
+  position: fixed;
+  min-width: 300px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateX(120%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1500;
+}
+
+.notification.visible {
+  transform: translateX(0);
+}
+
+.notification-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notification-message {
+  flex-grow: 1;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.notification-close {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.notification-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+/* 不同类型的样式 */
+.notification.success {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+}
+
+.notification.error {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+}
+
+.notification.info {
+  background: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+}
+
+.notification.warning {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+/* 添加动画 */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.notification.visible {
+  animation: slideIn 0.3s forwards;
+}
+
+.notification:not(.visible) {
+  animation: slideOut 0.3s forwards;
+}
+
+/* 位置变体 */
+.notification.top-right {
+  top: 70px;
+  right: 20px;
+}
+
+.notification.top-left {
+  top: 70px;
+  left: 20px;
+}
+
+.notification.bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+.notification.bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.notification.top-center {
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.notification.bottom-center {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
