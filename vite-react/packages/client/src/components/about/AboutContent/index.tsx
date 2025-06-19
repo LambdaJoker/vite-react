@@ -18,7 +18,7 @@ const personalInfo = {
 
 const contactInfo = [
   { type: 'email', href: 'mailto:2667534364@qq.com', icon: '📧', label: 'Email' },
-  { type: 'github', href: 'https://github.com/taotaozi-pro', icon: <FaGithub />, label: 'GitHub' },
+  { type: 'github', href: 'https://github.com/LambdaJoker', icon: <FaGithub />, label: 'GitHub' },
   { type: 'linkedin', href: 'https://linkedin.com/in/yourusername', icon: '💼', label: 'LinkedIn' },
 ];
 

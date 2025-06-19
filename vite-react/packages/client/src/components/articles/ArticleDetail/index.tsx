@@ -9,7 +9,11 @@ import { FC, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import useArticleStore from '../../store/articleStore'; // 修正路径
 import useAppStore from '../../store/appStore'; // 修正路径
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import './index.css';
+import 'github-markdown-css/github-markdown.css';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
 
@@ -91,7 +95,11 @@ const ArticleDetail: FC = () => {
           </div>
         </div>
 
-        <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }}></div>
+        <div className="article-content markdown-body">
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+            {article.content}
+          </ReactMarkdown>
+        </div>
 
         <div className="article-footer">
           <div className="tags">

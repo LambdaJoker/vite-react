@@ -1,13 +1,12 @@
 import { FC, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import RQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // import styles
+import Mde from 'react-mde';
+import ReactMarkdown from 'react-markdown';
+import 'react-mde/lib/styles/css/react-mde-all.css';
 import useArticleStore from '../../store/articleStore';
 import './index.css'; // 修正路径
 
-// 这是一个针对 react-quill 和 Vite/TypeScript 常见问题的解决方法。
-// 它能确保我们无论模块如何导出，都能获取到正确的组件。
-const ReactQuill = (RQuill as any).default ?? RQuill;
+const ReactMde = (Mde as any).default || Mde;
 
 interface ArticleFormProps {
   mode: 'create' | 'edit';
@@ -27,12 +26,13 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
   } = useArticleStore();
 
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(''); // content is now markdown
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [author, setAuthor] = useState('LambdaJoker');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
 
   useEffect(() => {
     if (mode === 'edit' && id) {
@@ -76,7 +76,7 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('content', content);
+    formData.append('content', content); // content is markdown
     formData.append('category', category);
     formData.append('tags', tags); // Send as a comma-separated string
     formData.append('author', author);
@@ -156,7 +156,20 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
         </div>
         <div className="form-group">
           <label>内容</label>
-          <ReactQuill value={content} onChange={setContent} theme="snow" />
+          <ReactMde
+            value={content}
+            onChange={setContent}
+            selectedTab={selectedTab}
+            onTabChange={setSelectedTab}
+            generateMarkdownPreview={(markdown: string) =>
+              Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
+            }
+            childProps={{
+              writeButton: {
+                tabIndex: -1
+              }
+            }}
+          />
         </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? '提交中...' : (mode === 'create' ? '创建' : '更新')}
