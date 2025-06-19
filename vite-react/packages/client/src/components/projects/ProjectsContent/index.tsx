@@ -3,14 +3,21 @@
  * @LastEditors: taotao
  * @Description: Do not edit
  * @Date: 2025-02-15 13:52:55
+ * @LastEditTime: 2025-06-19 10:17:27
+ */
+/*
+ * @Author: taotao
+ * @LastEditors: taotao
+ * @Description: Do not edit
+ * @Date: 2025-02-15 13:52:55
  * @LastEditTime: 2025-06-19 10:12:53
  */
 import { FC, useState, useEffect } from 'react';
 import './index.css';
 import SEO from '../../common/SEO';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
-import { Project } from './types';
-import { projects } from './data';
+import { Project } from '../types';
+import { projects } from '../data';
 
 const ProjectsContent: FC = () => {
   // 状态管理
