@@ -2,6 +2,13 @@
  * @Author: taotao
  * @LastEditors: taotao
  * @Description: Do not edit
+ * @Date: 2025-02-15 13:21:42
+ * @LastEditTime: 2025-06-19 10:40:00
+ */
+/*
+ * @Author: taotao
+ * @LastEditors: taotao
+ * @Description: Do not edit
  * @Date: 2025-04-28 20:45:53
  * @LastEditTime: 2025-06-18 23:07:40
  */
@@ -9,9 +16,7 @@ import { FC, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import useArticleStore from '../../store/articleStore'; // 修正路径
 import useAppStore from '../../store/appStore'; // 修正路径
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
+import MarkdownRenderer from '../../common/MarkdownRenderer'; // 导入新的渲染器
 import './index.css';
 import 'github-markdown-css/github-markdown.css';
 import SEO from '../../common/SEO';
@@ -96,9 +101,7 @@ const ArticleDetail: FC = () => {
         </div>
 
         <div className="article-content markdown-body">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-            {article.content}
-          </ReactMarkdown>
+          <MarkdownRenderer>{article.content}</MarkdownRenderer>
         </div>
 
         <div className="article-footer">

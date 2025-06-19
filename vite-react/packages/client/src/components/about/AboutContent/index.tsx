@@ -16,7 +16,14 @@ const personalInfo = {
   ],
 };
 
-const contactInfo = [
+interface ContactInfo {
+  type: string;
+  href: string;
+  icon: any;
+  label: string;
+}
+
+const contactInfo: ContactInfo[] = [
   { type: 'email', href: 'mailto:2667534364@qq.com', icon: '📧', label: 'Email' },
   { type: 'github', href: 'https://github.com/LambdaJoker', icon: <FaGithub />, label: 'GitHub' },
   { type: 'linkedin', href: 'https://linkedin.com/in/yourusername', icon: '💼', label: 'LinkedIn' },

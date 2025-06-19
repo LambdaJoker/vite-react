@@ -326,5 +326,14 @@ pre code {
 [data-theme="dark"] .token.char,
 [data-theme="dark"] .token.builtin,
 [data-theme="dark"] .token.inserted {
-  color: #ce9178;
+  color: #a5c261;
+}
+
+/* Fix for markdown body alignment */
+.markdown-body {
+  text-align: left !important;
+}
+
+.markdown-body * {
+  text-align: left !important;
 }

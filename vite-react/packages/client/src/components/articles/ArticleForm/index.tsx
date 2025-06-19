@@ -1,10 +1,10 @@
 import { FC, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Mde from 'react-mde';
-import ReactMarkdown from 'react-markdown';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import useArticleStore from '../../store/articleStore';
 import './index.css'; // 修正路径
+import MarkdownRenderer from '../../common/MarkdownRenderer'; // 导入新的渲染器
 
 const ReactMde = (Mde as any).default || Mde;
 
@@ -162,7 +162,7 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
             generateMarkdownPreview={(markdown: string) =>
-              Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
+              Promise.resolve(<MarkdownRenderer>{markdown}</MarkdownRenderer>)
             }
             childProps={{
               writeButton: {

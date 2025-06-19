@@ -138,3 +138,18 @@
   margin-bottom: 1.5rem;
   text-align: center;
 }
+
+/* Fix for react-mde alignment issues */
+.mde-textarea-wrapper,
+.mde-preview {
+  text-align: left;
+}
+
+.mde-preview h1,
+.mde-preview h2,
+.mde-preview h3,
+.mde-preview h4,
+.mde-preview h5,
+.mde-preview h6 {
+  text-align: left;
+}

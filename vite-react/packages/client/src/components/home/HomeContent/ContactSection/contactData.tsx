@@ -29,8 +29,8 @@ export const contacts: Contact[] = [
   {
     icon: <FaGithub />,
     title: 'GitHub',
-    content: 'taotaozi-pro',
-    link: 'https://github.com/taotaozi-pro',
+    content: 'LambdaJoker',
+    link: 'https://github.com/LambdaJoker',
     linkText: '访问主页',
   },
   {
