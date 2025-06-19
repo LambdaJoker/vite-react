@@ -3,7 +3,7 @@
  * @LastEditors: taotao
  * @Description: app
  * @Date: 2025-01-16 15:54:52
- * @LastEditTime: 2025-06-19 08:25:09
+ * @LastEditTime: 2025-06-19 10:06:55
  */
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
