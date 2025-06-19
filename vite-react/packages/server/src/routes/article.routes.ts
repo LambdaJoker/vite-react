@@ -6,7 +6,14 @@
  * @LastEditTime: 2025-06-18 20:28:35
  */
 import express from 'express';
-import { getArticles, getArticle } from '../controllers/article.controller';
+import {
+  getArticles,
+  getArticle,
+  createArticle,
+  updateArticle,
+  deleteArticle
+} from '../controllers/article.controller';
+import { upload } from '../middleware/multer.middleware'; // 引入 multer 中间件
 
 const router = express.Router();
 
@@ -15,5 +22,14 @@ router.get('/', getArticles);
 
 // 获取单篇文章
 router.get('/:id', getArticle);
+
+// 创建新文章 (带图片上传)
+router.post('/', upload.single('image'), createArticle);
+
+// 更新文章
+router.put('/:id', upload.single('image'), updateArticle);
+
+// 删除文章
+router.delete('/:id', deleteArticle);
 
 export default router; 

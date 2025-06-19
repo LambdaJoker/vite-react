@@ -3,31 +3,21 @@
  * @LastEditors: taotao
  * @Description: Do not edit
  * @Date: 2025-02-15 13:18:37
- * @LastEditTime: 2025-06-18 20:00:11
+ * @LastEditTime: 2025-06-19 08:22:46
  */
 import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import SkeletonLoader from '../../skeletonLoader';
 import LazyImage from '../../lazyImage';
-import useArticleStore from '../../../store/articleStore'; // 引入 Zustand store
+import useArticleStore, { type Article } from '../../store/articleStore'; // 修正为 type-only 导入
+import useAppStore from '../../store/appStore'; // 修正路径
 import ScrollToTopButton from '../../common/ScrollToTopButton'; // 引入新组件
-
-interface Article {
-  id: number;
-  title: string;
-  excerpt: string;  // 从数据库返回的摘要
-  date: string;
-  category: string;
-  image: string;
-  read_count: number;  // 从数据库返回的阅读次数
-  author: string;
-  tags: string[];
-}
 
 const ArticleList: FC = () => {
   // 从 Zustand store 中获取状态和 action
   const { articles, isLoading, error, fetchArticles } = useArticleStore();
+  const { isReadOnly } = useAppStore(); // 获取只读状态
 
   const [activeCategory, setActiveCategory] = useState<string>("全部");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -50,7 +40,7 @@ const ArticleList: FC = () => {
     .filter(article => {
       const matchesCategory = activeCategory === "全部" || article.category === activeCategory;
       const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+        (article.excerpt || '').toLowerCase().includes(searchTerm.toLowerCase());
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
@@ -108,6 +98,14 @@ const ArticleList: FC = () => {
             <span className="stat-label">文章分类</span>
           </div>
         </div>
+        {/* 只有在非只读模式下才显示创建按钮 */}
+        {!isReadOnly && (
+          <div className="create-article-button-container">
+            <Link to="/articles/new" className="create-article-button">
+              创建新文章
+            </Link>
+          </div>
+        )}
       </div>
       <div className="search-filter-container">
         <div className="search-box">
@@ -170,7 +168,7 @@ const ArticleList: FC = () => {
                 <span className="read-count">{article.read_count} 次阅读</span>
               </div>
               <h2>{article.title}</h2>
-              <p dangerouslySetInnerHTML={{ __html: article.excerpt }}></p>
+              <p dangerouslySetInnerHTML={{ __html: article.excerpt || '' }}></p>
               {article.tags && article.tags.length > 0 && (
                 <div className="article-tags">
                   {article.tags.map(tag => (

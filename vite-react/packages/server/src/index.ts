@@ -5,6 +5,7 @@
  * @Date: 2025-03-26 19:40:21
  * @LastEditTime: 2025-06-18 20:30:11
  */
+import 'dotenv/config';
 import app from './app';
 import { Request, Response, NextFunction } from 'express';
 
@@ -21,5 +22,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // 启动服务器
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
 }); 

@@ -3,12 +3,135 @@
  * @LastEditors: taotao
  * @Description: Do not edit
  * @Date: 2025-04-28 20:45:53
- * @LastEditTime: 2025-06-18 19:49:57
+ * @LastEditTime: 2025-06-18 23:48:06
  */
 import { Request, Response, RequestHandler } from 'express';
 import { PrismaClient } from '../generated/prisma';
+import path from 'path';
+import fs from 'fs';
 
 const prisma = new PrismaClient();
+
+// 创建新文章
+export const createArticle: RequestHandler = async (req, res) => {
+  const { title, content, category, tags } = req.body;
+
+  // 从 multer 中间件获取上传的文件信息
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  try {
+    const newArticle = await prisma.articles.create({
+      data: {
+        title,
+        content,
+        category,
+        // 将逗号分隔的标签字符串转为 JSON 字符串数组存储
+        tags: JSON.stringify(tags.split(',').map((tag: string) => tag.trim())),
+        image: imagePath,
+        author: 'Admin', // 你可以根据需要修改为动态获取
+        date: new Date(),
+        read_count: 0,
+      }
+    });
+
+    const formattedArticle = {
+      ...newArticle,
+      date: newArticle.date.toISOString().split('T')[0],
+      tags: JSON.parse(newArticle.tags as string),
+    };
+
+    res.status(201).json(formattedArticle);
+  } catch (error) {
+    console.error('创建文章失败:', error);
+    res.status(500).json({ message: '创建文章时发生服务器错误' });
+  }
+};
+
+// 更新文章
+export const updateArticle: RequestHandler = async (req, res) => {
+  const articleId = parseInt(req.params.id, 10);
+  const { title, content, category, tags } = req.body;
+
+  try {
+    // 查找现有文章以获取旧图片路径
+    const existingArticle = await prisma.articles.findUnique({
+      where: { id: articleId },
+    });
+
+    if (!existingArticle) {
+      res.status(404).json({ message: '文章未找到' });
+      return;
+    }
+
+    let imagePath = existingArticle.image; // 默认使用旧图片
+
+    // 如果有新文件上传，则替换旧图片
+    if (req.file) {
+      // 删除旧图片文件（如果存在）
+      if (existingArticle.image) {
+        const oldImagePath = path.join(__dirname, '../../public', existingArticle.image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      imagePath = `/uploads/${req.file.filename}`;
+    }
+
+    const updatedArticleData = await prisma.articles.update({
+      where: { id: articleId },
+      data: {
+        title,
+        content,
+        category,
+        tags: JSON.stringify(tags.split(',').map((tag: string) => tag.trim())),
+        image: imagePath,
+      },
+    });
+
+    const formattedArticle = {
+      ...updatedArticleData,
+      date: updatedArticleData.date.toISOString().split('T')[0],
+      tags: JSON.parse(updatedArticleData.tags as string),
+    };
+
+    res.json(formattedArticle);
+  } catch (error) {
+    console.error(`更新文章 #${articleId} 失败:`, error);
+    res.status(500).json({ message: '更新文章时发生服务器错误' });
+  }
+};
+
+// 删除文章
+export const deleteArticle: RequestHandler = async (req, res) => {
+  const articleId = parseInt(req.params.id, 10);
+
+  try {
+    // 删除文章前，先获取文章信息以找到图片路径
+    const articleToDelete = await prisma.articles.findUnique({
+      where: { id: articleId },
+    });
+
+    if (articleToDelete && articleToDelete.image) {
+      const imagePath = path.join(__dirname, '../../public', articleToDelete.image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
+    await prisma.articles.delete({
+      where: { id: articleId },
+    });
+
+    res.status(204).send(); // 204 No Content 表示成功删除
+  } catch (error) {
+    console.error(`删除文章 #${articleId} 失败:`, error);
+    if ((error as any).code === 'P2025') { // Prisma 找不到记录的错误码
+      res.status(404).json({ message: '文章未找到' });
+    } else {
+      res.status(500).json({ message: '删除文章时发生服务器错误' });
+    }
+  }
+};
 
 // 获取单篇文章
 export const getArticle: RequestHandler = async (req, res) => {

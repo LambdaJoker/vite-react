@@ -3,60 +3,51 @@
  * @LastEditors: taotao
  * @Description: Do not edit
  * @Date: 2025-04-28 20:45:53
- * @LastEditTime: 2025-04-28 21:42:24
+ * @LastEditTime: 2025-06-18 23:07:40
  */
-import { FC, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { FC, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import useArticleStore from '../../store/articleStore'; // 修正路径
+import useAppStore from '../../store/appStore'; // 修正路径
 import './index.css';
 import SEO from '../../common/SEO';
-
-interface ArticleParams {
-  id: string;
-}
-
-interface Article {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-  category: string;
-  image: string;
-  author: string;
-  read_count: number;
-  tags: string[];
-}
+import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
 
 const ArticleDetail: FC = () => {
-  const { id } = useParams<ArticleParams>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [article, setArticle] = useState<Article | null>(null);
-  const [error, setError] = useState<string>('');
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { isReadOnly } = useAppStore(); // 获取只读状态
+  const {
+    currentArticle: article,
+    isLoading,
+    error,
+    fetchArticle,
+    deleteArticle,
+    clearCurrentArticle,
+  } = useArticleStore();
 
   useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`http://localhost:3000/api/articles/${id}`);
-        setArticle(response.data);
-      } catch (error) {
-        console.error('获取文章失败:', error);
-        setError('获取文章失败，请稍后重试');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (id) {
-      fetchArticle();
+      fetchArticle(id);
     }
-  }, [id]);
+    // 组件卸载时清除当前文章数据
+    return () => {
+      clearCurrentArticle();
+    };
+  }, [id, fetchArticle, clearCurrentArticle]);
+
+  const handleDelete = async () => {
+    if (id && window.confirm('你确定要删除这篇文章吗？')) {
+      await deleteArticle(id);
+      navigate('/articles');
+    }
+  };
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
+      <div className="article-detail-container">
+        <SkeletonLoader type="title" />
+        <SkeletonLoader type="text" count={5} />
       </div>
     );
   }
@@ -69,6 +60,12 @@ const ArticleDetail: FC = () => {
     return <div className="article-not-found">文章未找到</div>;
   }
 
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
+  };
+
   return (
     <>
       <SEO
@@ -76,11 +73,13 @@ const ArticleDetail: FC = () => {
         description={article.content.replace(/<[^>]+>/g, '').slice(0, 200)}
         keywords={article.category}
         type="article"
-        image={article.image}
+        image={getImageUrl(article.image)}
       />
       <div className="article-detail-container">
+        {article.image && (
+          <div className="article-cover" style={{ backgroundImage: `url(${getImageUrl(article.image)})` }}></div>
+        )}
         <div className="article-header">
-          {/* <div className="article-cover" style={{ backgroundImage: `url(${article.image})` }}></div> */}
           <div className="article-info">
             <h1>{article.title}</h1>
             <div className="article-meta">
@@ -100,10 +99,17 @@ const ArticleDetail: FC = () => {
               <span key={index} className="tag">{tag}</span>
             ))}
           </div>
-          <div className="share-buttons">
-            <button className="share-button">分享到微信</button>
-            <button className="share-button">分享到微博</button>
-          </div>
+          {/* 只有在非只读模式下才显示操作按钮 */}
+          {!isReadOnly && (
+            <div className="action-buttons">
+              <Link to={`/articles/${id}/edit`} className="action-button edit-button">
+                编辑
+              </Link>
+              <button onClick={handleDelete} className="action-button delete-button">
+                删除
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
