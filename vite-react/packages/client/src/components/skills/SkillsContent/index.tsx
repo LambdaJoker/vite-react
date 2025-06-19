@@ -10,53 +10,29 @@ import './index.css';
 import Notification from '../../notification';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader';
-import apiClient from '../../../api/apiClient'; // 修正路径
 import AddSkillForm from '../AddSkillForm';
 import EditSkillForm from '../EditSkillForm';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
-
-interface Skill {
-  // 技能ID
-  id: number;
-  // 技能所属分类
-  categories: string[];
-  // 技能名称
-  name: string;
-  // 掌握程度 (0-100)
-  level: number;
-  // 技能图标
-  icon: string;
-  // 技能描述
-  description: string;
-  // 相关项目列表
-  projects?: string[];
-}
-
-interface NotificationItem {
-  id: number;
-  message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
-}
-
-interface ApiSkillData {
-  skill_id: number;
-  skill_name: string;
-  proficiency: number;
-  description: string;
-  icon: string;
-  projects?: string;
-  categories: string; // 从API返回的分类字符串
-}
+import { useSkills } from '../useSkills';
+import { Skill } from '../types';
 
 const SkillsContent: FC = () => {
+  // 使用自定义Hook
+  const {
+    skills,
+    isLoading,
+    notifications,
+    categories,
+    fetchSkills,
+    deleteSkill,
+    addNotification,
+    setNotifications
+  } = useSkills();
+
   // 状态管理
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isAnimated, setIsAnimated] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [categories, setCategories] = useState<string[]>([]);
   const [skillStats, setSkillStats] = useState({
     totalSkills: 0,
     averageLevel: 0,
@@ -64,49 +40,6 @@ const SkillsContent: FC = () => {
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
-
-  // 获取技能数据
-  const fetchSkills = async () => {
-    try {
-      const skillsResponse = await apiClient.get<any[]>('/skills');
-      if (!skillsResponse.data || !Array.isArray(skillsResponse.data)) {
-        throw new Error('无效的API响应格式');
-      }
-
-      const categoriesResponse = await apiClient.get<string[]>('/skills/categories');
-      if (!categoriesResponse.data || !Array.isArray(categoriesResponse.data)) {
-        throw new Error('无效的分类数据格式');
-      }
-
-      // 转换数据格式
-      const transformedSkills: Skill[] = skillsResponse.data.map((skill: any) => ({
-        id: skill.skill_id,
-        name: skill.skill_name,
-        level: skill.proficiency,
-        icon: skill.icon,
-        description: skill.description,
-        projects: skill.projects,
-        categories: Array.isArray(skill.categories) ? skill.categories : []
-      }));
-
-      setSkills(transformedSkills);
-      setCategories(['全部', ...categoriesResponse.data]);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('获取技能数据失败:', error);
-      const errorMessage = (error as any)?.message || '技能数据加载失败，请稍后重试';
-      setNotifications(prev => [...prev, {
-        id: Date.now(),
-        message: errorMessage,
-        type: 'error'
-      }]);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSkills();
-  }, []);
 
   // 计算统计数据
   useEffect(() => {
@@ -126,21 +59,12 @@ const SkillsContent: FC = () => {
   // 处理分类点击
   const handleCategoryClick = (category: string) => {
     setActiveCategory(category);
-
-    // 重置搜索词
     setSearchTerm('');
-    // 清空搜索输入框
     const searchInput = document.querySelector('input[name="search"]') as HTMLInputElement;
     if (searchInput) {
       searchInput.value = '';
     }
-
-    // 添加切换通知
-    setNotifications(prev => [...prev, {
-      id: Date.now(),
-      message: `已切换到${category === '全部' ? '所有技能' : category}分类`,
-      type: 'success'
-    }]);
+    addNotification(`已切换到${category === '全部' ? '所有技能' : category}分类`, 'success');
   };
 
   // 过滤并排序技能列表
@@ -153,18 +77,14 @@ const SkillsContent: FC = () => {
     })
     .sort((a, b) => b.level - a.level);
 
-  // 4. useEffect hooks
+  // useEffect hooks
   useEffect(() => {
     setIsAnimated(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
   }, []);
 
   // 处理搜索输入，使用防抖优化
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    // 只更新输入框的值，不触发搜索
     event.target.value = value;
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
@@ -176,31 +96,19 @@ const SkillsContent: FC = () => {
     event.preventDefault();
     const value = (event.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
 
-    // 更新搜索词
     setSearchTerm(value);
 
-    // 添加搜索通知
     if (value) {
-      setNotifications(prev => [...prev, {
-        id: Date.now(),
-        message: `正在搜索: ${value}`,
-        type: 'info'
-      }]);
+      addNotification(`正在搜索: ${value}`, 'info');
     }
   };
 
-  // 2. useRef hooks
   const searchTimeout = useRef<number | undefined>(undefined);
 
   // 处理添加技能成功
   const handleAddSuccess = () => {
     setShowAddForm(false);
-    setNotifications(prev => [...prev, {
-      id: Date.now(),
-      message: '技能添加成功',
-      type: 'success'
-    }]);
-    // 重新获取技能列表
+    addNotification('技能添加成功', 'success');
     fetchSkills();
   };
 
@@ -211,19 +119,14 @@ const SkillsContent: FC = () => {
 
   // 处理编辑技能
   const handleEdit = (skill: Skill) => {
-    console.log('准备编辑技能:', skill);
-    setEditingSkill(skill); // 直接设置要编辑的技能
+    setEditingSkill(skill);
   };
 
   // 处理编辑技能成功
   const handleEditSuccess = async () => {
     setEditingSkill(null);
     await fetchSkills();
-    setNotifications(prev => [...prev, {
-      id: Date.now(),
-      message: '技能更新成功！',
-      type: 'success'
-    }]);
+    addNotification('技能更新成功！', 'success');
   };
 
   // 处理取消编辑
@@ -233,23 +136,7 @@ const SkillsContent: FC = () => {
 
   // 处理删除技能
   const handleDelete = async (id: number) => {
-    try {
-      await apiClient.delete(`/skills/${id}`);
-      await fetchSkills();
-      setNotifications(prev => [...prev, {
-        id: Date.now(),
-        message: '技能删除成功',
-        type: 'success'
-      }]);
-    } catch (error) {
-      console.error('删除技能失败:', error);
-      const errorMessage = (error as any)?.message || '删除失败，请重试';
-      setNotifications(prev => [...prev, {
-        id: Date.now(),
-        message: errorMessage,
-        type: 'error'
-      }]);
-    }
+    await deleteSkill(id);
   };
 
   // 加载状态的骨架屏渲染
