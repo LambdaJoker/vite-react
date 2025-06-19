@@ -9,7 +9,7 @@ export const projects: Project[] = [
     technologies: ["React", "TypeScript", "Node.js", "MongoDB"],
     image: "/src/assets/img/project/project1.jpg",
     demoUrl: "https://blog.example.com",
-    githubUrl: "https://github.com/example/blog",
+    githubUrl: "https://github.com/LambdaJoker/vite-react",
     highlights: [
       "使用 React Hooks 实现状态管理",
       "采用 TypeScript 确保类型安全",
@@ -21,21 +21,21 @@ export const projects: Project[] = [
   },
   {
     id: 2,
-    title: "大数据分析平台",
-    description: "企业级大数据处理和分析平台，支持数据采集、处理、分析和可视化",
+    title: "离线数仓搭建",
+    description: "搭建企业级离线数仓，整合多源数据，提供T+1数据分析支持",
     category: "大数据",
-    technologies: ["Hadoop", "Spark", "Python", "React"],
+    technologies: ["Hadoop", "Hive", "Spark", "Airflow"],
     image: "/src/assets/img/project/project2.jpg",
     demoUrl: "https://bigdata.example.com",
     githubUrl: "https://github.com/example/bigdata",
     highlights: [
       "分布式数据处理架构",
-      "实时数据分析功能",
+      "ETL 流程设计与优化",
       "可视化数据报表",
       "高性能数据查询优化"
     ],
-    period: "2023.08 - 2023.12",
-    role: "后端开发"
+    period: "2024.08 - 2024.9",
+    role: "数据工程师"
   },
   {
     id: 3,
@@ -50,28 +50,29 @@ export const projects: Project[] = [
       "协同过滤算法实现",
       "实时用户行为分析",
       "千万级数据处理能力",
-      "99.9%系统可用性"
+      "88.7%系统可用性"
     ],
-    period: "2023.05 - 2023.07",
+    period: "2024.05 - 2024.07",
     role: "算法工程师"
   },
+
   {
     id: 4,
-    title: "微服务架构系统",
-    description: "基于 Spring Cloud 的微服务架构系统，支持高并发和分布式部署",
-    category: "后端开发",
-    technologies: ["Spring Cloud", "Docker", "Kubernetes", "MySQL"],
-    image: "/src/assets/img/project/project4.jpg",
-    demoUrl: "https://microservice.example.com",
-    githubUrl: "https://github.com/example/microservice",
+    title: "基于YOLOv11的目标检测系统",
+    description: "一个用于智慧社区的实时目标检测与识别系统，结合了ROS机器人操作系统与先进的计算机视觉技术。",
+    category: "人工智能",
+    technologies: ["YOLOv11", "ROS", "OpenCV", "图像分割"],
+    image: "/src/assets/img/project/project5.jpg",
+    demoUrl: "https://yolo.example.com",
+    githubUrl: "https://github.com/LambdaJoker",
     highlights: [
-      "服务注册与发现",
-      "分布式配置管理",
-      "服务熔断与降级",
-      "容器化部署方案"
+      "实现基于YOLOv11的高精度目标检测算法",
+      "集成ROS实现机器人自主导航与识别",
+      "应用图像分割技术提取关键区域",
+      "在复杂场景下达到高召回率与准确率"
     ],
-    period: "2023.01 - 2023.04",
-    role: "架构师"
+    period: "2024.10 - 2024.12",
+    role: "算法工程师"
   },
   // ... 可以添加更多项目
 ]; 
