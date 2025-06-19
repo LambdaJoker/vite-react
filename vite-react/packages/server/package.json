@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "npx ts-node-dev --respawn src/index.ts",
+    "dev": "npx ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "prod": "node dist/index.js",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",

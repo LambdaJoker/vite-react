@@ -14,7 +14,7 @@ import './App.css';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // 懒加载所有页面级组件
-const HomeContent = lazy(() => import('./components/home/HomeContent'));
+const HomePage = lazy(() => import('./components/home/HomePage'));
 const ArticleList = lazy(() => import('./components/articles/ArticleList'));
 const ArticleDetail = lazy(() => import('./components/articles/ArticleDetail'));
 const ArticleForm = lazy(() => import('./components/articles/ArticleForm'));
@@ -55,7 +55,7 @@ const App: React.FC = () => {
                     path="/"
                     element={
                       <AnimatedRoute>
-                        <HomeContent />
+                        <HomePage />
                       </AnimatedRoute>
                     }
                   />
