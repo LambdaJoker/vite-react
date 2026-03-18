@@ -136,24 +136,27 @@ export const deleteArticle: RequestHandler = async (req, res) => {
 // 获取单篇文章
 export const getArticle: RequestHandler = async (req, res) => {
   const articleId = parseInt(req.params.id as string, 10);
+  const shouldIncrement = req.query.increment !== 'false';
 
   try {
     const article = await prisma.$transaction(async (tx) => {
-      // 1. 获取文章，并更新阅读次数
-      const updatedArticle = await tx.articles.update({
-        where: { id: articleId },
-        data: {
-          read_count: {
-            increment: 1,
+      if (shouldIncrement) {
+        // 1. 获取文章，并更新阅读次数
+        const updatedArticle = await tx.articles.update({
+          where: { id: articleId },
+          data: {
+            read_count: {
+              increment: 1,
+            },
           },
-        },
-      });
-
-      if (!updatedArticle) {
-        return null;
+        });
+        return updatedArticle;
+      } else {
+        const foundArticle = await tx.articles.findUnique({
+          where: { id: articleId },
+        });
+        return foundArticle;
       }
-
-      return updatedArticle;
     });
 
     if (!article) {

@@ -1,26 +1,7 @@
 .about-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 60px auto 2rem;
   padding: 0 2rem;
-}
-
-/* 加载状态 */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
 }
 
 /* 头部样式 */
@@ -28,27 +9,134 @@
   text-align: center;
   margin-bottom: 4rem;
   padding: 3rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
 }
 
 .about-header h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #666;
+  font-size: 1.1rem;
+  color: #7f8c8d;
   margin-bottom: 2rem;
+}
+
+.intro-text {
+  max-width: 800px;
+  margin: 0 auto;
+  color: #555;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+/* 装备列表样式 */
+.setup-section {
+  margin-bottom: 4rem;
+}
+
+.setup-section h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.setup-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.setup-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+.setup-category {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.setup-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.setup-items li {
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.setup-items li::before {
+  content: "▹";
+  position: absolute;
+  left: 0;
+  color: #bdc3c7;
+}
+
+.setup-items li:last-child {
+  margin-bottom: 0;
+}
+
+.setup-items strong {
+  display: block;
+  font-size: 1.1rem;
+  color: #34495e;
+  margin-bottom: 0.3rem;
+}
+
+.setup-items p {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 动画 */
+.about-container.animated {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .profile-stats {
   display: flex;
   justify-content: center;
-  gap: 3rem;
+  gap: 4rem;
 }
 
 .stat-item {
@@ -57,10 +145,10 @@
 
 .stat-number {
   display: block;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #007bff;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 0.3rem;
 }
 
 .stat-label {

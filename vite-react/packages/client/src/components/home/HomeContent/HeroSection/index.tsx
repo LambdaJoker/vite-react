@@ -15,7 +15,7 @@ const HeroSection: FC = () => {
       <br />
       <p className="subtitle">前端开发工程师 | 人工智能爱好者</p>
       <div className="cta-buttons">
-        <Link to="/about" className="cta-button primary">了解更多</Link>
+        <Link to="/about" className="cta-button primary">我的装备库</Link>
         <Link to="/skills" className="cta-button secondary">查看技能</Link>
       </div>
     </section>

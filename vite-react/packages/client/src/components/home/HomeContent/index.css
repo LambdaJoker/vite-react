@@ -6,58 +6,72 @@
 
 /* 英雄区域样式 */
 .hero-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 20px;
-  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 5rem 2rem;
   margin-bottom: 4rem;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .hero-content h1 {
-  font-size: 3.5rem;
-  color: #333;
+  font-size: 3rem;
+  color: #2c3e50;
   margin-bottom: 1rem;
+  font-weight: 600;
   animation: fadeInDown 0.8s ease-out;
 }
 
 .hero-content .subtitle {
-  font-size: 1.5rem;
-  color: #666;
-  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-bottom: 2.5rem;
   animation: fadeInUp 0.8s ease-out;
 }
 
 .cta-buttons {
   display: flex;
-  gap: 1.5rem;
+  gap: 3rem;
   justify-content: center;
   animation: fadeIn 1s ease-out;
 }
 
 .cta-button {
-  padding: 1rem 2rem;
-  border-radius: 30px;
-  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .cta-button.primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: #2c3e50;
   color: white;
+  border: 1px solid #2c3e50;
 }
 
 .cta-button.secondary {
-  background: white;
-  color: #007bff;
-  border: 2px solid #007bff;
+  background: transparent;
+  color: #2c3e50;
+  border: 1px solid #dcdde1;
 }
 
 .cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.cta-button.primary:hover {
+  background: #34495e;
+}
+
+.cta-button.secondary:hover {
+  border-color: #2c3e50;
+  background: #f8f9fa;
 }
 
 /* 技能区域样式 */
@@ -178,10 +192,13 @@
 }
 
 .post-card {
-  background: white;
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
   opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;
@@ -189,7 +206,8 @@
 
 .post-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .post-image {
@@ -241,30 +259,34 @@
 }
 
 .read-more {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: #2c3e50;
+  border: 1px solid #2c3e50;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  line-height: 1;
 }
 
 .read-more:visited {
-  color: #007bff;
+  color: #2c3e50;
 }
 
 .read-more:hover {
-  color: #0056b3;
-  transform: translateX(5px);
+  transform: translateY(-2px);
+  background: #f0f0f0;
+  color: #2c3e50;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .read-more::after {
   content: none;
-}
-
-.read-more {
-  padding-right: 0;
 }
 
 .posts-grid .post-card:nth-child(1) {
@@ -282,8 +304,11 @@
 /* 联系部分样式 */
 .contact-section {
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
   margin-bottom: 4rem;
 }
 
@@ -301,17 +326,21 @@
 }
 
 .contact-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 12px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .contact-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .contact-icon {

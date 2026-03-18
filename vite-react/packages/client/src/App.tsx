@@ -9,7 +9,10 @@ import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import useAppStore from './components/store/appStore'; // 确认路径正确
 import Header from './components/home/Header';
+import Footer from './components/common/Footer';
 import SkeletonLoader from './components/skeletonLoader';
+import DynamicBackground from './components/common/DynamicBackground';
+import ClickEffect from './components/common/ClickEffect';
 import './App.css';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -24,10 +27,11 @@ const AboutContent = lazy(() => import('./components/about/AboutContent'));
 
 const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0, x: -50 }}
-    animate={{ opacity: 1, x: 0 }}
-    exit={{ opacity: 0, x: 50 }}
-    transition={{ duration: 0.3 }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+    style={{ width: '100%', position: 'relative' }}
   >
     {children}
   </motion.div>
@@ -43,6 +47,8 @@ const App: React.FC = () => {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="app">
+        <ClickEffect />
+        <DynamicBackground />
         <Header />
         <main id="main-content" className="main-content" tabIndex={-1}>
           <AnimatePresence mode="wait">
@@ -96,35 +102,15 @@ const App: React.FC = () => {
                       />
                     </>
                   )}
-                  <Route
-                    path="/projects"
-                    element={
-                      <AnimatedRoute>
-                        <ProjectsContent />
-                      </AnimatedRoute>
-                    }
-                  />
-                  <Route
-                    path="/skills"
-                    element={
-                      <AnimatedRoute>
-                        <SkillsContent />
-                      </AnimatedRoute>
-                    }
-                  />
-                  <Route
-                    path="/about"
-                    element={
-                      <AnimatedRoute>
-                        <AboutContent />
-                      </AnimatedRoute>
-                    }
-                  />
+                  <Route path="/projects" element={<AnimatedRoute><ProjectsContent /></AnimatedRoute>} />
+                  <Route path="/skills" element={<AnimatedRoute><SkillsContent /></AnimatedRoute>} />
+                  <Route path="/about" element={<AnimatedRoute><AboutContent /></AnimatedRoute>} />
                 </Routes>
               </Suspense>
             )}
           </AnimatePresence>
         </main>
+        <Footer />
       </div>
     </Router>
   );

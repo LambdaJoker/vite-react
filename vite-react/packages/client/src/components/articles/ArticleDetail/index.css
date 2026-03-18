@@ -5,7 +5,7 @@
   min-height: calc(100vh - 60px - 5rem);
 }
 
-.article-header {
+.article-detail-container .article-header {
   margin-top: 1rem;
   margin-bottom: 2.5rem;
   background: linear-gradient(to right, #f8f9fa, #ffffff);
@@ -14,7 +14,7 @@
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
 }
 
-.article-cover {
+.article-detail-container .article-cover {
   width: 100%;
   height: 350px;
   background-size: cover;
@@ -24,14 +24,14 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.article-info h1 {
+.article-detail-container .article-info h1 {
   font-size: 2.2rem;
   color: #333;
   margin-bottom: 1rem;
   line-height: 1.3;
 }
 
-.article-meta {
+.article-detail-container .article-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
@@ -41,53 +41,55 @@
   border-bottom: 1px solid #eee;
 }
 
-.article-meta span {
+.article-detail-container .article-meta span {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.article-content {
-  background: white;
+.article-detail-container .article-content {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 3rem;
-  border-radius: 15px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   font-size: 1.1rem;
   line-height: 1.8;
   color: #444;
   position: relative;
-  border: 1px solid #eee;
-  margin: 0 1rem;
-  /* 两边留白 */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 
-/* 添加装饰性边角 */
-.article-content::before,
-.article-content::after {
+/* 添加装饰性边角 - 修改为深色 */
+.article-detail-container .article-content::before,
+.article-detail-container .article-content::after {
   content: '';
   position: absolute;
   width: 20px;
   height: 20px;
-  border-color: #007bff;
+  border-color: #2c3e50;
   border-style: solid;
   pointer-events: none;
+  opacity: 0.3;
 }
 
-.article-content::before {
+.article-detail-container .article-content::before {
   top: 15px;
   left: 15px;
   border-width: 2px 0 0 2px;
   border-radius: 4px 0 0 0;
 }
 
-.article-content::after {
+.article-detail-container .article-content::after {
   bottom: 15px;
   right: 15px;
   border-width: 0 2px 2px 0;
   border-radius: 0 0 4px 0;
 }
 
-.article-content h2 {
+.article-detail-container .article-content h2 {
   font-size: 1.8rem;
   color: #333;
   margin: 2.5rem 0 1.5rem;
@@ -96,7 +98,7 @@
   position: relative;
 }
 
-.article-content h2::after {
+.article-detail-container .article-content h2::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -106,66 +108,77 @@
   background: #007bff;
 }
 
-.article-content p {
+.article-detail-container .article-content p {
   margin-bottom: 1.5rem;
   text-align: justify;
   letter-spacing: 0.5px;
 }
 
-.article-footer {
+.article-detail-container .article-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #eee;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+  margin: 2rem 0 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-.action-buttons {
+.article-detail-container .action-buttons {
   display: flex;
   gap: 1rem;
 }
 
-.action-button {
+.article-detail-container .action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
+  background: transparent;
+  border: 1px solid #2c3e50;
+  border-radius: 6px;
   text-decoration: none;
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.2s ease;
+  line-height: 1;
 }
 
-.action-button.edit-button {
-  background-color: #007bff;
+.article-detail-container .action-button.edit-button {
+  border-color: #2c3e50;
 }
 
-.action-button.edit-button:hover {
-  background-color: #0056b3;
+.article-detail-container .action-button.edit-button:hover {
+  background-color: #f0f0f0;
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.action-button.delete-button {
-  background-color: #dc3545;
+.article-detail-container .action-button.delete-button {
+  border-color: #e74c3c;
+  color: #e74c3c;
 }
 
-.action-button.delete-button:hover {
-  background-color: #c82333;
+.article-detail-container .action-button.delete-button:hover {
+  background-color: #e74c3c;
+  color: white;
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
 }
 
-.tags {
+.article-detail-container .tags {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
 }
 
-.tag {
+.article-detail-container .tag {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 0.5rem 1.2rem;
   border-radius: 20px;
@@ -174,16 +187,16 @@
   transition: transform 0.2s;
 }
 
-.tag:hover {
+.article-detail-container .tag:hover {
   transform: translateY(-2px);
 }
 
-.share-buttons {
+.article-detail-container .share-buttons {
   display: flex;
   gap: 1rem;
 }
 
-.share-button {
+.article-detail-container .share-button {
   padding: 0.8rem 1.8rem;
   border: none;
   border-radius: 25px;
@@ -194,12 +207,12 @@
   font-weight: 500;
 }
 
-.share-button:hover {
+.article-detail-container .share-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-.article-not-found {
+.article-detail-container .article-not-found {
   text-align: center;
   padding: 4rem 2rem;
   background: #f8f9fa;
@@ -217,28 +230,28 @@
     margin: 60px auto 1rem;
   }
 
-  .article-header,
-  .article-content,
-  .article-footer {
+  .article-detail-container .article-header,
+  .article-detail-container .article-content,
+  .article-detail-container .article-footer {
     padding: 1.5rem;
   }
 
-  .article-cover {
+  .article-detail-container .article-cover {
     height: 250px;
   }
 
-  .article-info h1 {
+  .article-detail-container .article-info h1 {
     font-size: 2rem;
   }
 
-  .article-meta {
+  .article-detail-container .article-meta {
     flex-wrap: wrap;
     gap: 1rem;
   }
 
-  .article-content {
+  .article-detail-container .article-content {
     padding: 2rem;
-    margin: 0 0.5rem;
+    margin: 0;
   }
 }
 

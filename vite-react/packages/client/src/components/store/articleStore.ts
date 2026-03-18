@@ -55,9 +55,22 @@ const useArticleStore = create<ArticleState>((set) => ({
   fetchArticle: async (id: string) => {
     set({ isLoading: true, error: null, currentArticle: null });
     try {
-      const response = await apiClient.get<Article>(`/articles/${id}`);
+      // 检查当前会话是否已经查看过该文章，避免重复增加阅读量
+      const viewedKey = `viewed_article_${id}`;
+      const hasViewed = sessionStorage.getItem(viewedKey);
+      const increment = !hasViewed;
+      
+      // 立即设置标记，防止 StrictMode 或并发请求导致重复增加
+      if (increment) {
+        sessionStorage.setItem(viewedKey, 'true');
+      }
+      
+      const response = await apiClient.get<Article>(`/articles/${id}?increment=${increment}`);
+      
       set({ currentArticle: response.data, isLoading: false });
     } catch (err: any) {
+      // 如果请求失败，清除标记，允许重试增加阅读量
+      sessionStorage.removeItem(`viewed_article_${id}`);
       const errorMessage = err.message || '获取文章详情失败';
       set({ error: errorMessage, isLoading: false });
     }

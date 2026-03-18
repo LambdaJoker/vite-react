@@ -7,27 +7,31 @@
 .articles-header {
   text-align: center;
   margin-bottom: 3rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   padding: 3rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .articles-header h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #666;
+  font-size: 1.1rem;
+  color: #7f8c8d;
 }
 
 .article-stats {
   display: flex;
   justify-content: center;
-  gap: 3rem;
+  gap: 4rem;
   margin-top: 2rem;
 }
 
@@ -37,10 +41,10 @@
 
 .stat-number {
   display: block;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #007bff;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 0.3rem;
 }
 
 .stat-label {
@@ -60,17 +64,21 @@
 }
 
 .article-card {
-  background: white;
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
   position: relative;
 }
 
 .article-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .article-image {
@@ -139,23 +147,30 @@
 }
 
 .read-more {
-  display: inline-block;
-  padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: #2c3e50;
+  border: 1px solid #2c3e50;
   text-decoration: none;
-  border-radius: 25px;
+  border-radius: 6px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  line-height: 1;
 }
 
 .read-more:visited {
-  color: white;
+  color: #2c3e50;
 }
 
 .read-more:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #f0f0f0;
+  color: #2c3e50;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* 其他样式（搜索、过滤、动画等）可以复用 projects 组件的样式 */
@@ -190,19 +205,109 @@
 
 .search-filter-container {
   max-width: 900px;
-  /* 与卡片宽度一致 */
   margin: 0 auto 2rem;
   padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 30px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.search-input:focus {
+  background: white;
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.15);
+  border-color: #007bff;
+}
+
+.category-filter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.category-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #555;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-button:hover {
+  transform: translateY(-2px);
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.category-button.active {
+  background: #007bff;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.category-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.category-button.active .category-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .filter-options {
   max-width: 900px;
-  /* 与卡片宽度一致 */
-  margin: 1.5rem auto;
+  margin: 0 auto;
   padding: 0 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+}
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.sort-select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  outline: none;
+  cursor: pointer;
 }
 
 .create-article-button-container {

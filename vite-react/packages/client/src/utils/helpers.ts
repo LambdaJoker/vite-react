@@ -1,7 +1,9 @@
-export const getImageUrl = (imagePath: string): string => {
-  if (!imagePath) return '/src/assets/img/article/article1.jpg'; // 提供一个默认图片
+import defaultCover from '../assets/default-cover.svg';
+
+export const getImageUrl = (imagePath: string | undefined | null): string => {
+  if (!imagePath) return defaultCover;
   if (imagePath.startsWith('/src/')) return imagePath;
-  if (imagePath.startsWith('http')) return imagePath;
+  if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
   return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
 };
 

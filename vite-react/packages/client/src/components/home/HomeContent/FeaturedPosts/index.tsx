@@ -9,6 +9,7 @@ import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../../../store/articleStore';
 import { createExcerpt, getImageUrl } from '../../../../utils/helpers';
+import defaultCover from '../../../../assets/default-cover.svg';
 
 interface FeaturedPostsProps {
   articles: Article[];
@@ -28,7 +29,7 @@ const FeaturedPosts: FC<FeaturedPostsProps> = ({ articles }) => {
         {postList.map(article => (
           <div className="post-card" key={article.id}>
             <div className="post-image">
-              <img src={getImageUrl(article.image)} alt={article.title} />
+              <img src={getImageUrl(article.image) || defaultCover} alt={article.title} />
             </div>
             <div className="post-content">
               <h3>{article.title}</h3>

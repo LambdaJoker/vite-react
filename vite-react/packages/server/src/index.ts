@@ -8,6 +8,7 @@
 import 'dotenv/config';
 import app from './app';
 import { Request, Response, NextFunction } from 'express';
+import { scrapeWallpapers } from './services/wallpaper.service';
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,8 +21,26 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// 启动服务器
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
-}); 
+const startServer = async () => {
+  try {
+    // 启动服务器
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
+    });
+
+    // Start initial wallpaper scrape
+    await scrapeWallpapers();
+
+    // Set interval to scrape every 10 minutes (600,000 ms)
+    setInterval(() => {
+      scrapeWallpapers();
+    }, 10 * 60 * 1000);
+
+  } catch (error) {
+    console.error('❌ Error starting server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

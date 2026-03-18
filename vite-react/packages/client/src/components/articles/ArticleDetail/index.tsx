@@ -21,6 +21,7 @@ import './index.css';
 import 'github-markdown-css/github-markdown.css';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
+import defaultCover from '../../../assets/default-cover.svg';
 
 const ArticleDetail: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,9 +70,9 @@ const ArticleDetail: FC = () => {
     return <div className="article-not-found">文章未找到</div>;
   }
 
-  const getImageUrl = (imagePath: string) => {
-    if (!imagePath) return '';
-    if (imagePath.startsWith('http')) return imagePath;
+  const getImageUrl = (imagePath: string | undefined | null) => {
+    if (!imagePath) return defaultCover;
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
     return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
   };
 
@@ -85,9 +86,7 @@ const ArticleDetail: FC = () => {
         image={getImageUrl(article.image)}
       />
       <div className="article-detail-container">
-        {article.image && (
-          <div className="article-cover" style={{ backgroundImage: `url(${getImageUrl(article.image)})` }}></div>
-        )}
+        <div className="article-cover" style={{ backgroundImage: `url(${getImageUrl(article.image)})` }}></div>
         <div className="article-header">
           <div className="article-info">
             <h1>{article.title}</h1>
