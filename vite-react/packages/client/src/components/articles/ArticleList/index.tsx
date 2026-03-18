@@ -5,7 +5,7 @@
  * @Date: 2025-02-15 13:18:37
  * @LastEditTime: 2025-06-19 08:22:46
  */
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import SkeletonLoader from '../../skeletonLoader';
@@ -35,21 +35,32 @@ const ArticleList: FC = () => {
   }, []);
 
   // 计算可用的分类
-  const categories = ["全部", ...new Set(articles.map(article => article.category))];
+  const categories = useMemo(() => ["全部", ...new Set(articles.map(article => article.category))], [articles]);
 
-  const filteredArticles = articles
-    .filter(article => {
-      const matchesCategory = activeCategory === "全部" || article.category === activeCategory;
-      const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (article.excerpt || '').toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-      return a.title.localeCompare(b.title);
+  const filteredArticles = useMemo(() => {
+    return articles
+      .filter(article => {
+        const matchesCategory = activeCategory === "全部" || article.category === activeCategory;
+        const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (article.excerpt || '').toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'date') {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        return a.title.localeCompare(b.title);
+      });
+  }, [articles, activeCategory, searchTerm, sortBy]);
+
+  // 计算每个分类的文章数量
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { "全部": articles.length };
+    articles.forEach(article => {
+      counts[article.category] = (counts[article.category] || 0) + 1;
     });
+    return counts;
+  }, [articles]);
 
   // 处理图片URL
   const getImageUrl = (imagePath: string | undefined | null) => {
@@ -127,8 +138,7 @@ const ArticleList: FC = () => {
             >
               {category}
               <span className="category-count">
-                {category === "全部" ? articles.length :
-                  articles.filter(article => article.category === category).length}
+                {categoryCounts[category] || 0}
               </span>
             </button>
           ))}
