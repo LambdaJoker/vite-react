@@ -21,7 +21,7 @@ import './index.css';
 import 'github-markdown-css/github-markdown.css';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
-import defaultCover from '../../../assets/default-cover.svg';
+import { getImageUrl } from '../../../utils/helpers';
 
 const ArticleDetail: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -70,17 +70,13 @@ const ArticleDetail: FC = () => {
     return <div className="article-not-found">文章未找到</div>;
   }
 
-  const getImageUrl = (imagePath: string | undefined | null) => {
-    if (!imagePath) return defaultCover;
-    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
-  };
+  const seoDescription = article.content ? article.content.replace(/<[^>]+>/g, '').slice(0, 200) : '';
 
   return (
     <>
       <SEO
         title={`${article.title} - 我的博客`}
-        description={article.content.replace(/<[^>]+>/g, '').slice(0, 200)}
+        description={seoDescription}
         keywords={article.category}
         type="article"
         image={getImageUrl(article.image)}

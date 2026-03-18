@@ -32,10 +32,14 @@ async function scrapeWallpapers(pageUrl = 'https://haowallpaper.com/') {
 
     // Approach 1: Try to find standard img tags
     $('img').each((i, el) => {
-      const src = $(el).attr('src') || $(el).attr('data-src') || $(el).attr('data-original');
+      let src = $(el).attr('src') || $(el).attr('data-src') || $(el).attr('data-original');
       if (src && (src.includes('haowallpaper.com') || src.includes('http'))) {
          // Filter out small icons or SVGs
          if (!src.endsWith('.svg') && !src.includes('logo')) {
+            // 将略缩图替换为高清图
+            if (src.includes('getCroppingImg')) {
+              src = src.replace('getCroppingImg', 'previewFileImg');
+            }
             imageUrls.push(src);
          }
       }
@@ -46,22 +50,34 @@ async function scrapeWallpapers(pageUrl = 'https://haowallpaper.com/') {
     const imgRegex = /https:\/\/[\w.-]+\.haowallpaper\.com\/[a-zA-Z0-9_/.-]+\.(jpg|jpeg|png|webp)/gi;
     const scriptMatches = scriptTags.match(imgRegex);
     if (scriptMatches) {
-        imageUrls.push(...scriptMatches);
+        // 将略缩图替换为高清图
+        const highResScriptMatches = scriptMatches.map(url => url.replace('getCroppingImg', 'previewFileImg'));
+        imageUrls.push(...highResScriptMatches);
     }
 
     // Approach 3: Just brute force the entire HTML for any haowallpaper image link
     const bruteRegex = /(https?:\/\/[^"'\\]+\.haowallpaper\.com\/[^"'\\]+\.(?:jpg|jpeg|png|webp))/gi;
     const bruteMatches = html.match(bruteRegex);
     if(bruteMatches) {
-       imageUrls.push(...bruteMatches);
+       // 将略缩图替换为高清图
+       const highResMatches = bruteMatches.map(url => url.replace('getCroppingImg', 'previewFileImg'));
+       imageUrls.push(...highResMatches);
     }
 
     // Deduplicate and filter
     const validUrls = [...new Set(imageUrls)].filter(url => {
-      return !url.includes('logo') && !url.includes('icon') && !url.includes('avatar');
+      // 过滤掉头像、logo、图标、用户、VIP等图片
+      return !url.includes('logo') && 
+             !url.includes('icon') && 
+             !url.includes('avatar') && 
+             !url.includes('user') &&
+             !url.includes('vip') &&
+             !url.includes('wx') &&
+             !url.includes('alipay') &&
+             !url.includes('pixabay'); // 也可以过滤一些外部的不相关资源
     });
     
-    console.log(`🔍 Found ${validUrls.length} unique image URLs`);
+    console.log(`🔍 Found ${validUrls.length} unique image URLs on this page`);
     
     if (validUrls.length === 0) {
       console.log('❌ No images found. The site might be heavily CSR (Client-Side Rendered) or using complex API requests.');
@@ -69,9 +85,23 @@ async function scrapeWallpapers(pageUrl = 'https://haowallpaper.com/') {
       return;
     }
     
+    // Read existing data if it exists
+    let existingData = [];
+    if (fs.existsSync(dataFile)) {
+      try {
+        const rawData = fs.readFileSync(dataFile, 'utf8');
+        existingData = JSON.parse(rawData);
+      } catch (e) {
+        console.error('Error reading existing data, starting fresh.', e.message);
+      }
+    }
+
+    // Merge and deduplicate
+    const mergedData = [...new Set([...existingData, ...validUrls])];
+
     // Save the raw URLs to a JSON file
-    fs.writeFileSync(dataFile, JSON.stringify(validUrls, null, 2));
-    console.log(`💾 Saved ${validUrls.length} URLs to ${dataFile}`);
+    fs.writeFileSync(dataFile, JSON.stringify(mergedData, null, 2));
+    console.log(`💾 Saved ${validUrls.length} new URLs. Total in ${dataFile}: ${mergedData.length}`);
     
     console.log('\n🌟 Sample of found wallpapers:');
     validUrls.slice(0, 5).forEach((url, i) => console.log(`  ${i+1}. ${url}`));

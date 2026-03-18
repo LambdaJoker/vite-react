@@ -13,7 +13,7 @@ import LazyImage from '../../lazyImage';
 import useArticleStore, { type Article } from '../../store/articleStore'; // 修正为 type-only 导入
 import useAppStore from '../../store/appStore'; // 修正路径
 import ScrollToTopButton from '../../common/ScrollToTopButton'; // 引入新组件
-import defaultCover from '../../../assets/default-cover.svg';
+import { getImageUrl } from '../../../utils/helpers';
 
 const ArticleList: FC = () => {
   // 从 Zustand store 中获取状态和 action
@@ -61,20 +61,6 @@ const ArticleList: FC = () => {
     });
     return counts;
   }, [articles]);
-
-  // 处理图片URL
-  const getImageUrl = (imagePath: string | undefined | null) => {
-    if (!imagePath) return defaultCover;
-
-    // 如果是相对路径且以/src开头，直接使用（Vite会处理这种路径）
-    if (imagePath.startsWith('/src/')) return imagePath;
-
-    // 如果是完整URL，直接使用
-    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-
-    // 其他情况，假设是后端路径
-    return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
-  };
 
   if (isLoading) {
     return (

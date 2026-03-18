@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: #333; /* 提高文字可见度 */
   background-color: transparent;
 
   font-synthesis: none;
@@ -15,8 +15,8 @@
   --primary-color: #2c3e50;
   --text-color: #333;
   --bg-color: transparent;
-  --card-bg: rgba(255, 255, 255, 0.35); /* Increased transparency */
-  --border-color: rgba(255, 255, 255, 0.4);
+  --card-bg: rgba(255, 255, 255, 0.65); /* 降低透明度，让卡片更不透明以看清文字 */
+  --border-color: rgba(255, 255, 255, 0.6);
   /* Cute default cursor: white rounded arrow with black border and shadow */
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23ffffff' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 3.5l6 17 4-7 7-4-17-6z'/%3E%3C/svg%3E") 2 2, default;
 }

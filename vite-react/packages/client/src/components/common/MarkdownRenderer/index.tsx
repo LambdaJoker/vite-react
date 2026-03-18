@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import RMD from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -9,6 +9,9 @@ import './index.css';
 
 const ReactMarkdown = (RMD as any).default || RMD;
 
+const markdownRemarkPlugins = [remarkGfm];
+const markdownRehypePlugins = [rehypeRaw];
+
 interface MarkdownRendererProps {
   children: string;
 }
@@ -18,7 +21,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
   const [previewText, setPreviewText] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLinkClick = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     if (!href) return;
 
@@ -75,45 +78,47 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
     } else {
       window.open(href, '_blank', 'noopener,noreferrer');
     }
-  };
+  }, []);
+
+  const markdownComponents = useMemo(() => ({
+    code({ node, inline, className, children, ...props }: any) {
+      const match = /language-(\w+)/.exec(className || '');
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={atomDark}
+          language={match[1]}
+          PreTag="div"
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+    a({ node, href, children, ...props }: any) {
+      return (
+        <a 
+          href={href} 
+          onClick={(e) => handleLinkClick(e, href)} 
+          className="interactive-link"
+          title="点击预览"
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
+  }), [handleLinkClick]);
 
   return (
     <>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          code({ node, inline, className, children, ...props }: any) {
-            const match = /language-(\w+)/.exec(className || '');
-            return !inline && match ? (
-              <SyntaxHighlighter
-                style={atomDark}
-                language={match[1]}
-                PreTag="div"
-                {...props}
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code className={className} {...props}>
-                {children}
-              </code>
-            );
-          },
-          a({ node, href, children, ...props }: any) {
-            return (
-              <a 
-                href={href} 
-                onClick={(e) => handleLinkClick(e, href)} 
-                className="interactive-link"
-                title="点击预览"
-                {...props}
-              >
-                {children}
-              </a>
-            );
-          }
-        }}
+        remarkPlugins={markdownRemarkPlugins}
+        rehypePlugins={markdownRehypePlugins}
+        components={markdownComponents}
       >
         {children}
       </ReactMarkdown>

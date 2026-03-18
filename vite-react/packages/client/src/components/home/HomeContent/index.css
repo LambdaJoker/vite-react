@@ -564,12 +564,16 @@
   font-weight: 500;
 }
 
-/* 技能预览 */
+/* 技能/资源预览 */
 .skills-preview {
   padding: 3rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   margin-bottom: 4rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .skills-grid {
@@ -582,19 +586,37 @@
 .skill-area {
   text-align: center;
   padding: 2rem;
-  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-color);
   border-radius: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .skill-area:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .skill-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.skill-area h3 {
+  font-size: 1.25rem;
+  color: #1a252f;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.skill-area p {
+  font-size: 0.95rem;
+  color: #34495e;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .view-all-button {

@@ -12,12 +12,20 @@
  * @Date: 2025-02-15 13:52:55
  * @LastEditTime: 2025-06-19 10:12:53
  */
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import './index.css';
 import SEO from '../../common/SEO';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
 import { Project } from '../types';
 import { projects } from '../data';
+
+// 提取所有项目分类
+const categories = ["全部", ...new Set(projects.map(project => project.category))];
+
+// 提取并去重所有技术标签
+const allTechnologies = Array.from(
+  new Set(projects.flatMap(project => project.technologies))
+).sort();
 
 const ProjectsContent: FC = () => {
   // 状态管理
@@ -34,14 +42,6 @@ const ProjectsContent: FC = () => {
   // 已选择的技术标签
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
 
-  // 提取所有项目分类
-  const categories = ["全部", ...new Set(projects.map(project => project.category))];
-
-  // 提取并去重所有技术标签
-  const allTechnologies = Array.from(
-    new Set(projects.flatMap(project => project.technologies))
-  ).sort();
-
   // 处理技术标签的选择和取消
   const handleTechSelect = (tech: string) => {
     setSelectedTechs(prev =>
@@ -52,26 +52,37 @@ const ProjectsContent: FC = () => {
   };
 
   // 项目过滤和排序逻辑
-  const filteredProjects = projects
-    .filter(project => {
-      // 匹配分类
-      const matchesCategory = activeCategory === "全部" || project.category === activeCategory;
-      // 匹配搜索词
-      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase());
-      // 匹配选中的技术标签
-      const matchesTech = selectedTechs.length === 0 ||
-        selectedTechs.every(tech => project.technologies.includes(tech));
-      return matchesCategory && matchesSearch && matchesTech;
-    })
-    .sort((a, b) => {
-      // 根据选择的方式排序
-      if (sortBy === 'date') {
-        return new Date(b.period.split(' - ')[0]).getTime() -
-          new Date(a.period.split(' - ')[0]).getTime();
-      }
-      return a.title.localeCompare(b.title);
+  const filteredProjects = useMemo(() => {
+    return projects
+      .filter(project => {
+        // 匹配分类
+        const matchesCategory = activeCategory === "全部" || project.category === activeCategory;
+        // 匹配搜索词
+        const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          project.description.toLowerCase().includes(searchTerm.toLowerCase());
+        // 匹配选中的技术标签
+        const matchesTech = selectedTechs.length === 0 ||
+          selectedTechs.every(tech => project.technologies.includes(tech));
+        return matchesCategory && matchesSearch && matchesTech;
+      })
+      .sort((a, b) => {
+        // 根据选择的方式排序
+        if (sortBy === 'date') {
+          return new Date(b.period.split(' - ')[0]).getTime() -
+            new Date(a.period.split(' - ')[0]).getTime();
+        }
+        return a.title.localeCompare(b.title);
+      });
+  }, [activeCategory, searchTerm, selectedTechs, sortBy]);
+
+  // 计算每个分类的项目数量
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { "全部": projects.length };
+    projects.forEach(project => {
+      counts[project.category] = (counts[project.category] || 0) + 1;
     });
+    return counts;
+  }, []);
 
   // 初始化动画和加载状态
   useEffect(() => {
@@ -128,8 +139,7 @@ const ProjectsContent: FC = () => {
                 {category}
                 {/* 显示每个分类的项目数量 */}
                 <span className="category-count">
-                  {category === "全部" ? projects.length :
-                    projects.filter(project => project.category === category).length}
+                  {categoryCounts[category] || 0}
                 </span>
               </button>
             ))}
@@ -152,7 +162,7 @@ const ProjectsContent: FC = () => {
 
             {/* 技术筛选切换按钮 */}
             <button
-              className="tech-filter-toggle"
+              className={`tech-filter-toggle ${showTechFilter ? 'active' : ''}`}
               onClick={() => setShowTechFilter(!showTechFilter)}
             >
               技术筛选 {showTechFilter ? '↑' : '↓'}

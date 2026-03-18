@@ -4,7 +4,7 @@ import SkeletonLoader from '../../skeletonLoader';
 import { Article } from '../../store/articleStore';
 import HeroSection from './HeroSection';
 import FeaturedPosts from './FeaturedPosts';
-import SkillsPreview from './SkillsPreview';
+import BookmarksPreview from './BookmarksPreview';
 import ProjectsShowcase from './ProjectsShowcase';
 import ContactSection from './ContactSection';
 
@@ -44,7 +44,7 @@ const HomeContent: FC<HomeContentProps> = ({ isAnimated, isLoading, latestArticl
     <div className={`home-container ${isAnimated ? 'animated' : ''}`}>
       <HeroSection />
       <FeaturedPosts articles={latestArticles} />
-      <SkillsPreview />
+      <BookmarksPreview />
       <ProjectsShowcase />
       <ContactSection />
     </div>

@@ -19,7 +19,9 @@ if (fs.existsSync(dataFile)) {
 
 export const scrapeWallpapers = async () => {
   // Generate a random page number between 1 and 100 to get diverse wallpapers
-  const randomPage = Math.floor(Math.random() * 100) + 1;
+  // haowallpaper.com/search 页面是 CSR 渲染的，直接请求 HTML 拿不到图片，我们需要修改一下策略
+  // 为了过滤露骨内容，我们改为去抓取某些特定的安全分类页面，或者通过其 API 请求
+  const randomPage = Math.floor(Math.random() * 50) + 1;
   const pageUrl = `https://haowallpaper.com/?page=${randomPage}`;
   
   console.log(`[WallpaperService] 🚀 Starting scrape from: ${pageUrl} (Page ${randomPage})`);
@@ -61,26 +63,40 @@ export const scrapeWallpapers = async () => {
     const imgRegex = /https:\/\/[\w.-]+\.haowallpaper\.com\/[a-zA-Z0-9_/.-]+\.(jpg|jpeg|png|webp)/gi;
     const scriptMatches = scriptTags.match(imgRegex);
     if (scriptMatches) {
-        imageUrls.push(...scriptMatches);
+        // 将略缩图替换为高清图
+        const highResScriptMatches = scriptMatches.map((url: string) => url.replace('getCroppingImg', 'previewFileImg'));
+        imageUrls.push(...highResScriptMatches);
     }
 
     // Approach 3
     const bruteRegex = /(https?:\/\/[^"'\\]+\.haowallpaper\.com\/[^"'\\]+\.(?:jpg|jpeg|png|webp))/gi;
     const bruteMatches = html.match(bruteRegex);
     if(bruteMatches) {
-       imageUrls.push(...bruteMatches);
+       // 将略缩图替换为高清图
+       const highResMatches = bruteMatches.map((url: string) => url.replace('getCroppingImg', 'previewFileImg'));
+       imageUrls.push(...highResMatches);
     }
 
-    const validUrls = [...new Set(imageUrls)].filter(url => {
-      return !url.includes('logo') && !url.includes('icon') && !url.includes('avatar');
+    const validUrls = [...new Set(imageUrls)].filter((url: string) => {
+      // 过滤掉头像、logo、图标，同时可以根据 URL 关键词过滤不需要的分类（如需要）
+      return !url.includes('logo') && 
+             !url.includes('icon') && 
+             !url.includes('avatar') && 
+             !url.includes('user') &&
+             !url.includes('vip') &&
+             !url.includes('wx') &&
+             !url.includes('alipay') &&
+             !url.includes('pixabay');
     });
     
     if (validUrls.length > 0) {
-      currentWallpapers = validUrls;
+      // 将新抓取的壁纸追加到现有的列表中，并去重
+      const mergedWallpapers = [...new Set([...currentWallpapers, ...validUrls])];
+      currentWallpapers = mergedWallpapers;
       fs.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
-      console.log(`[WallpaperService] ✅ Successfully updated ${currentWallpapers.length} wallpapers.`);
+      console.log(`[WallpaperService] ✅ Successfully updated wallpapers. Added ${validUrls.length} new ones. Total: ${currentWallpapers.length}`);
     } else {
-      console.log('[WallpaperService] ⚠️ No new wallpapers found.');
+      console.log('[WallpaperService] ⚠️ No new wallpapers found on this page.');
     }
   } catch (error: any) {
     console.error('[WallpaperService] ❌ Scraping failed:', error.message);

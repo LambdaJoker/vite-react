@@ -5,7 +5,7 @@
  * @Date: 2025-02-15 13:43:50
  * @LastEditTime: 2025-06-18 20:05:29
  */
-import { FC, useState, useEffect, useRef } from 'react';
+import { FC, useState, useEffect, useRef, useMemo } from 'react';
 import './index.css';
 import Notification from '../../notification';
 import SEO from '../../common/SEO';
@@ -33,27 +33,23 @@ const SkillsContent: FC = () => {
   const [isAnimated, setIsAnimated] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('全部');
-  const [skillStats, setSkillStats] = useState({
-    totalSkills: 0,
-    averageLevel: 0,
-    expertiseAreas: 0
-  });
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
 
   // 计算统计数据
-  useEffect(() => {
-    if (skills.length > 0) {
-      const total = skills.length;
-      const average = Math.round(skills.reduce((acc, curr) => acc + curr.level, 0) / total);
-      const expertise = new Set(skills.flatMap(skill => skill.categories)).size;
-
-      setSkillStats({
-        totalSkills: total,
-        averageLevel: average,
-        expertiseAreas: expertise
-      });
+  const skillStats = useMemo(() => {
+    if (skills.length === 0) {
+      return { totalSkills: 0, averageLevel: 0, expertiseAreas: 0 };
     }
+    const total = skills.length;
+    const average = Math.round(skills.reduce((acc, curr) => acc + curr.level, 0) / total);
+    const expertise = new Set(skills.flatMap(skill => skill.categories)).size;
+
+    return {
+      totalSkills: total,
+      averageLevel: average,
+      expertiseAreas: expertise
+    };
   }, [skills]);
 
   // 处理分类点击
@@ -68,42 +64,21 @@ const SkillsContent: FC = () => {
   };
 
   // 过滤并排序技能列表
-  const filteredSkills = skills
-    .filter(skill => {
-      const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        skill.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = activeCategory === '全部' || skill.categories.includes(activeCategory);
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => b.level - a.level);
+  const filteredSkills = useMemo(() => {
+    return skills
+      .filter(skill => {
+        const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          skill.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = activeCategory === '全部' || skill.categories.includes(activeCategory);
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => b.level - a.level);
+  }, [skills, searchTerm, activeCategory]);
 
   // useEffect hooks
   useEffect(() => {
     setIsAnimated(true);
   }, []);
-
-  // 处理搜索输入，使用防抖优化
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    event.target.value = value;
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
-  };
-
-  // 处理搜索提交
-  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const value = (event.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
-
-    setSearchTerm(value);
-
-    if (value) {
-      addNotification(`正在搜索: ${value}`, 'info');
-    }
-  };
-
-  const searchTimeout = useRef<number | undefined>(undefined);
 
   // 处理添加技能成功
   const handleAddSuccess = () => {
@@ -305,19 +280,17 @@ const SkillsContent: FC = () => {
 
         {/* 搜索和过滤区域 */}
         <div className="search-filter-container">
-          <form className="search-box" onSubmit={handleSearchSubmit}>
+          <div className="search-box">
             <input
               type="text"
               name="search"
               placeholder="搜索技能..."
-              onChange={handleSearchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
               aria-label="搜索技能"
             />
-            <button type="submit" className="search-button">
-              搜索
-            </button>
-          </form>
+          </div>
           {/* 分类过滤按钮组 */}
           <div className="category-filter">
             {categories.map(category => (

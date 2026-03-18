@@ -22,7 +22,7 @@ const ArticleList = lazy(() => import('./components/articles/ArticleList'));
 const ArticleDetail = lazy(() => import('./components/articles/ArticleDetail'));
 const ArticleForm = lazy(() => import('./components/articles/ArticleForm'));
 const ProjectsContent = lazy(() => import('./components/projects/ProjectsContent'));
-const SkillsContent = lazy(() => import('./components/skills/SkillsContent'));
+const BookmarksContent = lazy(() => import('./components/bookmarks/BookmarksContent'));
 const AboutContent = lazy(() => import('./components/about/AboutContent'));
 
 const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
@@ -103,7 +103,7 @@ const App: React.FC = () => {
                     </>
                   )}
                   <Route path="/projects" element={<AnimatedRoute><ProjectsContent /></AnimatedRoute>} />
-                  <Route path="/skills" element={<AnimatedRoute><SkillsContent /></AnimatedRoute>} />
+                  <Route path="/bookmarks" element={<AnimatedRoute><BookmarksContent /></AnimatedRoute>} />
                   <Route path="/about" element={<AnimatedRoute><AboutContent /></AnimatedRoute>} />
                 </Routes>
               </Suspense>
