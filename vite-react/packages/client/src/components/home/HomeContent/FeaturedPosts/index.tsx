@@ -15,11 +15,17 @@ interface FeaturedPostsProps {
 }
 
 const FeaturedPosts: FC<FeaturedPostsProps> = ({ articles }) => {
+  const postList = Array.isArray(articles) ? articles : [];
+
+  if (postList.length === 0) {
+    return null;
+  }
+
   return (
     <section className="featured-posts">
       <h2>最新文章</h2>
       <div className="posts-grid">
-        {articles.map(article => (
+        {postList.map(article => (
           <div className="post-card" key={article.id}>
             <div className="post-image">
               <img src={getImageUrl(article.image)} alt={article.title} />

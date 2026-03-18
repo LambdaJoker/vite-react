@@ -49,7 +49,7 @@ export const createArticle: RequestHandler = async (req, res) => {
 
 // 更新文章
 export const updateArticle: RequestHandler = async (req, res) => {
-  const articleId = parseInt(req.params.id, 10);
+  const articleId = parseInt(req.params.id as string, 10);
   const { title, content, category, tags } = req.body;
 
   try {
@@ -103,7 +103,7 @@ export const updateArticle: RequestHandler = async (req, res) => {
 
 // 删除文章
 export const deleteArticle: RequestHandler = async (req, res) => {
-  const articleId = parseInt(req.params.id, 10);
+  const articleId = parseInt(req.params.id as string, 10);
 
   try {
     // 删除文章前，先获取文章信息以找到图片路径
@@ -135,7 +135,7 @@ export const deleteArticle: RequestHandler = async (req, res) => {
 
 // 获取单篇文章
 export const getArticle: RequestHandler = async (req, res) => {
-  const articleId = parseInt(req.params.id, 10);
+  const articleId = parseInt(req.params.id as string, 10);
 
   try {
     const article = await prisma.$transaction(async (tx) => {

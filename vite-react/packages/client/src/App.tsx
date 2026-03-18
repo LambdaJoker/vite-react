@@ -41,7 +41,7 @@ const App: React.FC = () => {
   }, [fetchAppConfig]);
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="app">
         <Header />
         <main id="main-content" className="main-content" tabIndex={-1}>

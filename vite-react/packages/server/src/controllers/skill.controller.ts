@@ -93,7 +93,7 @@ export const addSkill: RequestHandler = async (req, res) => {
 
 // 更新技能
 export const updateSkill: RequestHandler = async (req, res) => {
-  const skillId = parseInt(req.params.id, 10);
+  const skillId = parseInt(req.params.id as string, 10);
   const { skill_name, proficiency, description, icon, categories } = req.body;
 
   try {
@@ -158,7 +158,7 @@ export const updateSkill: RequestHandler = async (req, res) => {
 
 // 删除技能
 export const deleteSkill: RequestHandler = async (req, res) => {
-  const skillId = parseInt(req.params.id, 10);
+  const skillId = parseInt(req.params.id as string, 10);
 
   try {
     // Prisma 的级联删除配置会自动处理关联表中的数据

@@ -19,12 +19,16 @@ export const useSkills = () => {
     setIsLoading(true);
     try {
       const skillsResponse = await apiClient.get<any[]>('/skills');
+
       if (!skillsResponse.data || !Array.isArray(skillsResponse.data)) {
+        console.error('Invalid skills data:', skillsResponse.data);
         throw new Error('无效的API响应格式');
       }
 
       const categoriesResponse = await apiClient.get<string[]>('/skills/categories');
+
       if (!categoriesResponse.data || !Array.isArray(categoriesResponse.data)) {
+        console.error('Invalid categories data:', categoriesResponse.data);
         throw new Error('无效的分类数据格式');
       }
 

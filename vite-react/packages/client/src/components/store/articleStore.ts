@@ -42,7 +42,9 @@ const useArticleStore = create<ArticleState>((set) => ({
     try {
       // 使用 apiClient 发起请求
       const response = await apiClient.get<Article[]>('/articles');
-      set({ articles: response.data, isLoading: false });
+      // 确保返回的是数组
+      const articles = Array.isArray(response.data) ? response.data : [];
+      set({ articles, isLoading: false });
     } catch (err: any) {
       const errorMessage = err.message || '获取文章列表失败';
       set({ error: errorMessage, isLoading: false, articles: [] });
