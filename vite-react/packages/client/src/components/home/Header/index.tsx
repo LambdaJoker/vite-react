@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           <Link to="/articles" className={`nav-link ${isActive('/articles') ? 'active' : ''}`}>文章</Link>
           <Link to="/bookmarks" className={`nav-link ${isActive('/bookmarks') ? 'active' : ''}`}>资源库</Link>
           <Link to="/projects" className={`nav-link ${isActive('/projects') ? 'active' : ''}`}>项目</Link>
-          <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>装备库</Link>
+          <Link to="/thoughts" className={`nav-link ${isActive('/thoughts') ? 'active' : ''}`}>思考</Link>
         </nav>
       </div>
     </header>

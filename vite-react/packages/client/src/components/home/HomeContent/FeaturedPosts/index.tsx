@@ -10,6 +10,8 @@ import { Link } from 'react-router-dom';
 import { Article } from '../../../store/articleStore';
 import { createExcerpt, getImageUrl } from '../../../../utils/helpers';
 import defaultCover from '../../../../assets/default-cover.svg';
+import MarkdownRenderer from '../../../common/MarkdownRenderer';
+import LazyImage from '../../../lazyImage';
 
 interface FeaturedPostsProps {
   articles: Article[];
@@ -29,11 +31,17 @@ const FeaturedPosts: FC<FeaturedPostsProps> = ({ articles }) => {
         {postList.map(article => (
           <div className="post-card" key={article.id}>
             <div className="post-image">
-              <img src={getImageUrl(article.image) || defaultCover} alt={article.title} />
+              <LazyImage 
+                src={getImageUrl(article.image) || defaultCover} 
+                alt={article.title} 
+                className="featured-post-cover"
+              />
             </div>
             <div className="post-content">
               <h3>{article.title}</h3>
-              <p>{article.excerpt || createExcerpt(article.content)}</p>
+              <div className="article-excerpt markdown-preview">
+                <MarkdownRenderer>{article.excerpt || createExcerpt(article.content)}</MarkdownRenderer>
+              </div>
               <Link to={`/articles/${article.id}`} className="read-more">阅读更多</Link>
             </div>
           </div>

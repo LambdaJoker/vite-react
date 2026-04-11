@@ -23,7 +23,7 @@ const ArticleDetail = lazy(() => import('./components/articles/ArticleDetail'));
 const ArticleForm = lazy(() => import('./components/articles/ArticleForm'));
 const ProjectsContent = lazy(() => import('./components/projects/ProjectsContent'));
 const BookmarksContent = lazy(() => import('./components/bookmarks/BookmarksContent'));
-const AboutContent = lazy(() => import('./components/about/AboutContent'));
+const ThoughtsContent = lazy(() => import('./components/thoughts/ThoughtsContent'));
 
 const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
   <motion.div
@@ -104,7 +104,7 @@ const App: React.FC = () => {
                   )}
                   <Route path="/projects" element={<AnimatedRoute><ProjectsContent /></AnimatedRoute>} />
                   <Route path="/bookmarks" element={<AnimatedRoute><BookmarksContent /></AnimatedRoute>} />
-                  <Route path="/about" element={<AnimatedRoute><AboutContent /></AnimatedRoute>} />
+                  <Route path="/thoughts" element={<AnimatedRoute><ThoughtsContent /></AnimatedRoute>} />
                 </Routes>
               </Suspense>
             )}

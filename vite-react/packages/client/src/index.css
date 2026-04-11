@@ -135,3 +135,60 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* --- 全局文章预览Markdown样式 --- */
+.article-excerpt.markdown-preview {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+  font-size: 0.95rem;
+}
+
+/* 渐变遮罩，使截断处更平滑 */
+.article-excerpt.markdown-preview::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  pointer-events: none;
+}
+
+/* 修复预览中可能出现的各种Markdown元素的样式，使其适合卡片 */
+.article-excerpt.markdown-preview * {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem !important;
+  line-height: 1.6;
+}
+
+.article-excerpt.markdown-preview h1,
+.article-excerpt.markdown-preview h2,
+.article-excerpt.markdown-preview h3,
+.article-excerpt.markdown-preview h4,
+.article-excerpt.markdown-preview h5,
+.article-excerpt.markdown-preview h6 {
+  font-size: 1.05rem !important;
+  font-weight: 600;
+  color: #444;
+  margin-top: 0.5rem;
+}
+
+.article-excerpt.markdown-preview img {
+  display: none; /* 在列表中隐藏图片，避免占用太多空间 */
+}
+
+.article-excerpt.markdown-preview pre {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  overflow: hidden;
+}
+
+.article-excerpt.markdown-preview code {
+  font-size: 0.85rem !important;
+}

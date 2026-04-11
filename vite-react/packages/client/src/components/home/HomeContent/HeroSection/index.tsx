@@ -11,12 +11,14 @@ import { Link } from 'react-router-dom';
 const HeroSection: FC = () => {
   return (
     <section className="hero-section">
-      <h1>欢迎来到我的个人网站</h1>
-      <br />
-      <p className="subtitle">前端开发工程师 | 人工智能爱好者</p>
-      <div className="cta-buttons">
-        <Link to="/about" className="cta-button primary">我的装备库</Link>
-        <Link to="/bookmarks" className="cta-button secondary">精选资源</Link>
+      <div className="hero-content">
+        <h1>欢迎来到我的个人网站</h1>
+        <br />
+        <p className="subtitle">前端开发工程师 | 人工智能爱好者</p>
+        <div className="cta-buttons">
+          <Link to="/thoughts" className="cta-button primary">我的思考</Link>
+          <Link to="/bookmarks" className="cta-button secondary">精选资源</Link>
+        </div>
       </div>
     </section>
   );

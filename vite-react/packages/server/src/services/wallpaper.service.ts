@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio';
 import fs from 'fs';
 import path from 'path';
 
-const dataFile = path.join(__dirname, '../../wallpapers-data.json');
+const dataFile = path.join(__dirname, '../../public/uploads/wallpapers-data.json');
 let currentWallpapers: string[] = [];
 
 // Initialize data from file if exists

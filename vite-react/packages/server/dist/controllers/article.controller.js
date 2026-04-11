@@ -179,8 +179,8 @@ const getArticles = async (req, res) => {
         const formattedArticles = articles.map(article => {
             let excerpt = '';
             if (article.content) {
-                // 简单的摘要生成：取 content 的前 150 个字符并移除 HTML 标签
-                excerpt = article.content.replace(/<[^>]+>/g, '').slice(0, 150);
+                // 生成包含原始Markdown格式的摘要，截取较长内容让前端处理截断
+                excerpt = article.content.slice(0, 400);
             }
             return {
                 ...article,

@@ -15,6 +15,8 @@ import useAppStore from '../../store/appStore'; // 修正路径
 import ScrollToTopButton from '../../common/ScrollToTopButton'; // 引入新组件
 import { getImageUrl } from '../../../utils/helpers';
 
+import MarkdownRenderer from '../../common/MarkdownRenderer';
+
 const ArticleList: FC = () => {
   // 从 Zustand store 中获取状态和 action
   const { articles, isLoading, error, fetchArticles } = useArticleStore();
@@ -38,11 +40,12 @@ const ArticleList: FC = () => {
   const categories = useMemo(() => ["全部", ...new Set(articles.map(article => article.category))], [articles]);
 
   const filteredArticles = useMemo(() => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
     return articles
       .filter(article => {
         const matchesCategory = activeCategory === "全部" || article.category === activeCategory;
-        const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (article.excerpt || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = article.title.toLowerCase().includes(lowerSearchTerm) ||
+          (article.excerpt || '').toLowerCase().includes(lowerSearchTerm);
         return matchesCategory && matchesSearch;
       })
       .sort((a, b) => {
@@ -147,15 +150,12 @@ const ArticleList: FC = () => {
       <div className="articles-grid">
         {filteredArticles.map(article => (
           <div key={article.id} className="article-card">
-            <div
-              className="article-image"
-              style={{
-                backgroundImage: `url(${getImageUrl(article.image)})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundColor: '#f5f5f5'
-              }}
-            >
+            <div className="article-image">
+              <LazyImage 
+                src={getImageUrl(article.image)} 
+                alt={article.title} 
+                className="article-cover-img"
+              />
               <div className="article-category">{article.category}</div>
             </div>
             <div className="article-content">
@@ -165,7 +165,9 @@ const ArticleList: FC = () => {
                 <span className="read-count">{article.read_count} 次阅读</span>
               </div>
               <h2>{article.title}</h2>
-              <p dangerouslySetInnerHTML={{ __html: article.excerpt || '' }}></p>
+              <div className="article-excerpt markdown-preview">
+                <MarkdownRenderer>{article.excerpt || ''}</MarkdownRenderer>
+              </div>
               {article.tags && article.tags.length > 0 && (
                 <div className="article-tags">
                   {article.tags.map(tag => (
