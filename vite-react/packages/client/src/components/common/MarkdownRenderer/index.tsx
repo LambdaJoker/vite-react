@@ -22,11 +22,14 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLinkClick = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
+    // Check if the click should just open the link naturally (e.g. holding Ctrl/Cmd)
+    if (e.ctrlKey || e.metaKey) return;
+
     if (!href) return;
 
     const isImageApi = 
       href.includes('unsplash.com') || 
+      href.includes('picsum.photos') ||
       href.includes('dog.ceo') || 
       href.includes('thecatapi') || 
       href.includes('haowallpaper.com') || 
@@ -38,8 +41,10 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
       href.includes('official-joke-api');
 
     if (isImageApi) {
+      e.preventDefault();
       setIsLoading(true);
       setPreviewImage(null); // Reset
+      setPreviewText(null);
       try {
         if (href.includes('dog.ceo')) {
           const res = await fetch(href).then(r => r.json());
@@ -57,13 +62,17 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
         setIsLoading(false);
       }
     } else if (isTextApi) {
+      e.preventDefault();
       setIsLoading(true);
+      setPreviewImage(null);
+      setPreviewText(null);
       try {
         const res = await fetch(href, { headers: { 'Accept': 'application/json' } }).then(r => r.json());
         if (href.includes('hitokoto.cn')) {
           setPreviewText(`「${res.hitokoto}」 —— ${res.from}`);
         } else if (href.includes('xygeng.cn')) {
-          setPreviewText(`「${res.data?.content || res.content}」`);
+          const dataContent = res.data?.content || res.content || res.data?.text || res.text;
+          setPreviewText(dataContent ? `「${dataContent}」` : JSON.stringify(res, null, 2));
         } else if (href.includes('official-joke-api')) {
           setPreviewText(`Q: ${res.setup}\nA: ${res.punchline}`);
         } else {
@@ -75,9 +84,8 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
       } finally {
         setIsLoading(false);
       }
-    } else {
-      window.open(href, '_blank', 'noopener,noreferrer');
     }
+    // 否则放行默认的 a 标签跳转行为
   }, []);
 
   const markdownComponents = useMemo(() => ({
