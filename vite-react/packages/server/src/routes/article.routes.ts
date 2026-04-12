@@ -34,6 +34,24 @@ router.post('/', upload.single('image'), createArticle);
 // 更新文章
 router.put('/:id', upload.single('image'), updateArticle);
 
+// 独立图片上传接口 (用于 Markdown 编辑器或图床)
+router.post('/upload-image', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image uploaded' });
+  }
+  
+  try {
+    const { put } = await import('@vercel/blob');
+    const blob = await put(`uploads/${Date.now()}-${req.file.originalname}`, req.file.buffer, {
+      access: 'public',
+    });
+    res.status(200).json({ url: blob.url });
+  } catch (error) {
+    console.error('图片上传失败:', error);
+    res.status(500).json({ message: '图片上传失败' });
+  }
+});
+
 // 删除文章
 router.delete('/:id', deleteArticle);
 

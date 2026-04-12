@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Mde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import useArticleStore from '../../store/articleStore';
+import apiClient from '../../../api/apiClient'; // 引入 apiClient
+import { getImageUrl } from '../../../utils/helpers'; // 引入 getImageUrl
 import './index.css'; // 修正路径
 import MarkdownRenderer from '../../common/MarkdownRenderer'; // 导入新的渲染器
 
@@ -49,10 +51,11 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
       setTitle(currentArticle.title);
       setContent(currentArticle.content);
       setCategory(currentArticle.category);
-      setTags(currentArticle.tags.join(', '));
+      if (currentArticle.tags) {
+        setTags(currentArticle.tags.join(', '));
+      }
       if (currentArticle.image) {
-        // Assuming the image path from backend can be directly used
-        setImagePreview(`${import.meta.env.VITE_API_BASE_URL}${currentArticle.image}`);
+        setImagePreview(getImageUrl(currentArticle.image));
       }
       if (currentArticle.author) {
         setAuthor(currentArticle.author);
@@ -93,6 +96,31 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
 
     if (result) {
       navigate(`/articles/${result.id}`); // 使用 navigate
+    }
+  };
+
+  const saveImage = async function* (data: ArrayBuffer): AsyncGenerator<string> {
+    // data 是图片的 ArrayBuffer，将其转换为 File 对象
+    const blob = new Blob([data]);
+    const file = new File([blob], `image-${Date.now()}.png`, { type: 'image/png' });
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      // 调用我们在后端新写的 /upload-image 接口
+      const response = await apiClient.post<{ url: string }>('/articles/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // 返回 Vercel Blob 的图片 URL 供 Markdown 编辑器插入
+      yield response.data.url;
+      return true;
+    } catch (err) {
+      console.error('图片上传到图床失败', err);
+      throw new Error('图片上传失败');
     }
   };
 
@@ -164,6 +192,9 @@ const ArticleForm: FC<ArticleFormProps> = ({ mode }) => {
             generateMarkdownPreview={(markdown: string) =>
               Promise.resolve(<MarkdownRenderer>{markdown}</MarkdownRenderer>)
             }
+            paste={{
+              saveImage: saveImage
+            }}
             childProps={{
               writeButton: {
                 tabIndex: -1
