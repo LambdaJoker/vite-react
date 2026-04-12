@@ -58,15 +58,15 @@ export const projects: Project[] = [
 
   {
     id: 4,
-    title: "基于YOLOv11的目标检测系统",
+    title: "基于深度学习的目标检测系统",
     description: "一个用于智慧社区的实时目标检测与识别系统，结合了ROS机器人操作系统与先进的计算机视觉技术。",
     category: "人工智能",
-    technologies: ["YOLOv11", "ROS", "OpenCV", "图像分割"],
+    technologies: ["深度学习", "ROS", "OpenCV", "图像分割"],
     image: "/src/assets/img/project/project5.jpg",
     demoUrl: "https://yolo.example.com",
     githubUrl: "https://github.com/LambdaJoker",
     highlights: [
-      "实现基于YOLOv11的高精度目标检测算法",
+      "实现基于深度学习的高精度目标检测算法",
       "集成ROS实现机器人自主导航与识别",
       "应用图像分割技术提取关键区域",
       "在复杂场景下达到高召回率与准确率"

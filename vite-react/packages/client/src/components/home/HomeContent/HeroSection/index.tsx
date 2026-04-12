@@ -14,7 +14,7 @@ const HeroSection: FC = () => {
       <div className="hero-content">
         <h1>欢迎来到我的个人网站</h1>
         <br />
-        <p className="subtitle">前端开发工程师 | 人工智能爱好者</p>
+        <p className="subtitle">全栈开发工程师 | 大模型与Agent开发者</p>
         <div className="cta-buttons">
           <Link to="/thoughts" className="cta-button primary">我的思考</Link>
           <Link to="/bookmarks" className="cta-button secondary">精选资源</Link>
