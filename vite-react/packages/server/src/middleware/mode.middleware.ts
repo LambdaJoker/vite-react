@@ -20,6 +20,15 @@ export const readOnlyMiddleware: RequestHandler = (req, res, next) => {
     return next();
   }
 
+  // 检查请求头中的管理员密钥
+  const adminPwd = req.headers['x-admin-pwd'];
+  const expectedPwd = process.env.ADMIN_PWD;
+
+  // 如果提供了正确的密钥，允许操作
+  if (expectedPwd && adminPwd === expectedPwd) {
+    return next();
+  }
+
   // Check for development mode for state-changing methods
   if (process.env.APP_MODE !== 'development') {
     res.status(403).json({

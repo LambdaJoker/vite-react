@@ -29,8 +29,15 @@ app.use(express.static(path.join(__dirname, '../public')));
 // 这个接口必须在只读中间件之前，因为它是一个GET请求，不受影响，
 // 但把它放在前面逻辑更清晰。
 app.get('/api/config', (req, res) => {
+  // 检查请求头或查询参数中是否带有管理员密码
+  const providedPwd = req.headers['x-admin-pwd'] || req.query.pwd;
+  const expectedPwd = process.env.ADMIN_PWD;
+
+  // 如果提供了正确的密码，或者本身就是开发模式，则返回 development
+  const isDevelopment = process.env.APP_MODE === 'development' || (expectedPwd && providedPwd === expectedPwd);
+
   res.json({
-    mode: process.env.APP_MODE || 'production', // 默认为 production
+    mode: isDevelopment ? 'development' : 'production', 
   });
 });
 

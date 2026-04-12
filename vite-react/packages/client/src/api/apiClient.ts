@@ -18,10 +18,11 @@ const apiClient = axios.create({
 // 例如：请求拦截器，用于添加认证 token
 apiClient.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // 从 localStorage 中读取管理员密码
+    const adminPwd = localStorage.getItem('admin_pwd');
+    if (adminPwd) {
+      config.headers['x-admin-pwd'] = adminPwd;
+    }
     return config;
   },
   (error) => {

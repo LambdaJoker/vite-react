@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './index.css';
 import logo from '../../../assets/logo.png';
-import { FaImage, FaImages } from 'react-icons/fa'; // 引入图标
+import { FaImage, FaImages, FaSignOutAlt } from 'react-icons/fa'; // 引入图标
 import useAppStore from '../../store/appStore'; // 引入 store
 
 // 定义组件属性接口
@@ -54,10 +54,16 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const { isReadOnly, bgMode, setBgMode } = useAppStore();
+  const { isReadOnly, bgMode, setBgMode, logoutAdmin } = useAppStore();
 
   const toggleBgMode = () => {
     setBgMode(bgMode === 'dynamic' ? 'static' : 'dynamic');
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('确定要退出管理员模式吗？')) {
+      logoutAdmin();
+    }
   };
 
   return (
@@ -80,25 +86,48 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           
           {/* 开发模式下显示背景切换按钮 */}
           {!isReadOnly && (
-            <button
-              onClick={toggleBgMode}
-              className="bg-toggle-btn"
-              aria-label="Toggle background mode"
-              title={bgMode === 'dynamic' ? "切换为静态背景" : "切换为动态背景"}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-color)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                fontSize: '1.2rem',
-                padding: '0.5rem',
-                marginLeft: '0.5rem'
-              }}
-            >
-              {bgMode === 'dynamic' ? <FaImages /> : <FaImage />}
-            </button>
+            <>
+              <button
+                onClick={toggleBgMode}
+                className="bg-toggle-btn"
+                aria-label="Toggle background mode"
+                title={bgMode === 'dynamic' ? "切换为静态背景" : "切换为动态背景"}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-color)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '1.2rem',
+                  padding: '0.5rem',
+                  marginLeft: '0.5rem'
+                }}
+              >
+                {bgMode === 'dynamic' ? <FaImages /> : <FaImage />}
+              </button>
+              
+              <button
+                onClick={handleLogout}
+                className="logout-btn"
+                aria-label="Logout Admin"
+                title="退出管理员模式"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#ff4d4f', // 使用红色警示退出操作
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '1.2rem',
+                  padding: '0.5rem',
+                  marginLeft: '0.5rem',
+                  transition: 'opacity 0.3s ease'
+                }}
+              >
+                <FaSignOutAlt />
+              </button>
+            </>
           )}
         </nav>
       </div>
