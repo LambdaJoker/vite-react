@@ -43,7 +43,7 @@ model skill_category_relations {
   skill_categories skill_categories @relation(fields: [category_id], references: [category_id], onDelete: Cascade, onUpdate: NoAction, map: "skill_category_relations_ibfk_2")
 
   @@unique([skill_id, category_id], map: "uniq_skill_category")
-  @@index([category_id], map: "idx_category")
+  @@index([category_id], map: "idx_relation_category")
   @@index([skill_id], map: "idx_skill")
 }
 
