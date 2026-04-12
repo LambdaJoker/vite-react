@@ -218,39 +218,87 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* 移动端菜单切换按钮 */
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001; /* 确保在菜单之上 */
+}
+
 /* 响应式设计 */
 @media screen and (max-width: 768px) {
   .header-content {
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem 1rem;
     flex-direction: row;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-
-  .logo-container {
-    flex-shrink: 0;
+    justify-content: space-between;
   }
 
   .logo {
-    display: none; /* 在手机端隐藏文字LOGO，只保留图标，节省空间 */
+    display: block; /* 恢复显示文字LOGO */
+    font-size: 1.2rem;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .navigation {
-    gap: 0.25rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch; /* 流畅滚动 */
-    scrollbar-width: none; /* Firefox 隐藏滚动条 */
-    padding-bottom: 2px;
+    position: fixed;
+    top: 60px; /* Header 高度 */
+    left: 0;
+    right: 0;
+    background: var(--bg-color, #ffffff);
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-150%);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+    height: auto;
+    border-top: 1px solid rgba(0,0,0,0.05);
   }
 
-  .navigation::-webkit-scrollbar {
-    display: none; /* Chrome 隐藏滚动条 */
+  .navigation.mobile-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .nav-link {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.9rem;
-    flex-shrink: 0;
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+    border-radius: 0;
+  }
+
+  .nav-link::after {
+    display: none; /* 移动端隐藏底部下划线动画 */
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background: rgba(0, 123, 255, 0.05);
+    border-left: 4px solid #007bff;
+  }
+
+  /* 调整移动端右上角按钮的间距和大小，放在菜单里 */
+  .bg-toggle-btn,
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem !important;
+    margin-left: 0 !important;
+    font-size: 1.2rem !important;
   }
 }

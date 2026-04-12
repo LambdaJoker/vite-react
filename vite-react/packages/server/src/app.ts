@@ -48,4 +48,24 @@ app.use('/api', readOnlyMiddleware);
 // Express 会按顺序执行匹配的中间件和路由
 app.use('/api', apiRoutes);
 
+// 全局错误处理中间件
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('❌ [Global Error Handler]:', err);
+
+  const statusCode = err.status || err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+
+  // 防止泄露敏感的堆栈信息到前端
+  const response: any = {
+    error: message,
+  };
+
+  // 在开发环境下返回堆栈信息以便调试
+  if (process.env.APP_MODE === 'development') {
+    response.stack = err.stack;
+  }
+
+  res.status(statusCode).json(response);
+});
+
 export default app;

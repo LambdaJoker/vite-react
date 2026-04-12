@@ -98,6 +98,72 @@
   position: relative;
 }
 
+/* 目录栏样式 */
+.table-of-contents {
+  position: fixed;
+  top: 100px;
+  /* 确保在主体 900px 容器右侧，留出 30px 空隙，不再相对于整个屏幕右侧去重叠 */
+  left: calc(50% + 480px);
+  width: 250px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+  z-index: 10;
+}
+
+.toc-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.toc-item.level-2 {
+  font-weight: bold;
+  margin-top: 0.8rem;
+}
+
+.toc-item.level-3 {
+  padding-left: 1.2rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.toc-item a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s;
+  display: block;
+}
+
+.toc-item a:hover {
+  color: #007bff;
+}
+
+/* 当屏幕宽度小于 1500px 时（不足以容下中间 900px + 右侧 250px + 边距），隐藏右侧目录 */
+@media (max-width: 1500px) {
+  .table-of-contents {
+    display: none; 
+  }
+}
+
 .article-detail-container .article-content h2::after {
   content: '';
   position: absolute;

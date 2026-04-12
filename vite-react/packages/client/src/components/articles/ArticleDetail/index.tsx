@@ -167,6 +167,40 @@ const ArticleDetail: FC = () => {
           <MarkdownRenderer>{article.content}</MarkdownRenderer>
         </div>
 
+        {/* 目录栏：自动提取 Markdown 中的 h2 和 h3 */}
+        {article.content && (
+          <div className="table-of-contents">
+            <h4 className="toc-title">目录</h4>
+            <ul className="toc-list">
+              {Array.from(article.content.matchAll(/^(##|###)\s+(.+)$/gm)).map((match, index) => {
+                const level = match[1].length; // 2 for h2, 3 for h3
+                const title = match[2].trim();
+                // 简单的 hash 生成（需要与渲染出的 id 对应，如果有的话，这里做简单锚点或仅展示）
+                return (
+                  <li key={index} className={`toc-item level-${level}`}>
+                    <a 
+                      href={`#${title.toLowerCase().replace(/\s+/g, '-')}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // 寻找匹配的标题元素并平滑滚动
+                        const headings = document.querySelectorAll('.markdown-body h2, .markdown-body h3');
+                        for (const heading of headings) {
+                          if (heading.textContent?.trim() === title) {
+                            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            break;
+                          }
+                        }
+                      }}
+                    >
+                      {title}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
         <div className="article-footer">
           <div className="tags">
             {article.tags?.map((tag, index) => (

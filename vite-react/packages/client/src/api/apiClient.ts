@@ -30,14 +30,63 @@ apiClient.interceptors.request.use(
   }
 );
 
+// 简单的全局消息提示函数
+const showMessage = (msg: string, type: 'error' | 'warning' | 'info' = 'error') => {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.top = '20px';
+  div.style.left = '50%';
+  div.style.transform = 'translateX(-50%)';
+  div.style.padding = '10px 20px';
+  div.style.borderRadius = '4px';
+  div.style.color = '#fff';
+  div.style.backgroundColor = type === 'error' ? '#ff4d4f' : type === 'warning' ? '#faad14' : '#1890ff';
+  div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  div.style.zIndex = '9999';
+  div.style.transition = 'opacity 0.3s';
+  div.innerText = msg;
+  
+  document.body.appendChild(div);
+  
+  setTimeout(() => {
+    div.style.opacity = '0';
+    setTimeout(() => document.body.removeChild(div), 300);
+  }, 3000);
+};
+
 // 响应拦截器，用于统一处理错误
 apiClient.interceptors.response.use(
   (response) => {
     return response; // 返回完整的 response 对象
   },
   (error) => {
-    // 在这里可以处理各种错误，例如 401 未授权，404 未找到等
-    // 也可以弹出一个全局的错误提示
+    let errorMsg = '网络请求异常，请稍后重试';
+    
+    if (error.response) {
+      const status = error.response.status;
+      const dataMsg = error.response.data?.message || error.response.data?.error;
+      
+      switch (status) {
+        case 401:
+          errorMsg = '未授权或身份已过期，请重新登录';
+          break;
+        case 403:
+          errorMsg = '拒绝访问：您没有权限执行此操作';
+          break;
+        case 404:
+          errorMsg = `请求的资源不存在 (${error.config.url})`;
+          break;
+        case 500:
+          errorMsg = '服务器内部错误，请联系管理员';
+          break;
+        default:
+          errorMsg = dataMsg || `请求错误 (${status})`;
+      }
+    } else if (error.request) {
+      errorMsg = '服务器无响应，请检查网络连接';
+    }
+
+    showMessage(errorMsg, 'error');
     console.error('API Error:', error.response?.data || error.message);
     return Promise.reject(error.response?.data || error);
   }

@@ -16,7 +16,7 @@ import ClickEffect from './components/common/ClickEffect';
 import './App.css';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// 懒加载所有页面级组件
+// 懒加载所有页面级组件，提升首屏加载速度
 const HomePage = lazy(() => import('./components/home/HomePage'));
 const ArticleList = lazy(() => import('./components/articles/ArticleList'));
 const ArticleDetail = lazy(() => import('./components/articles/ArticleDetail'));

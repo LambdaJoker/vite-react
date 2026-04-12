@@ -5,12 +5,13 @@
  * @Date: 2025-01-16 16:32:02
  * @LastEditTime: 2025-06-18 19:36:47
  */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './index.css';
 import logo from '../../../assets/logo.png';
-import { FaImage, FaImages, FaSignOutAlt } from 'react-icons/fa'; // 引入图标
+import { FaImage, FaImages, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa'; // 引入图标
 import useAppStore from '../../store/appStore'; // 引入 store
+import { throttle } from '../../../utils/helpers';
 
 // 定义组件属性接口
 interface HeaderProps {
@@ -26,9 +27,15 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
   // 获取当前路由位置
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // 判断导航项是否为当前激活路由
   const isActive = (path: string) => location.pathname === path;
+
+  // 路由切换时自动关闭移动端菜单
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   // 默认应用浅色主题
   useEffect(() => {
@@ -38,15 +45,15 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
 
   // 监听滚动事件，控制头部样式
   useEffect(() => {
-    // 处理滚动事件，添加或移除滚动样式类
-    const handleScroll = () => {
+    // 处理滚动事件，添加或移除滚动样式类，并使用节流优化性能
+    const handleScroll = throttle(() => {
       const header = document.querySelector('.header');
       if (window.scrollY > 50) {
         header?.classList.add('scrolled');
       } else {
         header?.classList.remove('scrolled');
       }
-    };
+    }, 100);
 
     // 添加滚动事件监听器
     window.addEventListener('scroll', handleScroll);
@@ -75,8 +82,18 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           <img src={logo} alt="Logo" className="logo-image" />
           <h1 className="logo">{title}</h1>
         </div>
+        
+        {/* 移动端菜单切换按钮 */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
         {/* 导航菜单 */}
-        <nav className="navigation">
+        <nav className={`navigation ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           {/* 导航链接，根据当前路由添加激活样式 */}
           <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>首页</Link>
           <Link to="/articles" className={`nav-link ${isActive('/articles') ? 'active' : ''}`}>文章</Link>

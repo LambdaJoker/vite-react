@@ -36,6 +36,7 @@ export const createArticle: RequestHandler = async (req, res) => {
       data: {
         title,
         content,
+        excerpt: content ? content.slice(0, 400) : '',
         category,
         // 将逗号分隔的标签字符串转为 JSON 字符串数组存储
         tags: JSON.stringify(tags.split(',').map((tag: string) => tag.trim())),
@@ -101,6 +102,7 @@ export const updateArticle: RequestHandler = async (req, res) => {
       data: {
         title,
         content,
+        excerpt: content ? content.slice(0, 400) : '',
         category,
         tags: JSON.stringify(tags.split(',').map((tag: string) => tag.trim())),
         image: imagePath,
@@ -161,25 +163,24 @@ export const getArticle: RequestHandler = async (req, res) => {
   const shouldIncrement = req.query.increment !== 'false';
 
   try {
-    const article = await prisma.$transaction(async (tx) => {
-      if (shouldIncrement) {
-        // 1. 获取文章，并更新阅读次数
-        const updatedArticle = await tx.articles.update({
-          where: { id: articleId },
-          data: {
-            read_count: {
-              increment: 1,
-            },
+    let article;
+    if (shouldIncrement) {
+      // 1. 获取文章，并更新阅读次数
+      // 直接使用 update，因为 update 会返回更新后的完整记录，没必要用 transaction
+      article = await prisma.articles.update({
+        where: { id: articleId },
+        data: {
+          read_count: {
+            increment: 1,
           },
-        });
-        return updatedArticle;
-      } else {
-        const foundArticle = await tx.articles.findUnique({
-          where: { id: articleId },
-        });
-        return foundArticle;
-      }
-    });
+        },
+      });
+    } else {
+      // 直接使用 findUnique 获取，不更新
+      article = await prisma.articles.findUnique({
+        where: { id: articleId },
+      });
+    }
 
     if (!article) {
       res.status(404).json({ message: '文章未找到' });
@@ -193,7 +194,6 @@ export const getArticle: RequestHandler = async (req, res) => {
       // 如果 tags 是 JSON 字符串，需要解析
       tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
     };
-
 
     res.json(formattedArticle);
   } catch (error) {
@@ -210,30 +210,34 @@ export const getArticle: RequestHandler = async (req, res) => {
 // 获取文章列表
 export const getArticles: RequestHandler = async (req, res) => {
   try {
+    // 使用 select 避免查询全量 content 字段，减少数据传输
     const articles = await prisma.articles.findMany({
       orderBy: {
         date: 'desc',
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        excerpt: true,
+        image: true,
+        author: true,
+        read_count: true,
+        likes: true,
+        category: true,
+        tags: true,
+        date: true,
+        created_at: true,
+        updated_at: true,
         _count: {
           select: { comments: true }
         }
       }
     });
 
-
-    // 为每篇文章生成摘要并格式化数据
+    // 格式化数据
     const formattedArticles = articles.map(article => {
-      let excerpt = '';
-      if (article.content) {
-        // 生成包含原始Markdown格式的摘要，截取较长内容让前端处理截断
-        excerpt = article.content.slice(0, 400);
-      }
-
       return {
         ...article,
-        excerpt,
-        content: undefined, // 列表页不返回完整内容
         date: article.date.toISOString().split('T')[0],
         // 如果 tags 是 JSON 字符串，需要解析
         tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
