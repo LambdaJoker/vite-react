@@ -41,7 +41,10 @@ const axios_1 = __importDefault(require("axios"));
 const cheerio = __importStar(require("cheerio"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const dataFile = path_1.default.join(__dirname, '../../wallpapers-data.json');
+const isVercel = process.env.VERCEL === '1';
+const dataFile = isVercel
+    ? '/tmp/wallpapers-data.json'
+    : path_1.default.join(__dirname, '../../public/uploads/wallpapers-data.json');
 let currentWallpapers = [];
 // Initialize data from file if exists
 if (fs_1.default.existsSync(dataFile)) {
@@ -119,7 +122,12 @@ const scrapeWallpapers = async () => {
             // 将新抓取的壁纸追加到现有的列表中，并去重
             const mergedWallpapers = [...new Set([...currentWallpapers, ...validUrls])];
             currentWallpapers = mergedWallpapers;
-            fs_1.default.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+            try {
+                fs_1.default.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+            }
+            catch (err) {
+                console.error('[WallpaperService] Failed to write cache:', err);
+            }
             console.log(`[WallpaperService] ✅ Successfully updated wallpapers. Added ${validUrls.length} new ones. Total: ${currentWallpapers.length}`);
         }
         else {
@@ -131,14 +139,24 @@ const scrapeWallpapers = async () => {
     }
 };
 exports.scrapeWallpapers = scrapeWallpapers;
-const getRandomWallpaper = () => {
+const getRandomWallpaper = async () => {
     if (currentWallpapers.length === 0) {
-        // Default fallback - Use previewFileImg for higher quality
-        return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
+        if (isVercel) {
+            await (0, exports.scrapeWallpapers)();
+        }
+        if (currentWallpapers.length === 0) {
+            // Default fallback - Use previewFileImg for higher quality
+            return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
+        }
     }
     const randomIndex = Math.floor(Math.random() * currentWallpapers.length);
     return currentWallpapers[randomIndex];
 };
 exports.getRandomWallpaper = getRandomWallpaper;
-const getAllWallpapers = () => currentWallpapers;
+const getAllWallpapers = async () => {
+    if (currentWallpapers.length === 0 && isVercel) {
+        await (0, exports.scrapeWallpapers)();
+    }
+    return currentWallpapers;
+};
 exports.getAllWallpapers = getAllWallpapers;

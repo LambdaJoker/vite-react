@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAll = exports.getRandom = void 0;
 const wallpaper_service_1 = require("../services/wallpaper.service");
-const getRandom = (req, res) => {
+const getRandom = async (req, res) => {
     try {
-        const url = (0, wallpaper_service_1.getRandomWallpaper)();
+        const url = await (0, wallpaper_service_1.getRandomWallpaper)();
         res.json({ success: true, data: { url } });
     }
     catch (error) {
@@ -12,9 +12,9 @@ const getRandom = (req, res) => {
     }
 };
 exports.getRandom = getRandom;
-const getAll = (req, res) => {
+const getAll = async (req, res) => {
     try {
-        const urls = (0, wallpaper_service_1.getAllWallpapers)();
+        const urls = await (0, wallpaper_service_1.getAllWallpapers)();
         res.json({ success: true, data: urls });
     }
     catch (error) {
