@@ -1,4 +1,5 @@
 import { FC, memo } from 'react';
+import LazyImage from '../../../lazyImage';
 import { projects } from './projectsData.ts';
 
 const ProjectsShowcase: FC = () => {
@@ -8,7 +9,9 @@ const ProjectsShowcase: FC = () => {
       <div className="projects-grid">
         {projects.map((project) => (
           <div className="project-card" key={project.title}>
-            <div className="project-image" style={{ backgroundImage: `url(${project.image})` }}></div>
+            <div className="project-image">
+              <LazyImage src={project.image} alt={project.title} />
+            </div>
             <div className="project-content">
               <h3>{project.title}</h3>
               <p>{project.description}</p>

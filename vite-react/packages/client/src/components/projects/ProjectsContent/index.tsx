@@ -16,6 +16,7 @@ import { FC, useState, useEffect, useMemo } from 'react';
 import './index.css';
 import SEO from '../../common/SEO';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
+import LazyImage from '../../lazyImage';
 import { Project } from '../types';
 import { projects } from '../data';
 
@@ -190,7 +191,8 @@ const ProjectsContent: FC = () => {
         <div className="projects-grid">
           {filteredProjects.map(project => (
             <div key={project.id} className="project-card">
-              <div className="project-image" style={{ backgroundImage: `url(${project.image})` }}>
+              <div className="project-image">
+                <LazyImage src={project.image} alt={project.title} />
                 <div className="project-category">{project.category}</div>
               </div>
               {/* 项目详细内容 */}

@@ -196,12 +196,21 @@ const ArticleDetail: FC = () => {
               commentTree.map((comment) => (
                 <div key={comment.id} className="comment-item">
                   <div className="comment-header">
-                    <span className="comment-author">{comment.author}</span>
-                    <span className="comment-date">
-                      {new Date(comment.created_at).toLocaleString()}
-                    </span>
+                    <img 
+                      src={`https://api.dicebear.com/7.x/identicon/svg?seed=${comment.author}`} 
+                      alt="avatar" 
+                      className="comment-avatar" 
+                    />
+                    <div className="comment-info-top">
+                      <span className="comment-author">{comment.author}</span>
+                      <span className="comment-date">
+                        {new Date(comment.created_at).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="comment-content">{comment.content}</div>
+                  <div className="comment-content">
+                    <MarkdownRenderer>{comment.content}</MarkdownRenderer>
+                  </div>
                   <div className="comment-actions">
                     <button 
                       className="comment-action-btn"
@@ -232,13 +241,22 @@ const ArticleDetail: FC = () => {
                       {comment.replies.map(reply => (
                         <div key={reply.id} className="reply-item">
                           <div className="comment-header">
-                            <span className="comment-author">{reply.author}</span>
-                            <span className="reply-badge">回复了 {comment.author}</span>
-                            <span className="comment-date">
-                              {new Date(reply.created_at).toLocaleString()}
-                            </span>
+                            <img 
+                              src={`https://api.dicebear.com/7.x/identicon/svg?seed=${reply.author}`} 
+                              alt="avatar" 
+                              className="comment-avatar small" 
+                            />
+                            <div className="comment-info-top">
+                              <span className="comment-author">{reply.author}</span>
+                              <span className="reply-badge">回复了 {comment.author}</span>
+                              <span className="comment-date">
+                                {new Date(reply.created_at).toLocaleString()}
+                              </span>
+                            </div>
                           </div>
-                          <div className="comment-content">{reply.content}</div>
+                          <div className="comment-content">
+                            <MarkdownRenderer>{reply.content}</MarkdownRenderer>
+                          </div>
                           <div className="comment-actions">
                             <button 
                               className="comment-action-btn"

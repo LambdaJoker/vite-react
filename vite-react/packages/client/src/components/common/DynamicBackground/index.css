@@ -9,6 +9,22 @@
   background-position: center;
   background-repeat: no-repeat;
   transition: background-image 1s ease-in-out;
+  overflow: hidden;
+}
+
+.video-background {
+  background-color: #000;
+}
+
+.bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保证视频填满整个屏幕，这对于手机端适配也很重要 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* 防止视频阻止下方元素的点击 */
 }
 
 /* Optional overlay to make text readable */
@@ -21,4 +37,5 @@
   height: 100%;
   background: rgba(255, 255, 255, 0.05); /* Almost transparent */
   backdrop-filter: none; /* Remove blur for maximum clarity */
+  pointer-events: none; /* 确保遮罩层不影响点击 */
 }

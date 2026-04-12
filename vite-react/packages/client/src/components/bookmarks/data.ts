@@ -142,5 +142,31 @@ export const bookmarksData: Bookmark[] = [
     url: 'https://ui.shadcn.com/',
     icon: '🖤',
     category: '开源轮子'
+  },
+
+  // --- 大模型 & Agent ---
+  {
+    id: 'ai-1',
+    title: 'MaiBot',
+    description: '多种模型协作，仿生的思考规划架构，模块化设计带来拟人化的交互体验平台。',
+    url: 'https://docs.mai-mai.org/',
+    icon: '🤖',
+    category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-2',
+    title: 'Skills',
+    description: '计算机与数学职业相关的职业与技术技能集合，可以一键运行在 Manus 中。',
+    url: 'https://skillsmp.com/occupations/computer-and-mathematical-occupations',
+    icon: '💡',
+    category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-3',
+    title: 'OpenClaw',
+    description: '一个自托管的 AI 智能体网关，支持连接 Discord、Slack、Telegram 等多种社交渠道到你的 AI 助手。',
+    url: 'https://docs.openclaw.ai/zh-CN',
+    icon: '🦞',
+    category: '大模型 & Agent'
   }
 ];

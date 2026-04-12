@@ -5,6 +5,8 @@ interface AppState {
   isReadOnly: boolean;
   isLoading: boolean;
   error: string | null;
+  bgMode: 'dynamic' | 'static';
+  setBgMode: (mode: 'dynamic' | 'static') => void;
   fetchAppConfig: () => Promise<void>;
 }
 
@@ -12,6 +14,11 @@ const useAppStore = create<AppState>((set) => ({
   isReadOnly: true, // 默认是只读，直到我们从后端确认模式
   isLoading: true,
   error: null,
+  bgMode: (localStorage.getItem('bg_mode') as 'dynamic' | 'static') || 'dynamic',
+  setBgMode: (mode) => {
+    localStorage.setItem('bg_mode', mode);
+    set({ bgMode: mode });
+  },
   fetchAppConfig: async () => {
     set({ isLoading: true, error: null });
     try {

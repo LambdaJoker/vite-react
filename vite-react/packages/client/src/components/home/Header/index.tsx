@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './index.css';
 import logo from '../../../assets/logo.png';
+import { FaImage, FaImages } from 'react-icons/fa'; // 引入图标
+import useAppStore from '../../store/appStore'; // 引入 store
 
 // 定义组件属性接口
 interface HeaderProps {
@@ -28,6 +30,12 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
   // 判断导航项是否为当前激活路由
   const isActive = (path: string) => location.pathname === path;
 
+  // 默认应用浅色主题
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }, []);
+
   // 监听滚动事件，控制头部样式
   useEffect(() => {
     // 处理滚动事件，添加或移除滚动样式类
@@ -46,6 +54,12 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const { isReadOnly, bgMode, setBgMode } = useAppStore();
+
+  const toggleBgMode = () => {
+    setBgMode(bgMode === 'dynamic' ? 'static' : 'dynamic');
+  };
+
   return (
     // 头部容器
     <header className="header-container">
@@ -63,6 +77,29 @@ const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
           <Link to="/bookmarks" className={`nav-link ${isActive('/bookmarks') ? 'active' : ''}`}>资源库</Link>
           <Link to="/projects" className={`nav-link ${isActive('/projects') ? 'active' : ''}`}>项目</Link>
           <Link to="/thoughts" className={`nav-link ${isActive('/thoughts') ? 'active' : ''}`}>思考</Link>
+          
+          {/* 开发模式下显示背景切换按钮 */}
+          {!isReadOnly && (
+            <button
+              onClick={toggleBgMode}
+              className="bg-toggle-btn"
+              aria-label="Toggle background mode"
+              title={bgMode === 'dynamic' ? "切换为静态背景" : "切换为动态背景"}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-color)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '1.2rem',
+                padding: '0.5rem',
+                marginLeft: '0.5rem'
+              }}
+            >
+              {bgMode === 'dynamic' ? <FaImages /> : <FaImage />}
+            </button>
+          )}
         </nav>
       </div>
     </header>

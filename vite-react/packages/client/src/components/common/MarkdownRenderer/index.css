@@ -82,6 +82,17 @@
   border-bottom: 1px solid #0056b3;
 }
 
+.markdown-image-wrapper .lazy-image-container {
+  min-height: 250px;
+  background: var(--secondary-bg, #f8f9fa);
+}
+
+.markdown-image-wrapper .lazy-image {
+  object-fit: contain;
+  height: auto;
+  max-height: 80vh;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

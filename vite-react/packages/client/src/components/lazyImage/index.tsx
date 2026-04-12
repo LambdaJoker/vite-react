@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import SkeletonLoader from '../skeletonLoader';
 import './index.css';
 
 interface LazyImageProps {
@@ -29,7 +30,11 @@ const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt,
   className = '',
-  placeholderColor = '#f0f0f0'
+  placeholderColor = 'transparent',
+  width,
+  height,
+  onLoad,
+  errorFallback
 }) => {
   // 图片加载完成状态
   const [isLoaded, setIsLoaded] = useState(false);
@@ -65,19 +70,34 @@ const LazyImage: React.FC<LazyImageProps> = ({
     <div
       ref={imgRef}
       className={`lazy-image-container ${className}`}
-      style={{ backgroundColor: placeholderColor }}
+      style={{ backgroundColor: placeholderColor, width, height }}
     >
       {/* 仅在元素进入视口后渲染图片 */}
       {isInView && (
         <img
           src={src}
           alt={alt}
+          loading="lazy"
           className={`lazy-image ${isLoaded ? 'loaded' : ''}`}
-          onLoad={() => setIsLoaded(true)}
+          onLoad={() => {
+            setIsLoaded(true);
+            if (onLoad) onLoad();
+          }}
+          onError={(e) => {
+            // 图片加载失败时处理
+            if (errorFallback) {
+              e.currentTarget.src = errorFallback;
+            }
+            setIsLoaded(true);
+          }}
         />
       )}
       {/* 显示加载状态指示器 */}
-      {!isLoaded && isInView && <div className="lazy-image-loading"></div>}
+      {!isLoaded && isInView && (
+        <div className="lazy-image-loading">
+          <SkeletonLoader type="image" className="lazy-image-skeleton" />
+        </div>
+      )}
     </div>
   );
 };

@@ -81,11 +81,42 @@
   --header-bg: #ffffff;
   --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-hover: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --card-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --primary-color: #3f8cff;
+  --secondary-bg: #1a1a1a;
+  --border-color: #333333;
+  --muted-text: #a0a0a0;
+  --link-color: #66b2ff;
+  --link-hover: #99ccff;
+  --code-bg: #2d2d2d;
+  --code-color: #ff80bf;
+  --blockquote-bg: #2d2d2d;
+  --blockquote-border: #444444;
+  --input-bg: #2d2d2d;
+  --input-border: #444444;
+  --input-focus-border: #66b2ff;
+  --button-hover: #1a66cc;
+  --header-bg: #121212;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+  --glass-bg: rgba(30, 30, 30, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-hover: rgba(40, 40, 40, 0.85);
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .hero-section,

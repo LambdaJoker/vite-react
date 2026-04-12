@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import LazyImage from '../../lazyImage';
 import './index.css';
 
 const ReactMarkdown = (RMD as any).default || RMD;
@@ -117,6 +118,14 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
         >
           {children}
         </a>
+      );
+    },
+    img({ node, src, alt, ...props }: any) {
+      if (!src) return null;
+      return (
+        <span className="markdown-image-wrapper" style={{ display: 'block', margin: '1rem 0', borderRadius: '8px', overflow: 'hidden' }}>
+          <LazyImage src={src} alt={alt || ''} className="markdown-image" />
+        </span>
       );
     }
   }), [handleLinkClick]);

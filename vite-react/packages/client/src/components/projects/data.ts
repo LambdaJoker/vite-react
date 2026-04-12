@@ -6,7 +6,7 @@ export const projects: Project[] = [
     title: "个人博客系统",
     description: "基于 React + TypeScript 的现代化博客系统，支持文章管理、技术栈展示等功能",
     category: "Web开发",
-    technologies: ["React", "TypeScript", "Node.js", "MongoDB"],
+    technologies: ["React", "TypeScript", "Node.js", "Vercel"],
     image: "/src/assets/img/project/project1.jpg",
     demoUrl: "https://blog.example.com",
     githubUrl: "https://github.com/LambdaJoker/vite-react",
@@ -21,48 +21,47 @@ export const projects: Project[] = [
   },
   {
     id: 2,
-    title: "离线数仓搭建",
-    description: "搭建企业级离线数仓，整合多源数据，提供T+1数据分析支持",
-    category: "大数据",
-    technologies: ["Hadoop", "Hive", "Spark", "Airflow"],
-    image: "/src/assets/img/project/project2.jpg",
-    demoUrl: "https://bigdata.example.com",
-    githubUrl: "https://github.com/example/bigdata",
+    title: "企业级 RAG 知识库系统",
+    description: "基于大语言模型（LLM）和检索增强生成（RAG）技术的企业级智能问答系统，支持多格式文档解析与精准召回。",
+    category: "大模型",
+    technologies: ["LangChain", "FastAPI", "Milvus", "OpenAI"],
+    image: "/src/assets/img/project/project4.jpg",
+    demoUrl: "https://rag.example.com",
+    githubUrl: "https://github.com/example/rag-system",
     highlights: [
-      "分布式数据处理架构",
-      "ETL 流程设计与优化",
-      "可视化数据报表",
-      "高性能数据查询优化"
+      "实现了基于语义的混合检索策略",
+      "支持 PDF、Word、Markdown 等多格式文档的高效解析与向量化",
+      "通过 Prompt 工程有效降低了模型幻觉",
+      "流式输出（Streaming）提升用户问答体验"
     ],
-    period: "2024.08 - 2024.9",
-    role: "数据工程师"
+    period: "2024.05 - 2024.08",
+    role: "AI 算法工程师"
   },
   {
     id: 3,
-    title: "智能推荐系统",
-    description: "基于机器学习的个性化推荐系统，提供精准的用户兴趣匹配",
-    category: "人工智能",
-    technologies: ["Python", "TensorFlow", "FastAPI", "Redis"],
-    image: "/src/assets/img/project/project3.jpg",
-    demoUrl: "https://recommend.example.com",
-    githubUrl: "https://github.com/example/recommend",
+    title: "多智能体协作框架 (Multi-Agent)",
+    description: "一个基于任务规划和角色分配的自主智能体协作框架，能够自动拆解复杂任务并协同完成代码编写与测试。",
+    category: "Agent",
+    technologies: ["Python", "AutoGen", "Docker", "LLM"],
+    image: "/src/assets/img/project/project1.jpg",
+    demoUrl: "https://agent.example.com",
+    githubUrl: "https://github.com/example/multi-agent",
     highlights: [
-      "协同过滤算法实现",
-      "实时用户行为分析",
-      "千万级数据处理能力",
-      "88.7%系统可用性"
+      "设计了 Planner、Coder、Reviewer 等多角色 Agent 协同机制",
+      "集成安全的沙箱环境（Docker）用于代码自动执行与验证",
+      "实现了 Agent 之间的记忆共享与反思机制（Reflection）",
+      "在特定代码生成评测集上达到 85% 的一次通过率"
     ],
-    period: "2024.05 - 2024.07",
-    role: "算法工程师"
+    period: "2024.09 - 2024.11",
+    role: "Agent 研发工程师"
   },
-
   {
     id: 4,
     title: "基于深度学习的目标检测系统",
     description: "一个用于智慧社区的实时目标检测与识别系统，结合了ROS机器人操作系统与先进的计算机视觉技术。",
     category: "人工智能",
     technologies: ["深度学习", "ROS", "OpenCV", "图像分割"],
-    image: "/src/assets/img/project/project5.jpg",
+    image: "/src/assets/img/project/project4.jpg",
     demoUrl: "https://yolo.example.com",
     githubUrl: "https://github.com/LambdaJoker",
     highlights: [
@@ -73,6 +72,5 @@ export const projects: Project[] = [
     ],
     period: "2024.10 - 2024.12",
     role: "算法工程师"
-  },
-  // ... 可以添加更多项目
-]; 
+  }
+];
