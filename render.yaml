@@ -16,8 +16,3 @@ services:
         sync: false # 表示需要在 Render 面板手动配置数据库连接字符串
       - key: APP_MODE
         value: production
-    # 磁盘配置：解决免费版重启/休眠导致图片丢失的问题
-    disk:
-      name: uploads-disk
-      mountPath: /opt/render/project/src/vite-react/packages/server/public/uploads
-      sizeGB: 1

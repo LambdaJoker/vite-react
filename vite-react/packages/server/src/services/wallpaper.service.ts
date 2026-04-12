@@ -3,7 +3,10 @@ import * as cheerio from 'cheerio';
 import fs from 'fs';
 import path from 'path';
 
-const dataFile = path.join(__dirname, '../../public/uploads/wallpapers-data.json');
+const isVercel = process.env.VERCEL === '1';
+const dataFile = isVercel 
+  ? '/tmp/wallpapers-data.json' 
+  : path.join(__dirname, '../../public/uploads/wallpapers-data.json');
 let currentWallpapers: string[] = [];
 
 // Initialize data from file if exists
@@ -93,7 +96,11 @@ export const scrapeWallpapers = async () => {
       // 将新抓取的壁纸追加到现有的列表中，并去重
       const mergedWallpapers = [...new Set([...currentWallpapers, ...validUrls])];
       currentWallpapers = mergedWallpapers;
-      fs.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+      try {
+        fs.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+      } catch (err) {
+        console.error('[WallpaperService] Failed to write cache:', err);
+      }
       console.log(`[WallpaperService] ✅ Successfully updated wallpapers. Added ${validUrls.length} new ones. Total: ${currentWallpapers.length}`);
     } else {
       console.log('[WallpaperService] ⚠️ No new wallpapers found on this page.');
@@ -103,13 +110,23 @@ export const scrapeWallpapers = async () => {
   }
 };
 
-export const getRandomWallpaper = () => {
+export const getRandomWallpaper = async () => {
   if (currentWallpapers.length === 0) {
-    // Default fallback - Use previewFileImg for higher quality
-    return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
+    if (isVercel) {
+      await scrapeWallpapers();
+    }
+    if (currentWallpapers.length === 0) {
+      // Default fallback - Use previewFileImg for higher quality
+      return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
+    }
   }
   const randomIndex = Math.floor(Math.random() * currentWallpapers.length);
   return currentWallpapers[randomIndex];
 };
 
-export const getAllWallpapers = () => currentWallpapers;
+export const getAllWallpapers = async () => {
+  if (currentWallpapers.length === 0 && isVercel) {
+    await scrapeWallpapers();
+  }
+  return currentWallpapers;
+};

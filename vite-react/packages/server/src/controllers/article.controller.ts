@@ -17,7 +17,8 @@ export const createArticle: RequestHandler = async (req, res) => {
   const { title, content, category, tags } = req.body;
 
   // 从 multer 中间件获取上传的文件信息
-  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  // 在 Vercel 环境下，我们使用 memoryStorage，没有 filename，此时直接忽略图片上传
+  const imagePath = req.file && req.file.filename ? `/uploads/${req.file.filename}` : null;
 
   try {
     const newArticle = await prisma.articles.create({
@@ -65,8 +66,8 @@ export const updateArticle: RequestHandler = async (req, res) => {
 
     let imagePath = existingArticle.image; // 默认使用旧图片
 
-    // 如果有新文件上传，则替换旧图片
-    if (req.file) {
+    // 如果有新文件上传并且不是在 Vercel 环境下（有 filename），则替换旧图片
+    if (req.file && req.file.filename) {
       // 删除旧图片文件（如果存在）
       if (existingArticle.image) {
         const oldImagePath = path.join(__dirname, '../../public', existingArticle.image);
@@ -112,9 +113,12 @@ export const deleteArticle: RequestHandler = async (req, res) => {
     });
 
     if (articleToDelete && articleToDelete.image) {
-      const imagePath = path.join(__dirname, '../../public', articleToDelete.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      // 在 Vercel 环境下，不要尝试删除不存在的文件（也没有权限）
+      if (process.env.VERCEL !== '1') {
+        const imagePath = path.join(__dirname, '../../public', articleToDelete.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
       }
     }
 

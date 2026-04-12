@@ -1,0 +1,6 @@
+{
+  "build_type": "npm",
+  "build_command": "npm install && npm run build",
+  "start_command": "npm run prod",
+  "root_directory": "packages/server"
+}

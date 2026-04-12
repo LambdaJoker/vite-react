@@ -21,26 +21,34 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-const startServer = async () => {
-  try {
-    // 启动服务器
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
-    });
+// Vercel 环境判断 (Vercel 部署时会自动注入 VERCEL=1)
+const isVercel = process.env.VERCEL === '1';
 
-    // Start initial wallpaper scrape
-    await scrapeWallpapers();
+if (!isVercel) {
+  const startServer = async () => {
+    try {
+      // 启动服务器
+      app.listen(PORT, () => {
+        console.log(`🚀 Server is running on port ${PORT}`);
+        console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
+      });
 
-    // Set interval to scrape every 10 minutes (600,000 ms)
-    setInterval(() => {
-      scrapeWallpapers();
-    }, 10 * 60 * 1000);
+      // Start initial wallpaper scrape
+      await scrapeWallpapers();
 
-  } catch (error) {
-    console.error('❌ Error starting server:', error);
-    process.exit(1);
-  }
-};
+      // Set interval to scrape every 10 minutes (600,000 ms)
+      setInterval(() => {
+        scrapeWallpapers();
+      }, 10 * 60 * 1000);
 
-startServer();
+    } catch (error) {
+      console.error('❌ Error starting server:', error);
+      process.exit(1);
+    }
+  };
+
+  startServer();
+}
+
+// 导出 app 供 Vercel Serverless Function 使用
+export default app;
