@@ -226,18 +226,36 @@ body {
 /* 响应式设计 */
 @media screen and (max-width: 768px) {
   .header-content {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.5rem;
     flex-direction: row;
-    /* 改回横向排列 */
-  }
-
-  .navigation {
+    justify-content: flex-start;
     gap: 0.5rem;
   }
 
-  .nav-link {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.9rem;
+  .logo-container {
+    flex-shrink: 0;
   }
 
+  .logo {
+    display: none; /* 在手机端隐藏文字LOGO，只保留图标，节省空间 */
+  }
+
+  .navigation {
+    gap: 0.25rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; /* 流畅滚动 */
+    scrollbar-width: none; /* Firefox 隐藏滚动条 */
+    padding-bottom: 2px;
+  }
+
+  .navigation::-webkit-scrollbar {
+    display: none; /* Chrome 隐藏滚动条 */
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
 }

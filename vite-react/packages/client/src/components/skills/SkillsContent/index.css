@@ -459,32 +459,46 @@
 @media screen and (max-width: 768px) {
   .skills-container {
     padding: 0 1rem 2rem;
+    margin-top: 20px;
   }
 
   .skills-header {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .skills-header h1 {
+    font-size: 1.8rem;
   }
 
   .category-filter {
     gap: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .category-button {
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
 
   .skills-grid {
-    gap: 1rem;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  .skill-card {
+    padding: 1.5rem;
   }
 
   .skill-stats {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1.5rem;
   }
 
   .search-input {
     max-width: 100%;
+    padding: 0.8rem 1rem;
   }
 }
 

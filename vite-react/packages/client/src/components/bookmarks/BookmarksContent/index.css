@@ -197,6 +197,7 @@
 @media screen and (max-width: 768px) {
   .bookmarks-container {
     padding: 0 1rem 2rem;
+    margin-top: 20px;
   }
   
   .bookmarks-header {

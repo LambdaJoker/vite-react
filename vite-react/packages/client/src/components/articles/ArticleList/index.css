@@ -339,3 +339,69 @@
     transform: translateY(0);
   }
 }
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+  .articles-container {
+    padding: 0 1rem 2rem;
+    margin-top: 20px;
+  }
+
+  .articles-header {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .articles-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .article-stats {
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .articles-grid {
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .article-image {
+    height: 180px;
+  }
+
+  .article-content {
+    padding: 1rem;
+  }
+
+  .article-meta {
+    font-size: 0.8rem;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .article-content h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .article-tags {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .read-more {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .articles-container .search-filter-container {
+    gap: 1rem;
+  }
+}

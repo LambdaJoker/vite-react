@@ -91,3 +91,20 @@
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+@media screen and (max-width: 768px) {
+  .preview-modal-content {
+    padding: 1rem;
+    max-width: 95vw;
+    border-radius: 8px;
+  }
+
+  .preview-text-container {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .preview-image {
+    max-height: calc(90vh - 2rem);
+  }
+}
