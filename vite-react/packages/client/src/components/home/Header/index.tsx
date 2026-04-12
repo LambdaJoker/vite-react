@@ -1,6 +1,6 @@
 /*
- * @Author: taotao
- * @LastEditors: taotao
+ * @Author: Random Glow
+ * @LastEditors: Random Glow
  * @Description: header
  * @Date: 2025-01-16 16:32:02
  * @LastEditTime: 2025-06-18 19:36:47
@@ -15,7 +15,7 @@ import { throttle } from '../../../utils/helpers';
 
 // 定义组件属性接口
 interface HeaderProps {
-  // 网站标题，默认值为 "TAO"
+  // 网站标题，默认值为 "Random Glow"
   title?: string;
 }
 
@@ -24,7 +24,7 @@ interface HeaderProps {
  * 包含 logo、标题和导航链接
  * 支持滚动时的样式变化和当前路由高亮
  */
-const Header: React.FC<HeaderProps> = ({ title = "TAO" }) => {
+const Header: React.FC<HeaderProps> = ({ title = "Random Glow" }) => {
   // 获取当前路由位置
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

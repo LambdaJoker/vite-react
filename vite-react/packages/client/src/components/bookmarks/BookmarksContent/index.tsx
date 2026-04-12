@@ -29,7 +29,7 @@ const BookmarksContent: FC = () => {
   return (
     <>
       <SEO 
-        title="资源收藏 | TAO" 
+        title="资源收藏 | Random Glow" 
         description="分享优质的前端开源库、设计素材、效率工具与学习资料。" 
       />
       <div className={`bookmarks-container ${isAnimated ? 'animated' : ''}`}>

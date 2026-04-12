@@ -1,13 +1,13 @@
 /*
- * @Author: taotao
- * @LastEditors: taotao
+ * @Author: Random Glow
+ * @LastEditors: Random Glow
  * @Description: Do not edit
  * @Date: 2025-02-15 13:21:42
  * @LastEditTime: 2025-06-19 10:40:00
  */
 /*
- * @Author: taotao
- * @LastEditors: taotao
+ * @Author: Random Glow
+ * @LastEditors: Random Glow
  * @Description: Do not edit
  * @Date: 2025-04-28 20:45:53
  * @LastEditTime: 2025-06-18 23:07:40
@@ -172,7 +172,7 @@ const ArticleDetail: FC = () => {
           <div className="table-of-contents">
             <h4 className="toc-title">目录</h4>
             <ul className="toc-list">
-              {Array.from(article.content.matchAll(/^(##|###)\s+(.+)$/gm)).map((match, index) => {
+              {Array.from(article.content.matchAll(/^(##|###)\s+([^\r\n]+)/gm)).map((match, index) => {
                 const level = match[1].length; // 2 for h2, 3 for h3
                 const title = match[2].trim();
                 // 简单的 hash 生成（需要与渲染出的 id 对应，如果有的话，这里做简单锚点或仅展示）

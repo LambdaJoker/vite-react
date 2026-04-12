@@ -29,23 +29,7 @@
   height: 100%;
 }
 
-/* 调整 logo 位置 */
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* 垂直居中 */
-  width: 20%;
-  height: 100%;
-  /* 调整 logo 宽度 */
-}
-
-/* logo 样式 */
-.logo img {
-  width: 100px;
-  /* 调整为适中的大小 */
-  height: auto;
-}
+/* 移除旧的 logo 样式，避免冲突 */
 
 /* 导航栏的基本样式 */
 .nav {
@@ -172,6 +156,7 @@
   background: linear-gradient(135deg, #007bff, #00ff88);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .navigation {

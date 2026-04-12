@@ -1,5 +1,5 @@
 /*
- * @Author: taotao
+ * @Author: Random Glow
  * @Description: 技能管理相关的 API 函数
  */
 import { Skill } from '../types/skill';

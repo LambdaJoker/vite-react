@@ -15,7 +15,7 @@ model articles {
   excerpt    String?   
   content    String?   
   image      String?   @db.VarChar(255)
-  author     String?   @default("Admin") @db.VarChar(100)
+  author     String?   @default("Random Glow") @db.VarChar(100)
   read_count Int       @default(0) 
   likes      Int       @default(0)
   category   String?   @db.VarChar(100)

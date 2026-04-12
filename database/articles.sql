@@ -6,7 +6,7 @@ CREATE TABLE articles (
     excerpt TEXT COMMENT '文章摘要',
     content TEXT COMMENT '文章完整内容',
     image VARCHAR(255) COMMENT '文章特色图片URL',
-    author VARCHAR(100) DEFAULT 'Admin' COMMENT '文章作者',
+    author VARCHAR(100) DEFAULT 'Random Glow' COMMENT '文章作者',
     read_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '阅读次数',
     category VARCHAR(100) COMMENT '文章分类',
     tags JSON COMMENT '文章标签 (JSON 数组)',

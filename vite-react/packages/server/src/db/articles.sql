@@ -52,7 +52,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   '2024-02-15 10:00:00',
   '技术',
   '/src/assets/img/article/article1.jpg',
-  'TAO',
+  "Random Glow",
   10
 ); 
 -- 记录1: Vue.js 性能优化专题
@@ -71,7 +71,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   '2024-03-02 14:30:00',
   '技术',
   '/src/assets/article1.jpg',
-  'TAO',
+  "Random Glow",
   28
 );
 
@@ -91,7 +91,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   '2024-03-05 09:15:00',
   '技术',
   '/src/assets/article1.jpg',
-  'TAO',
+  "Random Glow",
   45
 );
 
@@ -111,7 +111,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   '2024-03-08 16:20:00',
   '技术',
   '/src/assets/article1.jpg',
-  'TAO',
+  "Random Glow",
   33
 );
 

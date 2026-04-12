@@ -97,7 +97,7 @@ const AboutContent: FC = () => {
   return (
     <>
       <SEO 
-        title="装备库 | TAO" 
+        title="装备库 | Random Glow" 
         description="前端开发工程师的日常开发环境、硬件设备与软件工具推荐。" 
       />
       <div className="about-container animated">

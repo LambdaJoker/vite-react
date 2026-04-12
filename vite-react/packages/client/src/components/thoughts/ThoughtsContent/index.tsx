@@ -30,7 +30,7 @@ const ThoughtsContent: FC = () => {
   return (
     <>
       <SEO 
-        title="观点与思考 | TAO" 
+        title="观点与思考 | Random Glow" 
         description="记录我在软件开发、架构设计以及个人成长过程中的思考与沉淀。" 
       />
       <div className={`thoughts-container ${isAnimated ? 'animated' : ''}`}>

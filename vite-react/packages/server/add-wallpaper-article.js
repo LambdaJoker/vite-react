@@ -46,7 +46,7 @@ async function insertArticle() {
       '哲风壁纸 (HaoWallpaper) 爬取与展示',
       '写了一个简单的 Node.js 爬虫，抓取了哲风壁纸首页的高清图片，快来体验文章内的魔法预览功能吧！',
       articleContent,
-      'Admin',
+      'Random Glow',
       '技术分享',
       JSON.stringify(['爬虫', 'Node.js', '壁纸']),
     ];

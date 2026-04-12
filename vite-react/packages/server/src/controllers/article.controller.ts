@@ -1,6 +1,6 @@
 /*
- * @Author: taotao
- * @LastEditors: taotao
+ * @Author: Random Glow
+ * @LastEditors: Random Glow
  * @Description: Do not edit
  * @Date: 2025-04-28 20:45:53
  * @LastEditTime: 2025-06-18 23:48:06
@@ -41,7 +41,7 @@ export const createArticle: RequestHandler = async (req, res) => {
         // 将逗号分隔的标签字符串转为 JSON 字符串数组存储
         tags: JSON.stringify(tags.split(',').map((tag: string) => tag.trim())),
         image: imagePath,
-        author: 'Admin', // 你可以根据需要修改为动态获取
+        author: 'Random Glow', // 你可以根据需要修改为动态获取
         date: new Date(),
         read_count: 0,
       }
