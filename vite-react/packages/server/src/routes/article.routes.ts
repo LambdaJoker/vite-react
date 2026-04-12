@@ -11,7 +11,12 @@ import {
   getArticle,
   createArticle,
   updateArticle,
-  deleteArticle
+  deleteArticle,
+  likeArticle,
+  getComments,
+  addComment,
+  deleteComment,
+  likeComment
 } from '../controllers/article.controller';
 import { upload } from '../middleware/multer.middleware'; // 引入 multer 中间件
 
@@ -31,5 +36,20 @@ router.put('/:id', upload.single('image'), updateArticle);
 
 // 删除文章
 router.delete('/:id', deleteArticle);
+
+// 点赞文章
+router.post('/:id/like', likeArticle);
+
+// 获取文章评论
+router.get('/:id/comments', getComments);
+
+// 添加文章评论
+router.post('/:id/comments', addComment);
+
+// 删除评论
+router.delete('/comments/:commentId', deleteComment);
+
+// 点赞评论
+router.post('/comments/:commentId/like', likeComment);
 
 export default router; 

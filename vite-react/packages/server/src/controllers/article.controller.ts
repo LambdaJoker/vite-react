@@ -214,6 +214,11 @@ export const getArticles: RequestHandler = async (req, res) => {
       orderBy: {
         date: 'desc',
       },
+      include: {
+        _count: {
+          select: { comments: true }
+        }
+      }
     });
 
 
@@ -232,12 +237,108 @@ export const getArticles: RequestHandler = async (req, res) => {
         date: article.date.toISOString().split('T')[0],
         // 如果 tags 是 JSON 字符串，需要解析
         tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
+        comment_count: article._count.comments,
+        _count: undefined
       };
     });
 
     res.json(formattedArticles);
   } catch (error) {
     console.error('❌ [SERVER] 获取文章列表失败:', error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+}; 
+
+// 点赞文章
+export const likeArticle: RequestHandler = async (req, res) => {
+  const articleId = parseInt(req.params.id as string, 10);
+
+  try {
+    const updatedArticle = await prisma.articles.update({
+      where: { id: articleId },
+      data: {
+        likes: {
+          increment: 1,
+        },
+      },
+    });
+
+    res.json({ likes: updatedArticle.likes });
+  } catch (error) {
+    console.error(`点赞文章 #${articleId} 失败:`, error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+};
+
+// 获取文章评论
+export const getComments: RequestHandler = async (req, res) => {
+  const articleId = parseInt(req.params.id as string, 10);
+
+  try {
+    const comments = await prisma.comments.findMany({
+      where: { article_id: articleId },
+      orderBy: { created_at: 'asc' }, // 改为按时间正序，更符合带回复的评论流
+    });
+
+    res.json(comments);
+  } catch (error) {
+    console.error(`获取文章 #${articleId} 评论失败:`, error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+};
+
+// 发表评论
+export const addComment: RequestHandler = async (req, res) => {
+  const articleId = parseInt(req.params.id as string, 10);
+  const { content, author, parent_id } = req.body;
+
+  if (!content || !author) {
+    res.status(400).json({ message: '评论内容和作者不能为空' });
+    return;
+  }
+
+  try {
+    const newComment = await prisma.comments.create({
+      data: {
+        content,
+        author,
+        article_id: articleId,
+        parent_id: parent_id ? parseInt(parent_id, 10) : null,
+      },
+    });
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error(`为文章 #${articleId} 发表评论失败:`, error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+};
+
+// 删除评论
+export const deleteComment: RequestHandler = async (req, res) => {
+  const commentId = parseInt(req.params.commentId as string, 10);
+  try {
+    await prisma.comments.delete({
+      where: { id: commentId }
+    });
+    res.json({ message: '评论已删除' });
+  } catch (error) {
+    console.error(`删除评论 #${commentId} 失败:`, error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+};
+
+// 点赞评论
+export const likeComment: RequestHandler = async (req, res) => {
+  const commentId = parseInt(req.params.commentId as string, 10);
+  try {
+    const comment = await prisma.comments.update({
+      where: { id: commentId },
+      data: { likes: { increment: 1 } }
+    });
+    res.json(comment);
+  } catch (error) {
+    console.error(`点赞评论 #${commentId} 失败:`, error);
     res.status(500).json({ message: '服务器错误' });
   }
 }; 

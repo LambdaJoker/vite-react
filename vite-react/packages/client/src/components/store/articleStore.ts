@@ -3,6 +3,16 @@ import apiClient from '../../api/apiClient'; // 确认路径为 ../../api/apiCli
 
 // 定义文章和 Store 的类型
 // 合并后的 Article 类型
+export interface Comment {
+  id: number;
+  content: string;
+  author: string;
+  article_id: number;
+  created_at: string;
+  likes: number;
+  parent_id: number | null;
+}
+
 export interface Article {
   id: number;
   title: string;
@@ -12,6 +22,8 @@ export interface Article {
   category: string;
   image: string;
   read_count: number;
+  likes: number;
+  comment_count?: number;
   author: string;
   tags: string[];
 }
@@ -19,6 +31,7 @@ export interface Article {
 interface ArticleState {
   articles: Article[];
   currentArticle: Article | null;
+  comments: Comment[];
   isLoading: boolean;
   error: string | null;
   fetchArticles: () => Promise<void>;
@@ -27,12 +40,18 @@ interface ArticleState {
   updateArticle: (id: string, articleData: FormData) => Promise<Article | undefined>;
   deleteArticle: (id: string) => Promise<void>;
   clearCurrentArticle: () => void;
+  likeArticle: (id: string) => Promise<void>;
+  fetchComments: (id: string) => Promise<void>;
+  addComment: (id: string, content: string, author: string, parent_id?: number) => Promise<void>;
+  deleteComment: (commentId: number) => Promise<void>;
+  likeComment: (commentId: number) => Promise<void>;
 }
 
 // 创建 Store
 const useArticleStore = create<ArticleState>((set) => ({
   articles: [],
   currentArticle: null,
+  comments: [],
   isLoading: false,
   error: null,
 
@@ -134,8 +153,64 @@ const useArticleStore = create<ArticleState>((set) => ({
     }
   },
 
+  likeArticle: async (id: string) => {
+    try {
+      const response = await apiClient.post<{ likes: number }>(`/articles/${id}/like`);
+      set((state) => ({
+        currentArticle: state.currentArticle ? { ...state.currentArticle, likes: response.data.likes } : null,
+        articles: state.articles.map(a => a.id.toString() === id ? { ...a, likes: response.data.likes } : a)
+      }));
+    } catch (err: any) {
+      console.error('点赞失败', err);
+    }
+  },
+
+  fetchComments: async (id: string) => {
+    try {
+      const response = await apiClient.get<Comment[]>(`/articles/${id}/comments`);
+      set({ comments: response.data });
+    } catch (err: any) {
+      console.error('获取评论失败', err);
+    }
+  },
+
+  addComment: async (id: string, content: string, author: string, parent_id?: number) => {
+    try {
+      const response = await apiClient.post<Comment>(`/articles/${id}/comments`, { content, author, parent_id });
+      set((state) => ({
+        comments: [...state.comments, response.data] // 追加到后面，因为我们改成了 asc 排序
+      }));
+    } catch (err: any) {
+      console.error('添加评论失败', err);
+      throw err;
+    }
+  },
+
+  deleteComment: async (commentId: number) => {
+    try {
+      await apiClient.delete(`/articles/comments/${commentId}`);
+      set((state) => ({
+        comments: state.comments.filter((c) => c.id !== commentId && c.parent_id !== commentId)
+      }));
+    } catch (err: any) {
+      console.error('删除评论失败', err);
+      throw err;
+    }
+  },
+
+  likeComment: async (commentId: number) => {
+    try {
+      const response = await apiClient.post<Comment>(`/articles/comments/${commentId}/like`);
+      set((state) => ({
+        comments: state.comments.map((c) => (c.id === commentId ? { ...c, likes: response.data.likes } : c))
+      }));
+    } catch (err: any) {
+      console.error('点赞评论失败', err);
+    }
+  },
+
   clearCurrentArticle: () => {
-    set({ currentArticle: null });
+    set({ currentArticle: null, comments: [] });
   }
 }));
 

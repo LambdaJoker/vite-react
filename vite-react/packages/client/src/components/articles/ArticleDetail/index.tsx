@@ -12,7 +12,7 @@
  * @Date: 2025-04-28 20:45:53
  * @LastEditTime: 2025-06-18 23:07:40
  */
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import useArticleStore from '../../store/articleStore'; // 修正路径
 import useAppStore from '../../store/appStore'; // 修正路径
@@ -22,6 +22,7 @@ import 'github-markdown-css/github-markdown.css';
 import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
 import { getImageUrl } from '../../../utils/helpers';
+import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
 
 const ArticleDetail: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,22 +30,40 @@ const ArticleDetail: FC = () => {
   const { isReadOnly } = useAppStore(); // 获取只读状态
   const {
     currentArticle: article,
+    comments,
     isLoading,
     error,
     fetchArticle,
     deleteArticle,
     clearCurrentArticle,
+    likeArticle,
+    fetchComments,
+    addComment,
+    deleteComment,
+    likeComment
   } = useArticleStore();
+
+  const [hasLiked, setHasLiked] = useState(false);
+  const [commentContent, setCommentContent] = useState('');
+  const [commentAuthor, setCommentAuthor] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [replyTo, setReplyTo] = useState<{ id: number; author: string } | null>(null);
 
   useEffect(() => {
     if (id) {
       fetchArticle(id);
+      fetchComments(id);
+      // 检查本地存储中是否已经点过赞
+      const liked = localStorage.getItem(`liked_article_${id}`);
+      if (liked) {
+        setHasLiked(true);
+      }
     }
     // 组件卸载时清除当前文章数据
     return () => {
       clearCurrentArticle();
     };
-  }, [id, fetchArticle, clearCurrentArticle]);
+  }, [id, fetchArticle, fetchComments, clearCurrentArticle]);
 
   const handleDelete = async () => {
     if (id && window.confirm('你确定要删除这篇文章吗？')) {
@@ -52,6 +71,55 @@ const ArticleDetail: FC = () => {
       navigate('/articles');
     }
   };
+
+  const handleLike = async () => {
+    if (id && !hasLiked) {
+      await likeArticle(id);
+      setHasLiked(true);
+      localStorage.setItem(`liked_article_${id}`, 'true');
+    }
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !commentContent.trim() || !commentAuthor.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await addComment(id, commentContent, commentAuthor, replyTo?.id);
+      setCommentContent('');
+      setReplyTo(null);
+      // 可选：保留作者名以便下次评论
+    } catch (err) {
+      alert('评论失败，请稍后重试');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm('确定要删除这条评论吗？')) {
+      try {
+        await deleteComment(commentId);
+      } catch (error) {
+        alert('删除评论失败');
+      }
+    }
+  };
+
+  const handleLikeComment = async (commentId: number) => {
+    const liked = localStorage.getItem(`liked_comment_${commentId}`);
+    if (!liked) {
+      await likeComment(commentId);
+      localStorage.setItem(`liked_comment_${commentId}`, 'true');
+    }
+  };
+
+  // 组织评论树结构
+  const commentTree = comments.filter(c => !c.parent_id).map(c => ({
+    ...c,
+    replies: comments.filter(reply => reply.parent_id === c.id)
+  }));
 
   if (isLoading) {
     return (
@@ -117,6 +185,118 @@ const ArticleDetail: FC = () => {
             </div>
           )}
         </div>
+
+        {/* 评论区 */}
+        <div className="comments-section">
+          <h3>评论 ({comments.length})</h3>
+          
+          {/* 评论列表 */}
+          <div className="comments-list">
+            {commentTree.length > 0 ? (
+              commentTree.map((comment) => (
+                <div key={comment.id} className="comment-item">
+                  <div className="comment-header">
+                    <span className="comment-author">{comment.author}</span>
+                    <span className="comment-date">
+                      {new Date(comment.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="comment-content">{comment.content}</div>
+                  <div className="comment-actions">
+                    <button 
+                      className="comment-action-btn"
+                      onClick={() => handleLikeComment(comment.id)}
+                    >
+                      <FaHeart className={localStorage.getItem(`liked_comment_${comment.id}`) ? 'liked' : ''} /> 
+                      {comment.likes > 0 && <span>{comment.likes}</span>}
+                    </button>
+                    <button 
+                      className="comment-action-btn"
+                      onClick={() => setReplyTo({ id: comment.id, author: comment.author })}
+                    >
+                      回复
+                    </button>
+                    {!isReadOnly && (
+                      <button 
+                        className="comment-action-btn delete"
+                        onClick={() => handleDeleteComment(comment.id)}
+                      >
+                        删除
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 回复列表 */}
+                  {comment.replies.length > 0 && (
+                    <div className="comment-replies">
+                      {comment.replies.map(reply => (
+                        <div key={reply.id} className="reply-item">
+                          <div className="comment-header">
+                            <span className="comment-author">{reply.author}</span>
+                            <span className="reply-badge">回复了 {comment.author}</span>
+                            <span className="comment-date">
+                              {new Date(reply.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="comment-content">{reply.content}</div>
+                          <div className="comment-actions">
+                            <button 
+                              className="comment-action-btn"
+                              onClick={() => handleLikeComment(reply.id)}
+                            >
+                              <FaHeart className={localStorage.getItem(`liked_comment_${reply.id}`) ? 'liked' : ''} /> 
+                              {reply.likes > 0 && <span>{reply.likes}</span>}
+                            </button>
+                            {!isReadOnly && (
+                              <button 
+                                className="comment-action-btn delete"
+                                onClick={() => handleDeleteComment(reply.id)}
+                              >
+                                删除
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="no-comments">暂无评论，快来抢沙发吧！</div>
+            )}
+          </div>
+
+          {/* 评论表单 */}
+          <form className="comment-form" onSubmit={handleCommentSubmit}>
+            {replyTo && (
+              <div className="reply-to-banner">
+                <span>回复 @{replyTo.author}</span>
+                <button type="button" onClick={() => setReplyTo(null)}>取消回复</button>
+              </div>
+            )}
+            <input
+              type="text"
+              placeholder="你的昵称"
+              value={commentAuthor}
+              onChange={(e) => setCommentAuthor(e.target.value)}
+              required
+              className="comment-input"
+            />
+            <textarea
+              placeholder={replyTo ? "写下你的回复..." : "写下你的评论..."}
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              required
+              className="comment-textarea"
+              rows={4}
+            />
+            <button type="submit" disabled={isSubmitting} className="comment-submit-btn">
+              {isSubmitting ? '提交中...' : '发表评论'}
+            </button>
+          </form>
+        </div>
+
       </div>
     </>
   );
