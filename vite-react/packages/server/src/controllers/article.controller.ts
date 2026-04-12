@@ -7,8 +7,7 @@
  */
 import { Request, Response, RequestHandler } from 'express';
 import { PrismaClient } from '../generated/prisma';
-import path from 'path';
-import fs from 'fs';
+import { put, del } from '@vercel/blob';
 
 const prisma = new PrismaClient();
 
@@ -16,9 +15,21 @@ const prisma = new PrismaClient();
 export const createArticle: RequestHandler = async (req, res) => {
   const { title, content, category, tags } = req.body;
 
-  // 从 multer 中间件获取上传的文件信息
-  // 在 Vercel 环境下，我们使用 memoryStorage，没有 filename，此时直接忽略图片上传
-  const imagePath = req.file && req.file.filename ? `/uploads/${req.file.filename}` : null;
+  let imagePath = null;
+
+  // 上传图片到 Vercel Blob
+  if (req.file) {
+    try {
+      const blob = await put(req.file.originalname, req.file.buffer, {
+        access: 'public',
+      });
+      imagePath = blob.url;
+    } catch (uploadError) {
+      console.error('图片上传失败:', uploadError);
+      res.status(500).json({ message: '图片上传失败' });
+      return;
+    }
+  }
 
   try {
     const newArticle = await prisma.articles.create({
@@ -66,16 +77,23 @@ export const updateArticle: RequestHandler = async (req, res) => {
 
     let imagePath = existingArticle.image; // 默认使用旧图片
 
-    // 如果有新文件上传并且不是在 Vercel 环境下（有 filename），则替换旧图片
-    if (req.file && req.file.filename) {
-      // 删除旧图片文件（如果存在）
-      if (existingArticle.image) {
-        const oldImagePath = path.join(__dirname, '../../public', existingArticle.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+    // 如果有新文件上传，上传到 Vercel Blob 并删除旧图片
+    if (req.file) {
+      try {
+        const blob = await put(req.file.originalname, req.file.buffer, {
+          access: 'public',
+        });
+        imagePath = blob.url;
+
+        // 尝试删除旧图片
+        if (existingArticle.image && existingArticle.image.includes('vercel-storage.com')) {
+          await del(existingArticle.image);
         }
+      } catch (uploadError) {
+        console.error('图片更新失败:', uploadError);
+        res.status(500).json({ message: '图片更新失败' });
+        return;
       }
-      imagePath = `/uploads/${req.file.filename}`;
     }
 
     const updatedArticleData = await prisma.articles.update({
@@ -113,12 +131,12 @@ export const deleteArticle: RequestHandler = async (req, res) => {
     });
 
     if (articleToDelete && articleToDelete.image) {
-      // 在 Vercel 环境下，不要尝试删除不存在的文件（也没有权限）
-      if (process.env.VERCEL !== '1') {
-        const imagePath = path.join(__dirname, '../../public', articleToDelete.image);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
+      try {
+        if (articleToDelete.image.includes('vercel-storage.com')) {
+          await del(articleToDelete.image);
         }
+      } catch (deleteError) {
+        console.error('删除旧图片失败:', deleteError);
       }
     }
 

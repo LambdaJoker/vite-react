@@ -13,20 +13,8 @@ if (!isVercel && !fs.existsSync(uploadDir)) {
 }
 
 // 定义文件的存储方式
-// 如果是 Vercel 环境，因为它是只读系统（除了 /tmp），我们使用内存存储
-const storage = isVercel 
-  ? multer.memoryStorage()
-  : multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, uploadDir);
-      },
-      filename: function (req, file, cb) {
-        // 创建一个唯一的文件名
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const extension = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + extension);
-      }
-    });
+// 不管是不是 Vercel，统一使用内存存储，然后由 controller 上传到 Vercel Blob
+const storage = multer.memoryStorage();
 
 // 文件类型过滤器
 const fileFilter = (req: any, file: any, cb: any) => {
