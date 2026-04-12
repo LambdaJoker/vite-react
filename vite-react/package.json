@@ -2,11 +2,11 @@
   "name": "my-blog-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter client dev",
+    "dev": "pnpm --filter vite-react dev",
     "dev:server": "pnpm --filter server start",
     "dev:full": "pnpm --parallel --stream run /^dev/",
-    "build": "pnpm --filter server db:init && pnpm --filter client build",
-    "vercel-build": "pnpm --filter client build",
+    "build": "pnpm --filter server db:init && pnpm --filter vite-react build",
+    "vercel-build": "pnpm --filter vite-react build",
     "postinstall": "pnpm --filter server run prisma:generate"
   },
   "devDependencies": {
