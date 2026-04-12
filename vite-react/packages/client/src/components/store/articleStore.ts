@@ -13,6 +13,11 @@ export interface Comment {
   parent_id: number | null;
 }
 
+export interface ArticleNav {
+  id: number;
+  title: string;
+}
+
 export interface Article {
   id: number;
   title: string;
@@ -26,6 +31,8 @@ export interface Article {
   comment_count?: number;
   author: string;
   tags: string[];
+  prevArticle?: ArticleNav | null;
+  nextArticle?: ArticleNav | null;
 }
 
 interface ArticleState {

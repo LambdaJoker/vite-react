@@ -220,6 +220,36 @@ const ArticleDetail: FC = () => {
           )}
         </div>
 
+        {/* 文章底部导航 */}
+        <div className="article-navigation">
+          <div className="nav-item prev">
+            {article.prevArticle ? (
+              <Link to={`/articles/${article.prevArticle.id}`} className="nav-link">
+                <span className="nav-label">← 上一篇</span>
+                <span className="nav-title">{article.prevArticle.title}</span>
+              </Link>
+            ) : (
+              <div className="nav-empty">
+                <span className="nav-label">← 上一篇</span>
+                <span className="nav-title">已经是第一篇了</span>
+              </div>
+            )}
+          </div>
+          <div className="nav-item next">
+            {article.nextArticle ? (
+              <Link to={`/articles/${article.nextArticle.id}`} className="nav-link">
+                <span className="nav-label">下一篇 →</span>
+                <span className="nav-title">{article.nextArticle.title}</span>
+              </Link>
+            ) : (
+              <div className="nav-empty">
+                <span className="nav-label">下一篇 →</span>
+                <span className="nav-title">已经是最后一篇了</span>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* 评论区 */}
         <div className="comments-section">
           <h3>评论 ({comments.length})</h3>

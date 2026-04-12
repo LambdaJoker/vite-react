@@ -21,6 +21,7 @@ const HomePage = lazy(() => import('./components/home/HomePage'));
 const ArticleList = lazy(() => import('./components/articles/ArticleList'));
 const ArticleDetail = lazy(() => import('./components/articles/ArticleDetail'));
 const ArticleForm = lazy(() => import('./components/articles/ArticleForm'));
+const Archive = lazy(() => import('./components/articles/Archive'));
 const ProjectsContent = lazy(() => import('./components/projects/ProjectsContent'));
 const BookmarksContent = lazy(() => import('./components/bookmarks/BookmarksContent'));
 const ThoughtsContent = lazy(() => import('./components/thoughts/ThoughtsContent'));
@@ -78,6 +79,14 @@ const App: React.FC = () => {
                     element={
                       <AnimatedRoute>
                         <ArticleDetail />
+                      </AnimatedRoute>
+                    }
+                  />
+                  <Route
+                    path="/archive"
+                    element={
+                      <AnimatedRoute>
+                        <Archive />
                       </AnimatedRoute>
                     }
                   />

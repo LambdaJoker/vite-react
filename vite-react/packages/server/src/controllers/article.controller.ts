@@ -195,7 +195,29 @@ export const getArticle: RequestHandler = async (req, res) => {
       tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
     };
 
-    res.json(formattedArticle);
+    // 获取上一篇和下一篇文章的快捷导航信息 (只取 id 和 title)
+    // 假设按照 date 倒序排列（最新发布的在最前），那么“上一篇”是日期更新的，“下一篇”是日期更旧的
+    const prevArticle = await prisma.articles.findFirst({
+      where: {
+        date: { gt: article.date }
+      },
+      orderBy: { date: 'asc' }, // 找到所有比当前新的里面最旧的一个
+      select: { id: true, title: true }
+    });
+
+    const nextArticle = await prisma.articles.findFirst({
+      where: {
+        date: { lt: article.date }
+      },
+      orderBy: { date: 'desc' }, // 找到所有比当前旧的里面最新的一个
+      select: { id: true, title: true }
+    });
+
+    res.json({
+      ...formattedArticle,
+      prevArticle,
+      nextArticle
+    });
   } catch (error) {
     console.error(`获取文章 #${articleId} 失败:`, error);
     // Prisma 会在找不到记录时抛出特定错误

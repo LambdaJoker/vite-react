@@ -23,6 +23,7 @@ const ArticleList: FC = () => {
   const { isReadOnly } = useAppStore(); // 获取只读状态
 
   const [activeCategory, setActiveCategory] = useState<string>("全部");
+  const [activeTag, setActiveTag] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAnimated, setIsAnimated] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
@@ -39,14 +40,21 @@ const ArticleList: FC = () => {
   // 计算可用的分类
   const categories = useMemo(() => ["全部", ...new Set(articles.map(article => article.category))], [articles]);
 
+  // 计算可用的标签
+  const tags = useMemo(() => {
+    const allTags = articles.flatMap(article => article.tags || []);
+    return [...new Set(allTags)];
+  }, [articles]);
+
   const filteredArticles = useMemo(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
     return articles
       .filter(article => {
         const matchesCategory = activeCategory === "全部" || article.category === activeCategory;
+        const matchesTag = activeTag === "" || (article.tags && article.tags.includes(activeTag));
         const matchesSearch = article.title.toLowerCase().includes(lowerSearchTerm) ||
           (article.excerpt || '').toLowerCase().includes(lowerSearchTerm);
-        return matchesCategory && matchesSearch;
+        return matchesCategory && matchesTag && matchesSearch;
       })
       .sort((a, b) => {
         if (sortBy === 'date') {
@@ -132,6 +140,25 @@ const ArticleList: FC = () => {
             </button>
           ))}
         </div>
+        {tags.length > 0 && (
+          <div className="tag-filter">
+            <button
+              className={`tag-button ${activeTag === "" ? 'active' : ''}`}
+              onClick={() => setActiveTag("")}
+            >
+              全部标签
+            </button>
+            {tags.map(tag => (
+              <button
+                key={tag}
+                className={`tag-button ${activeTag === tag ? 'active' : ''}`}
+                onClick={() => setActiveTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="filter-options">
           <div className="sort-options">
             <span>排序方式：</span>
