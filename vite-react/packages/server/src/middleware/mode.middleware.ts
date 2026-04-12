@@ -11,6 +11,15 @@ export const readOnlyMiddleware: RequestHandler = (req, res, next) => {
     return next();
   }
 
+  // 允许所有用户（即使在只读模式下）进行评论和点赞操作
+  const path = req.originalUrl || req.path;
+  const isCommentOrLike = path.includes('/comments') || path.includes('/like');
+  
+  // 只允许 POST 请求（点赞和发表评论），删除操作（DELETE）仍受只读模式保护
+  if (isCommentOrLike && req.method === 'POST') {
+    return next();
+  }
+
   // Check for development mode for state-changing methods
   if (process.env.APP_MODE !== 'development') {
     res.status(403).json({

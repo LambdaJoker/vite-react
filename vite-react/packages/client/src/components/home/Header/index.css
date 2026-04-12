@@ -4,12 +4,7 @@
 
 }
 
-/* 设定 body 基础样式 */
-body {
-  font-family: Arial, sans-serif;
-  padding-top: 50px;
-  /* 为了避免内容被 header 遮挡 */
-}
+/* 移除过时的 body padding，防止干扰全局布局 */
 
 /* 让 header 固定在页面的顶部 */
 .header {

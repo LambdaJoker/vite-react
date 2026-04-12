@@ -53,8 +53,8 @@
 }
 
 .main-content {
-  margin-top: 60px;
-  /* 根据新的 header 高度调整 */
+  padding-top: 60px;
+  /* 根据新的 header 高度调整，使用 padding-top 避免外边距合并导致页面顶部贴紧 Header */
   min-height: calc(100vh - 60px);
 }
 
