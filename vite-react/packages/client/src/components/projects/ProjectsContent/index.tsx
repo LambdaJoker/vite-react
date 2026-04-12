@@ -16,7 +16,7 @@ import { FC, useState, useEffect, useMemo } from 'react';
 import './index.css';
 import SEO from '../../common/SEO';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
-import LazyImage from '../../lazyImage';
+import ProjectCard from '../ProjectCard';
 import { Project } from '../types';
 import { projects } from '../data';
 
@@ -190,53 +190,7 @@ const ProjectsContent: FC = () => {
         {/* 项目卡片网格 */}
         <div className="projects-grid">
           {filteredProjects.map(project => (
-            <div key={project.id} className="project-card">
-              <div className="project-image">
-                <LazyImage src={project.image} alt={project.title} />
-                <div className="project-category">{project.category}</div>
-              </div>
-              {/* 项目详细内容 */}
-              <div className="project-content">
-                {/* 项目标题和时间 */}
-                <div className="project-header">
-                  <h3>{project.title}</h3>
-                  <span className="project-period">{project.period}</span>
-                </div>
-                <p className="project-description">{project.description}</p>
-                {/* 担任角色标签 */}
-                <div className="project-role">
-                  <span className="role-badge">{project.role}</span>
-                </div>
-                {/* 项目亮点列表 */}
-                <div className="project-highlights">
-                  <h4>项目亮点:</h4>
-                  <ul>
-                    {project.highlights.map((highlight, index) => (
-                      <li key={index}>{highlight}</li>
-                    ))}
-                  </ul>
-                </div>
-                {/* 技术标签列表 */}
-                <div className="project-tech">
-                  {project.technologies.map((tech, index) => (
-                    <span key={index} className="tech-tag">{tech}</span>
-                  ))}
-                </div>
-                {/* 项目链接 */}
-                <div className="project-links">
-                  {project.demoUrl && (
-                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="project-link demo">
-                      查看演示
-                    </a>
-                  )}
-                  {project.githubUrl && (
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link github">
-                      源代码
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
 

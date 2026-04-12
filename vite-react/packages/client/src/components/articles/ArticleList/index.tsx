@@ -9,13 +9,10 @@ import { FC, useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import SkeletonLoader from '../../skeletonLoader';
-import LazyImage from '../../lazyImage';
 import useArticleStore, { type Article } from '../../store/articleStore'; // 修正为 type-only 导入
 import useAppStore from '../../store/appStore'; // 修正路径
 import ScrollToTopButton from '../../common/ScrollToTopButton'; // 引入新组件
-import { getImageUrl } from '../../../utils/helpers';
-
-import MarkdownRenderer from '../../common/MarkdownRenderer';
+import ArticleCard from '../ArticleCard'; // 引入提取出的独立卡片组件
 
 const ArticleList: FC = () => {
   // 从 Zustand store 中获取状态和 action
@@ -176,37 +173,7 @@ const ArticleList: FC = () => {
 
       <div className="articles-grid">
         {filteredArticles.map(article => (
-          <div key={article.id} className="article-card">
-            <div className="article-image">
-              <LazyImage 
-                src={getImageUrl(article.image)} 
-                alt={article.title} 
-                className="article-cover-img"
-              />
-              <div className="article-category">{article.category}</div>
-            </div>
-            <div className="article-content">
-              <div className="article-meta">
-                <span className="article-date">{article.date}</span>
-                <span className="article-author">{article.author}</span>
-                <span className="read-count">{article.read_count} 次阅读</span>
-              </div>
-              <h2>{article.title}</h2>
-              <div className="article-excerpt markdown-preview">
-                <MarkdownRenderer>{article.excerpt || ''}</MarkdownRenderer>
-              </div>
-              {article.tags && article.tags.length > 0 && (
-                <div className="article-tags">
-                  {article.tags.map(tag => (
-                    <span key={tag} className="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-              <Link to={`/articles/${article.id}`} className="read-more">
-                阅读更多
-              </Link>
-            </div>
-          </div>
+          <ArticleCard key={article.id} article={article} />
         ))}
       </div>
 

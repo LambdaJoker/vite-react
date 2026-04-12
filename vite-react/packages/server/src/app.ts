@@ -8,6 +8,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet'; // 引入 helmet
+import compression from 'compression'; // 引入 compression
 import path from 'path'; // 引入 path
 import apiRoutes from './routes'; // 引入集中的路由
 import { readOnlyMiddleware } from './middleware/mode.middleware'; // Updated import path
@@ -18,6 +19,7 @@ const app = express();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
+app.use(compression()); // 开启 Gzip 压缩，优化响应体积
 app.use(cors());
 app.use(express.json());
 

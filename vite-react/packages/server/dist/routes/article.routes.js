@@ -24,4 +24,14 @@ router.post('/', multer_middleware_1.upload.single('image'), article_controller_
 router.put('/:id', multer_middleware_1.upload.single('image'), article_controller_1.updateArticle);
 // 删除文章
 router.delete('/:id', article_controller_1.deleteArticle);
+// 点赞文章
+router.post('/:id/like', article_controller_1.likeArticle);
+// 获取文章评论
+router.get('/:id/comments', article_controller_1.getComments);
+// 添加文章评论
+router.post('/:id/comments', article_controller_1.addComment);
+// 删除评论
+router.delete('/comments/:commentId', article_controller_1.deleteComment);
+// 点赞评论
+router.post('/comments/:commentId/like', article_controller_1.likeComment);
 exports.default = router;

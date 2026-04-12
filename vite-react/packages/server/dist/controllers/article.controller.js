@@ -1,24 +1,33 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getArticles = exports.getArticle = exports.deleteArticle = exports.updateArticle = exports.createArticle = void 0;
+exports.likeComment = exports.deleteComment = exports.addComment = exports.getComments = exports.likeArticle = exports.getArticles = exports.getArticle = exports.deleteArticle = exports.updateArticle = exports.createArticle = void 0;
 const prisma_1 = require("../generated/prisma");
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
+const blob_1 = require("@vercel/blob");
 const prisma = new prisma_1.PrismaClient();
 // 创建新文章
 const createArticle = async (req, res) => {
     const { title, content, category, tags } = req.body;
-    // 从 multer 中间件获取上传的文件信息
-    // 在 Vercel 环境下，我们使用 memoryStorage，没有 filename，此时直接忽略图片上传
-    const imagePath = req.file && req.file.filename ? `/uploads/${req.file.filename}` : null;
+    let imagePath = null;
+    // 上传图片到 Vercel Blob
+    if (req.file) {
+        try {
+            const blob = await (0, blob_1.put)(req.file.originalname, req.file.buffer, {
+                access: 'public',
+            });
+            imagePath = blob.url;
+        }
+        catch (uploadError) {
+            console.error('图片上传失败:', uploadError);
+            res.status(500).json({ message: '图片上传失败' });
+            return;
+        }
+    }
     try {
         const newArticle = await prisma.articles.create({
             data: {
                 title,
                 content,
+                excerpt: content ? content.slice(0, 400) : '',
                 category,
                 // 将逗号分隔的标签字符串转为 JSON 字符串数组存储
                 tags: JSON.stringify(tags.split(',').map((tag) => tag.trim())),
@@ -55,22 +64,30 @@ const updateArticle = async (req, res) => {
             return;
         }
         let imagePath = existingArticle.image; // 默认使用旧图片
-        // 如果有新文件上传并且不是在 Vercel 环境下（有 filename），则替换旧图片
-        if (req.file && req.file.filename) {
-            // 删除旧图片文件（如果存在）
-            if (existingArticle.image) {
-                const oldImagePath = path_1.default.join(__dirname, '../../public', existingArticle.image);
-                if (fs_1.default.existsSync(oldImagePath)) {
-                    fs_1.default.unlinkSync(oldImagePath);
+        // 如果有新文件上传，上传到 Vercel Blob 并删除旧图片
+        if (req.file) {
+            try {
+                const blob = await (0, blob_1.put)(req.file.originalname, req.file.buffer, {
+                    access: 'public',
+                });
+                imagePath = blob.url;
+                // 尝试删除旧图片
+                if (existingArticle.image && existingArticle.image.includes('vercel-storage.com')) {
+                    await (0, blob_1.del)(existingArticle.image);
                 }
             }
-            imagePath = `/uploads/${req.file.filename}`;
+            catch (uploadError) {
+                console.error('图片更新失败:', uploadError);
+                res.status(500).json({ message: '图片更新失败' });
+                return;
+            }
         }
         const updatedArticleData = await prisma.articles.update({
             where: { id: articleId },
             data: {
                 title,
                 content,
+                excerpt: content ? content.slice(0, 400) : '',
                 category,
                 tags: JSON.stringify(tags.split(',').map((tag) => tag.trim())),
                 image: imagePath,
@@ -98,12 +115,13 @@ const deleteArticle = async (req, res) => {
             where: { id: articleId },
         });
         if (articleToDelete && articleToDelete.image) {
-            // 在 Vercel 环境下，不要尝试删除不存在的文件（也没有权限）
-            if (process.env.VERCEL !== '1') {
-                const imagePath = path_1.default.join(__dirname, '../../public', articleToDelete.image);
-                if (fs_1.default.existsSync(imagePath)) {
-                    fs_1.default.unlinkSync(imagePath);
+            try {
+                if (articleToDelete.image.includes('vercel-storage.com')) {
+                    await (0, blob_1.del)(articleToDelete.image);
                 }
+            }
+            catch (deleteError) {
+                console.error('删除旧图片失败:', deleteError);
             }
         }
         await prisma.articles.delete({
@@ -127,26 +145,25 @@ const getArticle = async (req, res) => {
     const articleId = parseInt(req.params.id, 10);
     const shouldIncrement = req.query.increment !== 'false';
     try {
-        const article = await prisma.$transaction(async (tx) => {
-            if (shouldIncrement) {
-                // 1. 获取文章，并更新阅读次数
-                const updatedArticle = await tx.articles.update({
-                    where: { id: articleId },
-                    data: {
-                        read_count: {
-                            increment: 1,
-                        },
+        let article;
+        if (shouldIncrement) {
+            // 1. 获取文章，并更新阅读次数
+            // 直接使用 update，因为 update 会返回更新后的完整记录，没必要用 transaction
+            article = await prisma.articles.update({
+                where: { id: articleId },
+                data: {
+                    read_count: {
+                        increment: 1,
                     },
-                });
-                return updatedArticle;
-            }
-            else {
-                const foundArticle = await tx.articles.findUnique({
-                    where: { id: articleId },
-                });
-                return foundArticle;
-            }
-        });
+                },
+            });
+        }
+        else {
+            // 直接使用 findUnique 获取，不更新
+            article = await prisma.articles.findUnique({
+                where: { id: articleId },
+            });
+        }
         if (!article) {
             res.status(404).json({ message: '文章未找到' });
             return;
@@ -158,7 +175,27 @@ const getArticle = async (req, res) => {
             // 如果 tags 是 JSON 字符串，需要解析
             tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
         };
-        res.json(formattedArticle);
+        // 获取上一篇和下一篇文章的快捷导航信息 (只取 id 和 title)
+        // 假设按照 date 倒序排列（最新发布的在最前），那么“上一篇”是日期更新的，“下一篇”是日期更旧的
+        const prevArticle = await prisma.articles.findFirst({
+            where: {
+                date: { gt: article.date }
+            },
+            orderBy: { date: 'asc' }, // 找到所有比当前新的里面最旧的一个
+            select: { id: true, title: true }
+        });
+        const nextArticle = await prisma.articles.findFirst({
+            where: {
+                date: { lt: article.date }
+            },
+            orderBy: { date: 'desc' }, // 找到所有比当前旧的里面最新的一个
+            select: { id: true, title: true }
+        });
+        res.json({
+            ...formattedArticle,
+            prevArticle,
+            nextArticle
+        });
     }
     catch (error) {
         console.error(`获取文章 #${articleId} 失败:`, error);
@@ -174,25 +211,38 @@ exports.getArticle = getArticle;
 // 获取文章列表
 const getArticles = async (req, res) => {
     try {
+        // 使用 select 避免查询全量 content 字段，减少数据传输
         const articles = await prisma.articles.findMany({
             orderBy: {
                 date: 'desc',
             },
-        });
-        // 为每篇文章生成摘要并格式化数据
-        const formattedArticles = articles.map(article => {
-            let excerpt = '';
-            if (article.content) {
-                // 生成包含原始Markdown格式的摘要，截取较长内容让前端处理截断
-                excerpt = article.content.slice(0, 400);
+            select: {
+                id: true,
+                title: true,
+                excerpt: true,
+                image: true,
+                author: true,
+                read_count: true,
+                likes: true,
+                category: true,
+                tags: true,
+                date: true,
+                created_at: true,
+                updated_at: true,
+                _count: {
+                    select: { comments: true }
+                }
             }
+        });
+        // 格式化数据
+        const formattedArticles = articles.map(article => {
             return {
                 ...article,
-                excerpt,
-                content: undefined, // 列表页不返回完整内容
                 date: article.date.toISOString().split('T')[0],
                 // 如果 tags 是 JSON 字符串，需要解析
                 tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
+                comment_count: article._count.comments,
+                _count: undefined
             };
         });
         res.json(formattedArticles);
@@ -203,3 +253,95 @@ const getArticles = async (req, res) => {
     }
 };
 exports.getArticles = getArticles;
+// 点赞文章
+const likeArticle = async (req, res) => {
+    const articleId = parseInt(req.params.id, 10);
+    try {
+        const updatedArticle = await prisma.articles.update({
+            where: { id: articleId },
+            data: {
+                likes: {
+                    increment: 1,
+                },
+            },
+        });
+        res.json({ likes: updatedArticle.likes });
+    }
+    catch (error) {
+        console.error(`点赞文章 #${articleId} 失败:`, error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};
+exports.likeArticle = likeArticle;
+// 获取文章评论
+const getComments = async (req, res) => {
+    const articleId = parseInt(req.params.id, 10);
+    try {
+        const comments = await prisma.comments.findMany({
+            where: { article_id: articleId },
+            orderBy: { created_at: 'asc' }, // 改为按时间正序，更符合带回复的评论流
+        });
+        res.json(comments);
+    }
+    catch (error) {
+        console.error(`获取文章 #${articleId} 评论失败:`, error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};
+exports.getComments = getComments;
+// 发表评论
+const addComment = async (req, res) => {
+    const articleId = parseInt(req.params.id, 10);
+    const { content, author, parent_id } = req.body;
+    if (!content || !author) {
+        res.status(400).json({ message: '评论内容和作者不能为空' });
+        return;
+    }
+    try {
+        const newComment = await prisma.comments.create({
+            data: {
+                content,
+                author,
+                article_id: articleId,
+                parent_id: parent_id ? parseInt(parent_id, 10) : null,
+            },
+        });
+        res.status(201).json(newComment);
+    }
+    catch (error) {
+        console.error(`为文章 #${articleId} 发表评论失败:`, error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};
+exports.addComment = addComment;
+// 删除评论
+const deleteComment = async (req, res) => {
+    const commentId = parseInt(req.params.commentId, 10);
+    try {
+        await prisma.comments.delete({
+            where: { id: commentId }
+        });
+        res.json({ message: '评论已删除' });
+    }
+    catch (error) {
+        console.error(`删除评论 #${commentId} 失败:`, error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};
+exports.deleteComment = deleteComment;
+// 点赞评论
+const likeComment = async (req, res) => {
+    const commentId = parseInt(req.params.commentId, 10);
+    try {
+        const comment = await prisma.comments.update({
+            where: { id: commentId },
+            data: { likes: { increment: 1 } }
+        });
+        res.json(comment);
+    }
+    catch (error) {
+        console.error(`点赞评论 #${commentId} 失败:`, error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};
+exports.likeComment = likeComment;

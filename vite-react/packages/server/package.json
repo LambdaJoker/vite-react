@@ -20,6 +20,7 @@
     "@vercel/blob": "^2.3.3",
     "axios": "^1.13.6",
     "cheerio": "^1.2.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -29,6 +30,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "eslint": "^9.29.0",
