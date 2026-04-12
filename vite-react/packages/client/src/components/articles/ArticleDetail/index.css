@@ -1,5 +1,5 @@
 .article-detail-container {
-  max-width: 900px;
+  max-width: 800px; /* 减小主内容宽度，使其看起来不那么挤 */
   margin: 60px auto 2rem;
   padding: 0 2rem 3rem;
   min-height: calc(100vh - 60px - 5rem);
@@ -102,8 +102,8 @@
 .table-of-contents {
   position: fixed;
   top: 100px;
-  /* 确保在主体 900px 容器右侧，留出 30px 空隙，不再相对于整个屏幕右侧去重叠 */
-  left: calc(50% + 480px);
+  /* 确保在主体 800px 容器右侧，留出 30px 空隙 */
+  left: calc(50% + 430px);
   width: 250px;
   max-height: calc(100vh - 120px);
   overflow-y: auto;
@@ -533,6 +533,11 @@ pre code {
   margin-bottom: 10px;
   word-break: break-word;
   padding-left: 52px; /* 缩进以对齐名字 */
+  text-align: left;
+}
+
+.comment-content * {
+  text-align: left;
 }
 
 /* 如果 Markdown 里有段落，取消底部多余 margin */
