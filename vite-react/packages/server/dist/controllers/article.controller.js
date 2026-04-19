@@ -32,7 +32,7 @@ const createArticle = async (req, res) => {
                 // 将逗号分隔的标签字符串转为 JSON 字符串数组存储
                 tags: JSON.stringify(tags.split(',').map((tag) => tag.trim())),
                 image: imagePath,
-                author: 'Admin', // 你可以根据需要修改为动态获取
+                author: 'Random Glow', // 你可以根据需要修改为动态获取
                 date: new Date(),
                 read_count: 0,
             }
