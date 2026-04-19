@@ -20,8 +20,11 @@ if (fs.existsSync(dataFile)) {
   }
 }
 
+// [保留代码] 以下是实时获取模式 (Scrape Mode) 的核心逻辑
+// 现已通过 WALLPAPER_MODE 环境变量进行控制，不再强制每次启动执行
 export const scrapeWallpapers = async () => {
   // Generate a random page number between 1 and 100 to get diverse wallpapers
+
   // haowallpaper.com/search 页面是 CSR 渲染的，直接请求 HTML 拿不到图片，我们需要修改一下策略
   // 为了过滤露骨内容，我们改为去抓取某些特定的安全分类页面，或者通过其 API 请求
   const randomPage = Math.floor(Math.random() * 50) + 1;
@@ -111,21 +114,37 @@ export const scrapeWallpapers = async () => {
 };
 
 export const getRandomWallpaper = async () => {
-  if (currentWallpapers.length === 0) {
-    if (isVercel) {
-      await scrapeWallpapers();
-    }
+  const mode = process.env.WALLPAPER_MODE || 'local'; // 可选值: 'scrape' | 'local' | 'video'
+
+  // 1. Video 模式 (vedio模式)
+  if (mode === 'video') {
+    // 如果是 video 模式，这里返回一个默认视频地址，或者从数据库中随机挑选一个视频
+    // 注意：如果您的前端在 assets 中有 bg-video.mp4，这里可以返回可以访问的网络视频链接，或者通知前端
+    // 这里我们返回一个常见的免费 mp4 作为示例，你可以换成自己的
+    return 'https://media.w3.org/2010/05/sintel/trailer.mp4'; 
+  }
+
+  // 2. 实时获取模式 (实时抓取模式)
+  if (mode === 'scrape') {
     if (currentWallpapers.length === 0) {
-      // Default fallback - Use previewFileImg for higher quality
-      return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
+      if (isVercel) {
+        await scrapeWallpapers();
+      }
     }
+  }
+
+  // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
+  if (currentWallpapers.length === 0) {
+    // Default fallback - Use previewFileImg for higher quality
+    return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
   }
   const randomIndex = Math.floor(Math.random() * currentWallpapers.length);
   return currentWallpapers[randomIndex];
 };
 
 export const getAllWallpapers = async () => {
-  if (currentWallpapers.length === 0 && isVercel) {
+  const mode = process.env.WALLPAPER_MODE || 'local';
+  if (mode === 'scrape' && currentWallpapers.length === 0 && isVercel) {
     await scrapeWallpapers();
   }
   return currentWallpapers;

@@ -63,10 +63,25 @@ const DynamicBackground: FC = () => {
         </div>
       ) : (
         bgUrl && (
-          <div 
-            className="dynamic-background image-background"
-            style={{ backgroundImage: `url(${bgUrl})` }}
-          />
+          bgUrl.endsWith('.mp4') || bgUrl.endsWith('.webm') ? (
+            <div className="dynamic-background video-background">
+              <video 
+                key={bgUrl} /* 使用 key 强制重新渲染 video 元素加载新源 */
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="bg-video"
+              >
+                <source src={bgUrl} type="video/mp4" />
+              </video>
+            </div>
+          ) : (
+            <div 
+              className="dynamic-background image-background"
+              style={{ backgroundImage: `url(${bgUrl})` }}
+            />
+          )
         )
       )}
     </>
