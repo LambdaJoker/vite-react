@@ -127,10 +127,9 @@ export const getRandomWallpaper = async () => {
   const mode = process.env.WALLPAPER_MODE || 'local'; // 可选值: 'scrape' | 'local' | 'video'
 
   // 1. Video 模式 (vedio模式)
-  if (mode === 'video') {
-    // 这里返回刚刚上传到 public/uploads 目录中的视频地址
-    // 前端会拼接 VITE_API_BASE_URL，所以我们只返回相对路径 /uploads/bg-video.mp4
-    return '/uploads/bg-video.mp4'; 
+  if (mode === 'video' || mode === 'vedio') { // 兼容拼写错误
+    // 视频文件已放置在前端 public 目录下，以避开 Vercel Serverless 的体积限制
+    return '/bg-video.mp4'; 
   }
 
   // 2. 实时获取模式 (实时抓取模式)

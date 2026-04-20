@@ -19,9 +19,9 @@ const DynamicBackground: FC = () => {
       const res = await fetch(`${baseUrl}/api/wallpapers/random?t=${Date.now()}`);
       const data = await res.json();
       if (data.success && data.data.url) {
-        // 如果后端返回的是相对路径，则补全域名
+        // 如果后端返回的是相对路径，且不是前端 public 目录下的静态视频，则补全域名
         let finalUrl = data.data.url;
-        if (finalUrl.startsWith('/')) {
+        if (finalUrl.startsWith('/') && finalUrl !== '/bg-video.mp4') {
           finalUrl = `${baseUrl}${finalUrl}`;
         }
         setBgUrl(finalUrl);
