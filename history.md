@@ -81,3 +81,20 @@
   1. 修改前端 `DynamicBackground/index.tsx` 组件，将动态壁纸的自动轮询拉取时间从 10 分钟缩短至 5 分钟（`300,000 ms`）。
   2. 修改后端 `wallpaper.service.ts` 的逻辑，在 `local` 模式下每次调用 `/api/wallpapers/random` 时强制重新读取并解析 `wallpapers-data.json` 文件，绕过内存级缓存。
 - **结果:** 用户手动修改 `wallpapers-data.json` 后，无需重启后端服务即可生效；前端用户也会更频繁地（每5分钟）自动看到壁纸刷新。
+
+### 14. 2026-04-19 - 修复浏览器默认缓存导致本地随机背景刷新不变的 Bug
+- **目标:** 修复在 local 模式下，浏览器 F5 刷新网页时背景图片“像是被写死”始终不改变的问题。
+- **原因:** 现代浏览器会对相同的 HTTP GET 请求（如 `fetch('/api/wallpapers/random')`）进行默认的启发式缓存。即使后端在每次请求时都随机挑选了新图片，但浏览器根本没有真正向后端发起请求，而是直接读取了本地磁盘缓存中的旧链接。
+- **操作:**
+  1. **前端:** 在 `DynamicBackground/index.tsx` 的 fetch 请求 URL 末尾追加了时间戳参数 `?t=${Date.now()}`，强制让每次请求的 URL 都不一样，从而击穿浏览器缓存。
+  2. **后端:** 在 `wallpaper.controller.ts` 中手动为该接口增加了强缓存控制响应头：`Cache-Control: no-cache, no-store, must-revalidate`、`Pragma: no-cache` 以及 `Expires: 0`。
+- **结果:** 双重缓存击穿机制确保了每一次（不管是定时器轮询还是手动 F5 刷新页面）都能向后端发起真实的请求，并成功获取到全新的随机背景图片。
+
+### 15. 2026-04-19 - 应用自定义动态视频作为 video 模式背景
+- **目标:** 将用户指定的本地视频 `【哲风壁纸】山峰-房屋-树木.mp4` 设置为 `WALLPAPER_MODE=video` 模式下的专属背景视频。
+- **操作:**
+  1. **资源迁移:** 将用户指定的视频文件通过 PowerShell 命令强行复制到了后端的公共静态资源目录 `packages/server/public/uploads/bg-video.mp4`。
+  2. **逻辑更新:** 修改了后端 `wallpaper.service.ts` 中的 `video` 模式返回逻辑，使其不再返回示例链接，而是返回相对路径 `/uploads/bg-video.mp4`。
+  3. **路径补全:** 更新了前端的 `DynamicBackground/index.tsx` 组件，在收到后端的相对路径后，自动补全 `VITE_API_BASE_URL` 拼接成完整的网络 URL。
+  4. **重启生效:** 终止了原有的 Node 进程并重启服务，以加载最新的 `.env`（设置为 `video` 模式）及代码更改。
+- **结果:** 现在当 `.env` 中 `WALLPAPER_MODE=video` 时，网站首页的动态背景将完美呈现用户指定的山峰树木高清视频。

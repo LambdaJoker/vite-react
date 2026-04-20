@@ -15,10 +15,16 @@ const DynamicBackground: FC = () => {
     }
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      const res = await fetch(`${baseUrl}/api/wallpapers/random`);
+      // 添加时间戳以防止浏览器缓存 GET 请求，确保每次刷新或轮询都能拿到新的随机背景
+      const res = await fetch(`${baseUrl}/api/wallpapers/random?t=${Date.now()}`);
       const data = await res.json();
       if (data.success && data.data.url) {
-        setBgUrl(data.data.url);
+        // 如果后端返回的是相对路径，则补全域名
+        let finalUrl = data.data.url;
+        if (finalUrl.startsWith('/')) {
+          finalUrl = `${baseUrl}${finalUrl}`;
+        }
+        setBgUrl(finalUrl);
       }
     } catch (err) {
       console.error('Failed to fetch wallpaper:', err);

@@ -3,6 +3,11 @@ import { getRandomWallpaper, getAllWallpapers } from '../services/wallpaper.serv
 
 export const getRandom: RequestHandler = async (req, res) => {
   try {
+    // 禁用此接口的浏览器缓存，确保每次请求都能获取到随机壁纸
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const url = await getRandomWallpaper();
     res.json({ success: true, data: { url } });
   } catch (error) {
