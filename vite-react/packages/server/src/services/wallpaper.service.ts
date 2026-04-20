@@ -4,19 +4,28 @@ import fs from 'fs';
 import path from 'path';
 
 const isVercel = process.env.VERCEL === '1';
-const dataFile = isVercel 
-  ? '/tmp/wallpapers-data.json' 
-  : path.join(__dirname, '../../public/uploads/wallpapers-data.json');
+const tempFile = '/tmp/wallpapers-data.json';
+const localFile = path.join(__dirname, '../../public/uploads/wallpapers-data.json');
 let currentWallpapers: string[] = [];
 
+// Helper function to read data
+const readWallpapersData = () => {
+  if (isVercel && fs.existsSync(tempFile)) {
+    return fs.readFileSync(tempFile, 'utf8');
+  } else if (fs.existsSync(localFile)) {
+    return fs.readFileSync(localFile, 'utf8');
+  }
+  return null;
+};
+
 // Initialize data from file if exists
-if (fs.existsSync(dataFile)) {
+const initialData = readWallpapersData();
+if (initialData) {
   try {
-    const data = fs.readFileSync(dataFile, 'utf8');
-    currentWallpapers = JSON.parse(data);
+    currentWallpapers = JSON.parse(initialData);
     console.log(`[WallpaperService] Loaded ${currentWallpapers.length} wallpapers from cache.`);
   } catch (err) {
-    console.error('[WallpaperService] Failed to read cache:', err);
+    console.error('[WallpaperService] Failed to parse cache:', err);
   }
 }
 
@@ -100,7 +109,8 @@ export const scrapeWallpapers = async () => {
       const mergedWallpapers = [...new Set([...currentWallpapers, ...validUrls])];
       currentWallpapers = mergedWallpapers;
       try {
-        fs.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+        const targetFile = isVercel ? tempFile : localFile;
+        fs.writeFileSync(targetFile, JSON.stringify(currentWallpapers, null, 2));
       } catch (err) {
         console.error('[WallpaperService] Failed to write cache:', err);
       }
@@ -135,12 +145,12 @@ export const getRandomWallpaper = async () => {
   // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
   if (currentWallpapers.length === 0 || mode === 'local') {
     // 每次请求随机前重新读取一次文件，这样用户在外部修改 wallpapers-data.json 后会立即生效
-    if (fs.existsSync(dataFile)) {
+    const data = readWallpapersData();
+    if (data) {
       try {
-        const data = fs.readFileSync(dataFile, 'utf8');
         currentWallpapers = JSON.parse(data);
       } catch (err) {
-        console.error('[WallpaperService] Failed to read cache:', err);
+        console.error('[WallpaperService] Failed to parse cache:', err);
       }
     }
   }
@@ -157,6 +167,16 @@ export const getAllWallpapers = async () => {
   const mode = process.env.WALLPAPER_MODE || 'local';
   if (mode === 'scrape' && currentWallpapers.length === 0 && isVercel) {
     await scrapeWallpapers();
+  }
+  if (currentWallpapers.length === 0) {
+    const data = readWallpapersData();
+    if (data) {
+      try {
+        currentWallpapers = JSON.parse(data);
+      } catch (err) {
+        console.error('[WallpaperService] Failed to parse cache:', err);
+      }
+    }
   }
   return currentWallpapers;
 };

@@ -98,3 +98,12 @@
   3. **路径补全:** 更新了前端的 `DynamicBackground/index.tsx` 组件，在收到后端的相对路径后，自动补全 `VITE_API_BASE_URL` 拼接成完整的网络 URL。
   4. **重启生效:** 终止了原有的 Node 进程并重启服务，以加载最新的 `.env`（设置为 `video` 模式）及代码更改。
 - **结果:** 现在当 `.env` 中 `WALLPAPER_MODE=video` 时，网站首页的动态背景将完美呈现用户指定的山峰树木高清视频。
+
+### 16. 2026-04-19 - 修复 Vercel 部署后本地壁纸模式失效 (写死) 的 Bug
+- **目标:** 解决在 Vercel 部署环境下，`local` 模式下获取不到随机壁纸，每次刷新都显示同一个默认写死图片的问题。
+- **原因:** 在 Vercel 的 Serverless Function 运行时环境中，文件系统是只读的，只能向 `/tmp` 目录写入文件。原有的代码逻辑在判断 `isVercel` 为真时，将文件读取路径强行指定为了 `/tmp/wallpapers-data.json`。然而在实例刚启动、尚未执行抓取时，`/tmp` 目录是空的，导致读取不到随代码部署上传的默认壁纸数据，最终触发了 fallback，永远返回写死的默认图片。
+- **操作:**
+  - 修改 `wallpaper.service.ts`，区分了“临时缓存文件”(`/tmp/wallpapers-data.json`) 和“本地内置文件”(`../../public/uploads/wallpapers-data.json`)。
+  - 在读取时：如果是 Vercel 环境且 `/tmp` 中有缓存则优先读取，否则**回退去读取随代码打包部署的本地内置 JSON 文件**。
+  - 在写入时 (scrape 模式下)：如果是 Vercel 环境则写入 `/tmp`，否则写入本地内置文件。
+- **结果:** 重新部署到 Vercel 后，即便实例刚启动（`/tmp` 为空），也能正确读取打包进来的上百张随机壁纸数据，彻底解决了被写死的假象。
