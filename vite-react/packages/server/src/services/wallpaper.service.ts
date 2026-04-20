@@ -134,6 +134,18 @@ export const getRandomWallpaper = async () => {
   }
 
   // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
+  if (currentWallpapers.length === 0 || mode === 'local') {
+    // 每次请求随机前重新读取一次文件，这样用户在外部修改 wallpapers-data.json 后会立即生效
+    if (fs.existsSync(dataFile)) {
+      try {
+        const data = fs.readFileSync(dataFile, 'utf8');
+        currentWallpapers = JSON.parse(data);
+      } catch (err) {
+        console.error('[WallpaperService] Failed to read cache:', err);
+      }
+    }
+  }
+
   if (currentWallpapers.length === 0) {
     // Default fallback - Use previewFileImg for higher quality
     return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';

@@ -21,7 +21,8 @@ apiClient.interceptors.request.use(
     // 从 localStorage 中读取管理员密码
     const adminPwd = localStorage.getItem('admin_pwd');
     if (adminPwd) {
-      config.headers['x-admin-pwd'] = adminPwd;
+      // 在 Axios v1.x+ 中，推荐使用 set 方法来绑定 header
+      config.headers.set('x-admin-pwd', adminPwd);
     }
     return config;
   },

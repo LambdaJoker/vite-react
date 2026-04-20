@@ -28,12 +28,12 @@ const DynamicBackground: FC = () => {
   useEffect(() => {
     fetchWallpaper();
     
-    // Refresh every 10 minutes (600,000 ms) only for dynamic
+    // Refresh every 5 minutes (300,000 ms) only for dynamic
     const intervalId = setInterval(() => {
       if (useAppStore.getState().bgMode === 'dynamic') {
         fetchWallpaper();
       }
-    }, 10 * 60 * 1000);
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(intervalId);
   }, [bgMode]);

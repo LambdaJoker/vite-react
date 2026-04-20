@@ -44,14 +44,15 @@ const Header: React.FC<HeaderProps> = ({ title = "Random Glow" }) => {
   }, []);
 
   // 监听滚动事件，控制头部样式
+  const [isScrolled, setIsScrolled] = useState(false);
+
   useEffect(() => {
-    // 处理滚动事件，添加或移除滚动样式类，并使用节流优化性能
+    // 处理滚动事件，并使用节流优化性能
     const handleScroll = throttle(() => {
-      const header = document.querySelector('.header');
       if (window.scrollY > 50) {
-        header?.classList.add('scrolled');
+        setIsScrolled(true);
       } else {
-        header?.classList.remove('scrolled');
+        setIsScrolled(false);
       }
     }, 100);
 
@@ -75,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ title = "Random Glow" }) => {
 
   return (
     // 头部容器
-    <header className="header-container">
+    <header className={`header-container ${isScrolled ? 'scrolled' : ''}`}>
       <div className="header-content">
         {/* Logo 区域 */}
         <div className="logo-container">
