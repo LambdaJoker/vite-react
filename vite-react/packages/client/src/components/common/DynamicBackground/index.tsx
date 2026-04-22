@@ -61,8 +61,11 @@ const DynamicBackground: FC = () => {
             autoPlay 
             loop 
             muted 
-            playsInline 
+            playsInline
+            webkit-playsinline="true"
+            x5-playsinline="true"
             className="bg-video"
+            poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           >
             <source src={bgVideo} type="video/mp4" />
           </video>
@@ -76,8 +79,11 @@ const DynamicBackground: FC = () => {
                 autoPlay 
                 loop 
                 muted 
-                playsInline 
+                playsInline
+                webkit-playsinline="true"
+                x5-playsinline="true"
                 className="bg-video"
+                poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
               >
                 <source src={bgUrl} type="video/mp4" />
               </video>

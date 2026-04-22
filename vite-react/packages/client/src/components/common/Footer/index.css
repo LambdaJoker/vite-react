@@ -2,12 +2,12 @@
   width: 100%;
   padding: 1.5rem 0;
   margin-top: auto;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  color: #555;
-  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  color: #444;
+  font-size: 0.95rem;
 }
 
 .footer-content {
@@ -21,18 +21,20 @@
 
 .footer-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .footer-links a {
-  color: #555;
+  color: #444;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s ease, transform 0.3s ease;
   font-weight: 500;
+  display: inline-block;
 }
 
 .footer-links a:hover {
   color: #007bff;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {

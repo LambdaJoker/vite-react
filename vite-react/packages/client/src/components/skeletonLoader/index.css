@@ -1,9 +1,11 @@
 .skeleton {
-  background: var(--border-color, #e0e0e0);
-  border-radius: 4px;
+  background: var(--border-color, rgba(255, 255, 255, 0.4));
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
   margin-bottom: 8px;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .skeleton.animate::after {
@@ -16,10 +18,10 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.6) 50%,
     transparent 100%
   );
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 [data-theme="dark"] .skeleton.animate::after {

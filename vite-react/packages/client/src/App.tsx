@@ -6,7 +6,7 @@
  * @LastEditTime: 2025-06-19 10:12:38
  */
 import { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import useAppStore from './components/store/appStore'; // 确认路径正确
 import Header from './components/home/Header';
 import Footer from './components/common/Footer';
@@ -28,99 +28,108 @@ const ThoughtsContent = lazy(() => import('./components/thoughts/ThoughtsContent
 
 const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 15 }}
     animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
+    exit={{ opacity: 0, y: -15 }}
+    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     style={{ width: '100%', position: 'relative' }}
   >
     {children}
   </motion.div>
 );
 
-const App: React.FC = () => {
+const MainApp: React.FC = () => {
   const { fetchAppConfig, isReadOnly, isLoading } = useAppStore();
+  const location = useLocation();
 
   useEffect(() => {
     fetchAppConfig();
   }, [fetchAppConfig]);
 
   return (
+    <div className="app">
+      <ClickEffect />
+      <DynamicBackground />
+      <Header />
+      <main id="main-content" className="main-content" tabIndex={-1}>
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div key="loader" exit={{ opacity: 0 }} className="page-loader">
+              <SkeletonLoader type="card" count={3} />
+            </motion.div>
+          ) : (
+            <Suspense fallback={<div className="page-loader"><SkeletonLoader type="card" count={3} /></div>}>
+              <Routes location={location} key={location.pathname}>
+                <Route
+                  path="/"
+                  element={
+                    <AnimatedRoute>
+                      <HomePage />
+                    </AnimatedRoute>
+                  }
+                />
+                <Route
+                  path="/articles"
+                  element={
+                    <AnimatedRoute>
+                      <ArticleList />
+                    </AnimatedRoute>
+                  }
+                />
+                <Route
+                  path="/articles/:id"
+                  element={
+                    <AnimatedRoute>
+                      <ArticleDetail />
+                    </AnimatedRoute>
+                  }
+                />
+                <Route
+                  path="/archive"
+                  element={
+                    <AnimatedRoute>
+                      <Archive />
+                    </AnimatedRoute>
+                  }
+                />
+                {/* 只有在非只读模式下才渲染创建和编辑的路由 */}
+                {!isReadOnly && (
+                  <>
+                    <Route
+                      path="/articles/new"
+                      element={
+                        <AnimatedRoute>
+                          <ArticleForm mode="create" />
+                        </AnimatedRoute>
+                      }
+                    />
+                    <Route
+                      path="/articles/:id/edit"
+                      element={
+                        <AnimatedRoute>
+                          <ArticleForm mode="edit" />
+                        </AnimatedRoute>
+                      }
+                    />
+                  </>
+                )}
+                <Route path="/projects" element={<AnimatedRoute><ProjectsContent /></AnimatedRoute>} />
+                <Route path="/bookmarks" element={<AnimatedRoute><BookmarksContent /></AnimatedRoute>} />
+                <Route path="/thoughts" element={<AnimatedRoute><ThoughtsContent /></AnimatedRoute>} />
+              </Routes>
+            </Suspense>
+          )}
+        </AnimatePresence>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="app">
-        <ClickEffect />
-        <DynamicBackground />
-        <Header />
-        <main id="main-content" className="main-content" tabIndex={-1}>
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <div className="page-loader"><SkeletonLoader type="card" count={3} /></div>
-            ) : (
-              <Suspense fallback={<div className="page-loader"><SkeletonLoader type="card" count={3} /></div>}>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <AnimatedRoute>
-                        <HomePage />
-                      </AnimatedRoute>
-                    }
-                  />
-                  <Route
-                    path="/articles"
-                    element={
-                      <AnimatedRoute>
-                        <ArticleList />
-                      </AnimatedRoute>
-                    }
-                  />
-                  <Route
-                    path="/articles/:id"
-                    element={
-                      <AnimatedRoute>
-                        <ArticleDetail />
-                      </AnimatedRoute>
-                    }
-                  />
-                  <Route
-                    path="/archive"
-                    element={
-                      <AnimatedRoute>
-                        <Archive />
-                      </AnimatedRoute>
-                    }
-                  />
-                  {/* 只有在非只读模式下才渲染创建和编辑的路由 */}
-                  {!isReadOnly && (
-                    <>
-                      <Route
-                        path="/articles/new"
-                        element={
-                          <AnimatedRoute>
-                            <ArticleForm mode="create" />
-                          </AnimatedRoute>
-                        }
-                      />
-                      <Route
-                        path="/articles/:id/edit"
-                        element={
-                          <AnimatedRoute>
-                            <ArticleForm mode="edit" />
-                          </AnimatedRoute>
-                        }
-                      />
-                    </>
-                  )}
-                  <Route path="/projects" element={<AnimatedRoute><ProjectsContent /></AnimatedRoute>} />
-                  <Route path="/bookmarks" element={<AnimatedRoute><BookmarksContent /></AnimatedRoute>} />
-                  <Route path="/thoughts" element={<AnimatedRoute><ThoughtsContent /></AnimatedRoute>} />
-                </Routes>
-              </Suspense>
-            )}
-          </AnimatePresence>
-        </main>
-        <Footer />
-      </div>
+      <MainApp />
     </Router>
   );
 };
