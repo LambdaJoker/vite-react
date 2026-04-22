@@ -32,6 +32,10 @@
   color: inherit;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -81,6 +85,11 @@ a:hover {
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
 }
 
+.glass-card:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -122,11 +131,15 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button:hover {
   border-color: #646cff;
+}
+
+button:active {
+  transform: scale(0.96);
 }
 
 button:focus,

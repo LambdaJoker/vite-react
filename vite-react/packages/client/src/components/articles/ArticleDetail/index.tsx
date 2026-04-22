@@ -49,10 +49,17 @@ const ArticleDetail: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [replyTo, setReplyTo] = useState<{ id: number; author: string } | null>(null);
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
     if (id) {
-      fetchArticle(id);
-      fetchComments(id);
+      setIsInitialLoad(true);
+      Promise.all([
+        fetchArticle(id),
+        fetchComments(id)
+      ]).finally(() => {
+        setIsInitialLoad(false);
+      });
       // 检查本地存储中是否已经点过赞
       const liked = localStorage.getItem(`liked_article_${id}`);
       if (liked) {
@@ -121,7 +128,11 @@ const ArticleDetail: FC = () => {
     replies: comments.filter(reply => reply.parent_id === c.id)
   }));
 
-  if (isLoading) {
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  if (isInitialLoad || isLoading) {
     return (
       <div className="article-detail-container">
         <SkeletonLoader type="title" />
@@ -130,11 +141,7 @@ const ArticleDetail: FC = () => {
     );
   }
 
-  if (error) {
-    return <div className="error-message">{error}</div>;
-  }
-
-  if (!article) {
+  if (!article || article.id.toString() !== id) {
     return <div className="article-not-found">文章未找到</div>;
   }
 

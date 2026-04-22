@@ -193,6 +193,11 @@
   background: rgba(0, 123, 255, 0.05);
 }
 
+.nav-link:active {
+  transform: scale(0.95);
+  background: rgba(0, 123, 255, 0.1);
+}
+
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 80%;
@@ -255,43 +260,54 @@
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, 0.95); /* 降低透明度，使其更清晰可见 */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
     align-items: center;
     padding: 1rem 0;
-    gap: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* 加深一点阴影增加层次感 */
-    transform: translateY(-150%);
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* 加深一点阴影增加层次感 */
+    transform: translateY(-20px) scale(0.98);
     opacity: 0;
-    transition: all 0.3s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     pointer-events: none;
     height: auto;
-    border-top: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    transform-origin: top center;
   }
 
   .navigation.mobile-open {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
 
   .nav-link {
-    width: 100%;
+    width: 90%;
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
-    border-radius: 0;
+    border-radius: 12px;
+    margin: 0.2rem 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
   }
 
   .nav-link::after {
     display: none; /* 移动端隐藏底部下划线动画 */
   }
 
+  .nav-link:active {
+    transform: scale(0.96);
+    background: rgba(0, 123, 255, 0.1);
+  }
+
   .nav-link:hover,
   .nav-link.active {
-    background: rgba(0, 123, 255, 0.05);
-    border-left: 4px solid #007bff;
+    background: rgba(0, 123, 255, 0.08);
+    color: #007bff;
+    font-weight: 600;
   }
 
   /* 调整移动端右上角按钮的间距和大小，放在菜单里 */

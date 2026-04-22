@@ -8,9 +8,11 @@ import './index.css';
 const Archive: FC = () => {
   const { articles, isLoading, error, fetchArticles } = useArticleStore();
   const [isAnimated, setIsAnimated] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    fetchArticles();
+    setIsInitialLoad(true);
+    fetchArticles().finally(() => setIsInitialLoad(false));
     setIsAnimated(true);
   }, [fetchArticles]);
 
@@ -42,7 +44,7 @@ const Archive: FC = () => {
 
   const years = Object.keys(groupedArticles).sort((a, b) => Number(b) - Number(a));
 
-  if (isLoading && articles.length === 0) {
+  if (isInitialLoad || (isLoading && articles.length === 0)) {
     return (
       <div className="archive-container">
         <SkeletonLoader type="title" />

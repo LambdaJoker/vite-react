@@ -30,9 +30,14 @@
 - **结果:** 向下滚动页面时，导航栏现在会平滑且优雅地变窄（变短），视觉体验更自然。
 
 ### 20. 2026-04-20 - 优化移动端导航菜单背景清晰度
-- **目标:** 解决手机端展开导航菜单时，背景过于透明导致文字看不清的问题。
-- **操作:** 在 `Header/index.css` 的媒体查询 `@media screen and (max-width: 768px)` 中，将 `.navigation` 的背景调整为不透明度更高的 `rgba(255, 255, 255, 0.95)`，并添加了 `backdrop-filter: blur(10px)` 毛玻璃效果，同时略微加深了下方阴影。
-- **结果:** 移动端菜单展开时内容更加清晰易读，不再被页面下方的复杂背景干扰。
+- **目标:** 提升全站的UI交互丝滑度，并修复从归档跳转文章时会短暂闪烁“文章未找到”的问题以及 Header 导航栏不高亮的问题。
+- **操作:** 
+  1. 修改 `Header/index.tsx` 中的 `isActive` 函数，支持子路由高亮（如 `/articles/123` 会高亮“文章”）。
+  2. 在 `index.css` 中全局添加 `scroll-behavior: smooth`。
+  3. 为全局卡片(`.glass-card`)、按钮(`button`, `.cta-button`)、筛选标签(`.category-button`)以及导航卡片(`.nav-link`)补充了 `:active` 状态的 `transform: scale()` 压感反馈。
+  4. 优化 `ScrollToTopButton` 的 framer-motion 弹簧动画曲线为 `cubic-bezier(0.4, 0, 0.2, 1)`。
+  5. 修复 `ArticleDetail` 和 `Archive` 组件中因初始状态 `isLoading` 为 false 导致的闪烁问题，通过引入 `isInitialLoad` 状态确保在首次加载前正确展示 SkeletonLoader。
+- **结果:** 全站点击反馈更顺畅，页面跳转和渲染时的体验得到了极大的平滑优化。
 
 ### 21. 2026-04-20 - 全局前端 UI/UX 体验与动画流畅度升级
 - **目标:** 利用 `ui-ux-pro-max` 技能对前端界面的视觉体验和交互流畅度进行深度优化。

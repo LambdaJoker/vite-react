@@ -729,6 +729,11 @@ pre code {
   border-color: #007bff;
 }
 
+.article-navigation .nav-link:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 .article-navigation .nav-empty {
   opacity: 0.6;
   background: transparent;

@@ -29,8 +29,13 @@ const Header: React.FC<HeaderProps> = ({ title = "Random Glow" }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 判断导航项是否为当前激活路由
-  const isActive = (path: string) => location.pathname === path;
+  // 判断导航项是否为当前激活路由（支持子路由高亮）
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
 
   // 路由切换时自动关闭移动端菜单
   useEffect(() => {

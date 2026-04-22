@@ -13,7 +13,7 @@
 }
 
 .video-background {
-  background-color: #000;
+  background-color: transparent; /* 去除纯黑底色 */
 }
 
 .bg-video {
@@ -25,6 +25,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none; /* 防止视频阻止下方元素的点击 */
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Optional overlay to make text readable */
