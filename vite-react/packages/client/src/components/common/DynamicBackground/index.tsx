@@ -66,6 +66,7 @@ const DynamicBackground: FC = () => {
             x5-playsinline="true"
             className="bg-video"
             poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            style={{ backgroundColor: 'transparent' }}
           >
             <source src={bgVideo} type="video/mp4" />
           </video>
@@ -84,6 +85,7 @@ const DynamicBackground: FC = () => {
                 x5-playsinline="true"
                 className="bg-video"
                 poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                style={{ backgroundColor: 'transparent' }}
               >
                 <source src={bgUrl} type="video/mp4" />
               </video>

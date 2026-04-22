@@ -19,6 +19,7 @@
   --border-color: rgba(255, 255, 255, 0.6);
   /* Cute default cursor: white rounded arrow with black border and shadow */
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23ffffff' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 3.5l6 17 4-7 7-4-17-6z'/%3E%3C/svg%3E") 2 2, default;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Force override all cursors */
