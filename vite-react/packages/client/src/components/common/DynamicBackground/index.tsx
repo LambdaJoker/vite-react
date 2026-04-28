@@ -5,14 +5,25 @@ import bgVideo from '../../../assets/video/bg-video.mp4';
 
 const DynamicBackground: FC = () => {
   const [bgUrl, setBgUrl] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
   const { bgMode } = useAppStore();
   const videoRef = useRef<HTMLVideoElement>(null);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchWallpaper = async () => {
-    if (bgMode === 'static') {
+    if (bgMode === 'static' && !isMobile) {
       setBgUrl(''); // 清空 bgUrl 以便显示视频
       return;
     }
+    
+    // 如果是移动端，或者模式为 dynamic，都去获取图片
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
       // 添加时间戳以防止浏览器缓存 GET 请求，确保每次刷新或轮询都能拿到新的随机背景
@@ -36,25 +47,27 @@ const DynamicBackground: FC = () => {
     
     // Refresh every 5 minutes (300,000 ms) only for dynamic
     const intervalId = setInterval(() => {
-      if (useAppStore.getState().bgMode === 'dynamic') {
+      // 只有在 dynamic 模式下，或者（静态模式但为移动端）时才需要轮询壁纸
+      const currentBgMode = useAppStore.getState().bgMode;
+      if (currentBgMode === 'dynamic' || (currentBgMode === 'static' && isMobile)) {
         fetchWallpaper();
       }
     }, 5 * 60 * 1000);
 
     return () => clearInterval(intervalId);
-  }, [bgMode]);
+  }, [bgMode, isMobile]);
 
   useEffect(() => {
-    if (bgMode === 'static' && videoRef.current) {
+    if (bgMode === 'static' && !isMobile && videoRef.current) {
       videoRef.current.play().catch(error => {
         console.error("Auto-play was prevented:", error);
       });
     }
-  }, [bgMode]);
+  }, [bgMode, isMobile]);
 
   return (
     <>
-      {bgMode === 'static' ? (
+      {bgMode === 'static' && !isMobile ? (
         <div className="dynamic-background video-background">
           <video 
             ref={videoRef}
