@@ -21,21 +21,21 @@ export const projects: Project[] = [
   },
   {
     id: 2,
-    title: "企业级 RAG 知识库系统",
-    description: "基于大语言模型（LLM）和检索增强生成（RAG）技术的企业级智能问答系统，支持多格式文档解析与精准召回。",
-    category: "大模型",
-    technologies: ["LangChain", "FastAPI", "Milvus", "OpenAI"],
+    title: "ChefAgent - AI私厨",
+    description: "一个前后端分离的多模态智能体项目，支持图片食材识别、菜谱智能推荐、私厨对话及按需联网搜索，提供沉浸式流式对话体验。",
+    category: "Agent",
+    technologies: ["Vue 3", "FastAPI", "LangChain", "Minimax", "Qwen-VL", "OSS"],
     image: "/src/assets/img/project/project4.jpg",
-    demoUrl: "https://rag.example.com",
-    githubUrl: "https://github.com/example/rag-system",
+    demoUrl: "https://chefagent.example.com",
+    githubUrl: "https://github.com/LambdaJoker/ChefAgent",
     highlights: [
-      "实现了基于语义的混合检索策略",
-      "支持 PDF、Word、Markdown 等多格式文档的高效解析与向量化",
-      "通过 Prompt 工程有效降低了模型幻觉",
-      "流式输出（Streaming）提升用户问答体验"
+      "结合视觉模型实现高精度的图片食材识别与分析",
+      "基于 SSE 流式响应，打造带思考过程的沉浸式多轮对话",
+      "支持多会话本地持久化、按需联网搜索及 markdown 渲染",
+      "打通全栈链路，集成阿里云 OSS 实现静态资源云端管理"
     ],
-    period: "2024.05 - 2024.08",
-    role: "AI 算法工程师"
+    period: "2026.03 - 2026.04",
+    role: "Agent开发"
   },
   {
     id: 3,
@@ -57,20 +57,20 @@ export const projects: Project[] = [
   },
   {
     id: 4,
-    title: "基于深度学习的目标检测系统",
-    description: "一个用于智慧社区的实时目标检测与识别系统，结合了ROS机器人操作系统与先进的计算机视觉技术。",
-    category: "人工智能",
-    technologies: ["深度学习", "ROS", "OpenCV", "图像分割"],
+    title: "AgriVision - 基于改进型 YOLOv11 的农作物病虫害识别系统",
+    description: "致力于智慧农业的计算机视觉项目，基于最新的 YOLOv11 架构进行改进，实现对复杂自然环境下农作物病虫害的实时、高精度检测与分类。",
+    category: "计算机视觉",
+    technologies: ["YOLOv11", "PyTorch", "OpenCV", "Python"],
     image: "/src/assets/img/project/project4.jpg",
-    demoUrl: "https://yolo.example.com",
-    githubUrl: "https://github.com/LambdaJoker",
+    demoUrl: "https://agrivision.example.com",
+    githubUrl: "https://github.com/LambdaJoker/AgriVision-YOLOv11",
     highlights: [
-      "实现基于深度学习的高精度目标检测算法",
-      "集成ROS实现机器人自主导航与识别",
-      "应用图像分割技术提取关键区域",
-      "在复杂场景下达到高召回率与准确率"
+      "引入轻量化注意力机制，增强复杂背景下微小病虫害的特征提取能力",
+      "构建并清洗了包含十余种农作物病虫害的大规模高质量图像数据集",
+      "针对边缘设备进行模型剪枝与量化，大幅提升端侧计算的推理帧率",
+      "在自建测试集上 mAP@0.5 达到 99.2%，满足真实农业场景的实时检测需求"
     ],
-    period: "2024.10 - 2024.12",
-    role: "算法工程师"
+    period: "2025.01 - 2025.05",
+    role: "CV 算法工程师"
   }
 ];

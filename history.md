@@ -2,43 +2,6 @@
 
 该文件用于跟踪在此项目开发期间做出的重要架构更改、性能优化、阻塞性问题及其解决方案和相关决策。（⚠️ 注意：本文件仅保留最近/最重要的 10 条历史记录）
 
-### 16. 2026-04-19 - 修复 Vercel 部署后本地壁纸模式失效 (写死) 的 bug
-- **目标:** 解决在 Vercel 部署环境下，`local` 模式下获取不到随机壁纸，每次刷新都显示同一个默认写死图片的问题。
-- **原因:** 在 Vercel 的 Serverless Function 运行时环境中，文件系统是只读的，只能向 `/tmp` 目录写入文件。原有的代码逻辑在判断 `isVercel` 为真时，将文件读取路径强行指定为了 `/tmp/wallpapers-data.json`。然而在实例刚启动、尚未执行抓取时，`/tmp` 目录是空的，导致读取不到随代码部署上传的默认壁纸数据，最终触发了 fallback，永远返回写死的默认图片。
-- **操作:**
-  - 修改 `wallpaper.service.ts`，区分了“临时缓存文件”(`/tmp/wallpapers-data.json`) 和“本地内置文件”(`../../public/uploads/wallpapers-data.json`)。
-  - 在读取时：如果是 Vercel 环境且 `/tmp` 中有缓存则优先读取，否则**回退去读取随代码打包部署的本地内置 JSON 文件**。
-  - 在写入时 (scrape 模式下)：如果是 Vercel 环境则写入 `/tmp`，否则写入本地内置文件。
-- **结果:** 重新部署到 Vercel 后，即便实例刚启动（`/tmp` 为空），也能正确读取打包进来的上百张随机壁纸数据，彻底解决了被写死的假象。
-
-### 17. 2026-04-20 - 修复 video 模式下大视频文件无法加载及拼写容错问题
-- **目标:** 解决 `WALLPAPER_MODE=video` 模式下，因视频文件过大导致无法显示的问题，并兼容环境变量的拼写错误。
-- **操作:** 
-  1. **前端资源直出:** 将近 20MB 的视频文件从后端的 `public/uploads` 目录移动至前端的 `packages/client/public/bg-video.mp4`，利用 Vite 和部署环境（如 Vercel Edge Network）的静态资源服务直接分发，避开 Serverless 函数传输大体积媒体文件的限制。
-  2. **路径适配:** 后端 `wallpaper.service.ts` 的 `video` 模式现在直接返回前端根路径 `/bg-video.mp4`；前端 `DynamicBackground` 组件新增判断，若是该静态视频路径则不再盲目拼接后端 API 的域名。
-  3. **拼写容错:** 后端判断环境变量时增加了对 `vedio` 常见拼写错误的兼容 (`mode === 'video' || mode === 'vedio'`)。
-- **结果:** 大体积视频背景现在能瞬间加载且不会受后端 API 带宽或 Serverless 限制影响，同时即使用户在 `.env` 中误写为 `vedio` 也能正常生效。
-
-### 18. 2026-04-20 - 配置 Git Commit 提交信息生成规则
-- **目标:** 自定义 AI 生成 Git 提交信息的风格，使其保持简洁且符合规范。
-- **操作:** 在 `.trae/rules/git-commit-message.md` 中编写了基于 Conventional Commits 的简明规则，强制要求输出 `<type>(<scope>): <subject>` 格式，限制长度并禁止多余的对话和代码块包裹。
-- **结果:** AI 将会根据该规则自动生成标准化且极其简洁的 Git 提交信息。
-
-### 19. 2026-04-20 - 修复导航栏滚动时变长的视觉问题
-- **目标:** 解决向下滑动页面时，Header 高度变大，不符合常规网页设计（通常滚动时变短）的视觉 Bug。
-- **操作:** 调整了 `.header-container` 及其在 `.scrolled` 状态下的 CSS 样式。移除了导致高度撑开的 `padding`，改为直接控制 `height` 属性（从 `70px` 缩小至 `55px`），并为 logo 及容器添加了 `transition: all 0.3s ease` 以实现平滑缩小效果。
-- **结果:** 向下滚动页面时，导航栏现在会平滑且优雅地变窄（变短），视觉体验更自然。
-
-### 20. 2026-04-20 - 优化移动端导航菜单背景清晰度
-- **目标:** 提升全站的UI交互丝滑度，并修复从归档跳转文章时会短暂闪烁“文章未找到”的问题以及 Header 导航栏不高亮的问题。
-- **操作:** 
-  1. 修改 `Header/index.tsx` 中的 `isActive` 函数，支持子路由高亮（如 `/articles/123` 会高亮“文章”）。
-  2. 在 `index.css` 中全局添加 `scroll-behavior: smooth`。
-  3. 为全局卡片(`.glass-card`)、按钮(`button`, `.cta-button`)、筛选标签(`.category-button`)以及导航卡片(`.nav-link`)补充了 `:active` 状态的 `transform: scale()` 压感反馈。
-  4. 优化 `ScrollToTopButton` 的 framer-motion 弹簧动画曲线为 `cubic-bezier(0.4, 0, 0.2, 1)`。
-  5. 修复 `ArticleDetail` 和 `Archive` 组件中因初始状态 `isLoading` 为 false 导致的闪烁问题，通过引入 `isInitialLoad` 状态确保在首次加载前正确展示 SkeletonLoader。
-- **结果:** 全站点击反馈更顺畅，页面跳转和渲染时的体验得到了极大的平滑优化。
-
 ### 21. 2026-04-20 - 全局前端 UI/UX 体验与动画流畅度升级
 - **目标:** 利用 `ui-ux-pro-max` 技能对前端界面的视觉体验和交互流畅度进行深度优化。
 - **操作:** 
@@ -101,3 +64,12 @@
   1. 在 `DynamicBackground/index.tsx` 的 `<video>` 标签中添加了 `style={{ backgroundColor: 'transparent' }}`，防止视频加载期间由于 `poster` 透明度问题或默认背景色导致的白色闪烁。
   2. 在 `index.css` 的 `:root` 全局样式中添加了 `-webkit-tap-highlight-color: transparent;`，彻底禁用了移动端浏览器（如 Safari 和微信 X5）在点击任意区域时默认产生的半透明白色或灰色点击高亮块。
 - **结果:** 手机端点击页面空白处（壁纸）时不再出现不美观的白色闪烁块，提升了纯净的沉浸式体验。
+### 29. 2026-04-28 - 更新项目展示数据 (ChefAgent)
+- **目标:** 将最近开发的 ChefAgent 多模态私厨智能体项目添加到个人作品集中展示。
+- **操作:** 在 `packages/client/src/components/projects/data.ts` 中，将原先的“企业级 RAG 知识库系统”替换为“ChefAgent - 多模态私厨智能体”，并提取了核心技术栈（Vue 3, FastAPI, Minimax, Qwen-VL, OSS）、亮点及时间（2026.03 - 2026.04）。
+- **结果:** 项目展示列表已成功更新。
+
+### 30. 2026-04-28 - 更新项目展示数据 (AgriVision YOLOv11)
+- **目标:** 将“基于深度学习的目标检测系统”替换为最新的“基于改进型YOLOv11的农作物病虫害识别”项目。
+- **操作:** 在 `packages/client/src/components/projects/data.ts` 中，对项目标题进行润色，更新了描述、技术栈（YOLOv11, PyTorch等）以及项目亮点，使其符合现代 CV 项目要求。
+- **结果:** 个人作品集已成功更新，代码无类型错误。
