@@ -124,9 +124,16 @@ export const scrapeWallpapers = async () => {
   }
 };
 
-export const getRandomWallpaper = async () => {
-  // Always use local mode to fetch from the specified file
-  const mode = 'local'; 
+export const getRandomWallpaper = async (isMobile = false) => {
+  // Allow overriding mode via env, default to local
+  const mode = process.env.WALLPAPER_MODE || 'local'; 
+
+  // 1. Video 模式 (vedio模式)
+  // 只有在非移动端才允许使用视频模式
+  if (!isMobile && (mode === 'video' || mode === 'vedio')) { // 兼容拼写错误
+    // 视频文件已放置在前端 public 目录下，以避开 Vercel Serverless 的体积限制
+    return '/bg-video.mp4'; 
+  }
 
   // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
   if (currentWallpapers.length === 0 || mode === 'local') {
@@ -150,8 +157,7 @@ export const getRandomWallpaper = async () => {
 };
 
 export const getAllWallpapers = async () => {
-  // Always use local mode to fetch from the specified file
-  const mode = 'local';
+  const mode = process.env.WALLPAPER_MODE || 'local';
   
   if (currentWallpapers.length === 0) {
     const data = readWallpapersData();

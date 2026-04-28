@@ -7,8 +7,9 @@ export const getRandom: RequestHandler = async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-
-    const url = await getRandomWallpaper();
+    
+    const isMobile = req.query.isMobile === 'true';
+    const url = await getRandomWallpaper(isMobile);
     res.json({ success: true, data: { url } });
   } catch (error) {
     res.status(500).json({ success: false, message: '获取壁纸失败' });

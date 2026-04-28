@@ -26,8 +26,8 @@ const DynamicBackground: FC = () => {
     // 如果是移动端，或者模式为 dynamic，都去获取图片
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      // 添加时间戳以防止浏览器缓存 GET 请求，确保每次刷新或轮询都能拿到新的随机背景
-      const res = await fetch(`${baseUrl}/api/wallpapers/random?t=${Date.now()}`);
+      // 添加时间戳以防止浏览器缓存 GET 请求，同时传入 isMobile 参数告知后端当前设备类型
+      const res = await fetch(`${baseUrl}/api/wallpapers/random?t=${Date.now()}&isMobile=${isMobile}`);
       const data = await res.json();
       if (data.success && data.data.url) {
         // 如果后端返回的是相对路径，且不是前端 public 目录下的静态视频，则补全域名
