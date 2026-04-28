@@ -5,7 +5,8 @@ import path from 'path';
 
 const isVercel = process.env.VERCEL === '1';
 const tempFile = '/tmp/wallpapers-data.json';
-const localFile = path.join(__dirname, '../../public/uploads/wallpapers-data.json');
+// Point to the specific file requested by the user
+const localFile = path.join(__dirname, '../../wallpapers-data.json');
 let currentWallpapers: string[] = [];
 
 // Helper function to read data
@@ -124,22 +125,8 @@ export const scrapeWallpapers = async () => {
 };
 
 export const getRandomWallpaper = async () => {
-  const mode = process.env.WALLPAPER_MODE || 'local'; // 可选值: 'scrape' | 'local' | 'video'
-
-  // 1. Video 模式 (vedio模式)
-  if (mode === 'video' || mode === 'vedio') { // 兼容拼写错误
-    // 视频文件已放置在前端 public 目录下，以避开 Vercel Serverless 的体积限制
-    return '/bg-video.mp4'; 
-  }
-
-  // 2. 实时获取模式 (实时抓取模式)
-  if (mode === 'scrape') {
-    if (currentWallpapers.length === 0) {
-      if (isVercel) {
-        await scrapeWallpapers();
-      }
-    }
-  }
+  // Always use local mode to fetch from the specified file
+  const mode = 'local'; 
 
   // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
   if (currentWallpapers.length === 0 || mode === 'local') {
@@ -163,10 +150,9 @@ export const getRandomWallpaper = async () => {
 };
 
 export const getAllWallpapers = async () => {
-  const mode = process.env.WALLPAPER_MODE || 'local';
-  if (mode === 'scrape' && currentWallpapers.length === 0 && isVercel) {
-    await scrapeWallpapers();
-  }
+  // Always use local mode to fetch from the specified file
+  const mode = 'local';
+  
   if (currentWallpapers.length === 0) {
     const data = readWallpapersData();
     if (data) {
