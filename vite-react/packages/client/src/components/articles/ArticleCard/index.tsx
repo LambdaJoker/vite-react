@@ -16,8 +16,7 @@ const ArticleCard: FC<ArticleCardProps> = ({ article }) => {
       <div className="article-image">
         <LazyImage 
           src={getImageUrl(article.image)} 
-          alt={article.title} 
-          className="article-cover-img"
+          alt={article.title}
         />
         <div className="article-category">{article.category}</div>
       </div>

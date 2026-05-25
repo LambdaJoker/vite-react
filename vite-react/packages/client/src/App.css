@@ -1,6 +1,13 @@
 #root {
   margin: 0 auto;
   text-align: center;
+  min-height: 100vh;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
 }
 
 @media screen and (max-width: 768px) {
@@ -56,10 +63,6 @@
   padding-top: 60px;
   /* 根据新的 header 高度调整，使用 padding-top 避免外边距合并导致页面顶部贴紧 Header */
   min-height: calc(100vh - 60px);
-}
-
-.article-page-main {
-  background: transparent;
 }
 
 /* 添加主题相关样式 */

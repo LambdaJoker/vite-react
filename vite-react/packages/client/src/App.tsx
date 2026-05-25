@@ -41,7 +41,6 @@ const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
 const MainApp: React.FC = () => {
   const { fetchAppConfig, isReadOnly, isLoading } = useAppStore();
   const location = useLocation();
-  const isArticleRoute = location.pathname.startsWith('/articles');
 
   useEffect(() => {
     fetchAppConfig();
@@ -52,11 +51,7 @@ const MainApp: React.FC = () => {
       <ClickEffect />
       <DynamicBackground />
       <Header />
-      <main
-        id="main-content"
-        className={`main-content ${isArticleRoute ? 'article-page-main' : ''}`}
-        tabIndex={-1}
-      >
+      <main id="main-content" className="main-content" tabIndex={-1}>
         <AnimatePresence mode="wait">
           {isLoading ? (
             <motion.div key="loader" exit={{ opacity: 0 }} className="page-loader">
