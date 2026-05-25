@@ -67,9 +67,6 @@ export default defineConfig({
             if (packagePath.startsWith('react-markdown') || packagePath.startsWith('react-syntax-highlighter') || packagePath.startsWith('remark') || packagePath.startsWith('rehype')) {
               return 'vendor-markdown';
             }
-            if (packagePath.startsWith('react-mde') || packagePath.startsWith('react-quill')) {
-              return 'vendor-editor';
-            }
             if (packagePath.startsWith('@mui') || packagePath.startsWith('@emotion')) {
               return 'vendor-mui';
             }
