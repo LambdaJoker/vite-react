@@ -31,8 +31,17 @@ export interface Article {
   comment_count?: number;
   author: string;
   tags: string[];
+  isPinned?: boolean;
   prevArticle?: ArticleNav | null;
   nextArticle?: ArticleNav | null;
+}
+
+interface ArticleListResponse {
+  items: Article[];
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
 }
 
 interface ArticleState {
@@ -40,8 +49,14 @@ interface ArticleState {
   currentArticle: Article | null;
   comments: Comment[];
   isLoading: boolean;
+  isLoadingMore: boolean;
   error: string | null;
-  fetchArticles: () => Promise<void>;
+  articlePage: number;
+  articleLimit: number;
+  articleTotal: number;
+  hasMoreArticles: boolean;
+  fetchArticles: (options?: { reset?: boolean; limit?: number }) => Promise<void>;
+  loadMoreArticles: () => Promise<void>;
   fetchArticle: (id: string) => Promise<void>;
   createArticle: (articleData: FormData) => Promise<Article | undefined>;
   updateArticle: (id: string, articleData: FormData) => Promise<Article | undefined>;
@@ -60,20 +75,92 @@ const useArticleStore = create<ArticleState>((set) => ({
   currentArticle: null,
   comments: [],
   isLoading: false,
+  isLoadingMore: false,
   error: null,
+  articlePage: 0,
+  articleLimit: 8,
+  articleTotal: 0,
+  hasMoreArticles: true,
 
   // 异步获取文章数据的 action
-  fetchArticles: async () => {
+  fetchArticles: async (options = {}) => {
+    const state = useArticleStore.getState();
+    const limit = options.limit || state.articleLimit;
+    const shouldReset = options.reset || state.articles.length === 0;
+
+    if (!shouldReset && state.articles.length > 0) return;
+
     set({ isLoading: true, error: null });
     try {
-      // 使用 apiClient 发起请求
-      const response = await apiClient.get<Article[]>('/articles');
-      // 确保返回的是数组
-      const articles = Array.isArray(response.data) ? response.data : [];
-      set({ articles, isLoading: false });
+      const response = await apiClient.get<ArticleListResponse | Article[]>('/articles', {
+        params: { page: 1, limit }
+      });
+
+      if (Array.isArray(response.data)) {
+        set({
+          articles: response.data,
+          articlePage: 1,
+          articleLimit: limit,
+          articleTotal: response.data.length,
+          hasMoreArticles: false,
+          isLoading: false
+        });
+        return;
+      }
+
+      set({
+        articles: response.data.items,
+        articlePage: response.data.page,
+        articleLimit: response.data.limit,
+        articleTotal: response.data.total,
+        hasMoreArticles: response.data.hasMore,
+        isLoading: false
+      });
     } catch (err: any) {
       const errorMessage = err.message || '获取文章列表失败';
       set({ error: errorMessage, isLoading: false, articles: [] });
+    }
+  },
+
+  loadMoreArticles: async () => {
+    const state = useArticleStore.getState();
+    if (state.isLoading || state.isLoadingMore || !state.hasMoreArticles) return;
+
+    const nextPage = state.articlePage + 1;
+    set({ isLoadingMore: true, error: null });
+
+    try {
+      const response = await apiClient.get<ArticleListResponse | Article[]>('/articles', {
+        params: { page: nextPage, limit: state.articleLimit }
+      });
+
+      if (Array.isArray(response.data)) {
+        set({
+          articles: response.data,
+          hasMoreArticles: false,
+          isLoadingMore: false
+        });
+        return;
+      }
+
+      const pagedData = response.data;
+
+      set((currentState) => {
+        const existingIds = new Set(currentState.articles.map((article) => article.id));
+        const nextItems = pagedData.items.filter((article: Article) => !existingIds.has(article.id));
+
+        return {
+          articles: [...currentState.articles, ...nextItems],
+          articlePage: pagedData.page,
+          articleLimit: pagedData.limit,
+          articleTotal: pagedData.total,
+          hasMoreArticles: pagedData.hasMore,
+          isLoadingMore: false
+        };
+      });
+    } catch (err: any) {
+      const errorMessage = err.message || '加载更多文章失败';
+      set({ error: errorMessage, isLoadingMore: false });
     }
   },
 

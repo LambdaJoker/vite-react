@@ -51,7 +51,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   <p>在大型应用中，合理的状态管理是至关重要的。Redux、MobX 等状态管理库各有特点...</p>',
   '2024-02-15 10:00:00',
   '技术',
-  '/src/assets/img/article/article1.jpg',
+  '/src/assets/img/article/react-cover.svg',
   "Random Glow",
   10
 ); 
@@ -70,7 +70,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   <p>Pinia 状态管理库与 Vite 构建工具的协同工作流优化...</p>',
   '2024-03-02 14:30:00',
   '技术',
-  '/src/assets/article1.jpg',
+  '/src/assets/img/article/vue-cover.svg',
   "Random Glow",
   28
 );
@@ -90,7 +90,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   <p>基于 NestJS 框架搭建 TypeScript 全栈工程化体系...</p>',
   '2024-03-05 09:15:00',
   '技术',
-  '/src/assets/article1.jpg',
+  '/src/assets/img/article/node-cover.svg',
   "Random Glow",
   45
 );
@@ -110,7 +110,7 @@ INSERT INTO articles (title, content, date, category, image, author, read_count)
   <p>MVCC 多版本并发控制机制在 RR 和 RC 级别下的不同实现...</p>',
   '2024-03-08 16:20:00',
   '技术',
-  '/src/assets/article1.jpg',
+  '/src/assets/img/article/database-cover.svg',
   "Random Glow",
   33
 );

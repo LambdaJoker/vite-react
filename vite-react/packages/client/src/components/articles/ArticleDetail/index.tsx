@@ -23,6 +23,7 @@ import SEO from '../../common/SEO';
 import SkeletonLoader from '../../skeletonLoader'; // 引入骨架加载器
 import { getImageUrl } from '../../../utils/helpers';
 import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
+import LazyImage from '../../lazyImage';
 
 const ArticleDetail: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -157,7 +158,15 @@ const ArticleDetail: FC = () => {
         image={getImageUrl(article.image)}
       />
       <div className="article-detail-container">
-        <div className="article-cover" style={{ backgroundImage: `url(${getImageUrl(article.image)})` }}></div>
+        <div className="article-cover">
+          <LazyImage
+            src={getImageUrl(article.image)}
+            alt={article.title}
+            className="article-cover-image"
+            fetchPriority="low"
+            rootMargin="240px 0px"
+          />
+        </div>
         <div className="article-header">
           <div className="article-info">
             <h1>{article.title}</h1>

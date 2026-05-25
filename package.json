@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "dev": "pnpm --dir vite-react dev",
+    "dev:server": "pnpm --dir vite-react dev:server",
+    "dev:full": "pnpm --dir vite-react dev:full",
+    "build": "pnpm --dir vite-react build"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@types/ioredis": "^4.28.10",

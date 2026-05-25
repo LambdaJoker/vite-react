@@ -1,4 +1,6 @@
 import { FC, memo } from 'react';
+import { Link } from 'react-router-dom';
+import { FaArrowRight } from 'react-icons/fa';
 import LazyImage from '../../../lazyImage';
 import { projects } from '../../../projects/data';
 
@@ -23,9 +25,10 @@ const ProjectsShowcase: FC = () => {
                   <span key={tech}>{tech}</span>
                 ))}
               </div>
-              <a href={project.demoUrl || project.githubUrl} className="project-link" target="_blank" rel="noopener noreferrer">
-                查看项目 →
-              </a>
+              <Link to={`/projects#project-${project.id}`} className="project-link">
+                <span>查看项目</span>
+                <FaArrowRight aria-hidden="true" />
+              </Link>
             </div>
           </div>
         ))}

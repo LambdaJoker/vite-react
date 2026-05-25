@@ -13,6 +13,7 @@
  * @LastEditTime: 2025-06-19 10:12:53
  */
 import { FC, useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import './index.css';
 import SEO from '../../common/SEO';
 import ScrollToTopButton from '../../common/ScrollToTopButton';
@@ -29,6 +30,7 @@ const allTechnologies = Array.from(
 ).sort();
 
 const ProjectsContent: FC = () => {
+  const location = useLocation();
   // 状态管理
   // 当前选中的项目分类
   const [activeCategory, setActiveCategory] = useState<string>("全部");
@@ -89,6 +91,20 @@ const ProjectsContent: FC = () => {
   useEffect(() => {
     setIsAnimated(true);
   }, []);
+
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const targetId = decodeURIComponent(location.hash.slice(1));
+    const timer = window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [location.hash, filteredProjects]);
 
   return (
     <>

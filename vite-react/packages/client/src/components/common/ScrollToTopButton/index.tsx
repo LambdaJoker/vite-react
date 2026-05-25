@@ -6,7 +6,6 @@
  * @LastEditTime: 2025-06-18 19:55:30
  */
 import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import './index.css';
 
 const ScrollToTopButton = () => {
@@ -35,20 +34,13 @@ const ScrollToTopButton = () => {
   }, []);
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          className="scroll-top-button-reusable"
-          onClick={scrollToTop}
-          initial={{ opacity: 0, y: 20, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.9 }}
-          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <span className="material-icons">keyboard_arrow_up</span>
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <button
+      className={`scroll-top-button-reusable ${isVisible ? 'visible' : ''}`}
+      onClick={scrollToTop}
+      aria-label="Scroll to top"
+    >
+      <span className="material-icons">keyboard_arrow_up</span>
+    </button>
   );
 };
 

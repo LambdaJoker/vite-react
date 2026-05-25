@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">React article cover</title>
+  <desc id="desc">A clean React component dashboard illustration.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#e0f2fe"/>
+      <stop offset="1" stop-color="#f8fafc"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0f4c81" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="640" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <rect x="158" y="118" width="884" height="404" rx="34" fill="#fff" opacity="0.9"/>
+    <circle cx="600" cy="320" r="46" fill="#38bdf8"/>
+    <g fill="none" stroke="#0284c7" stroke-width="10" opacity="0.75">
+      <ellipse cx="600" cy="320" rx="238" ry="84"/>
+      <ellipse cx="600" cy="320" rx="238" ry="84" transform="rotate(60 600 320)"/>
+      <ellipse cx="600" cy="320" rx="238" ry="84" transform="rotate(120 600 320)"/>
+    </g>
+    <rect x="232" y="182" width="210" height="46" rx="14" fill="#e0f2fe"/>
+    <rect x="232" y="260" width="170" height="22" rx="11" fill="#8ecae6"/>
+    <rect x="232" y="306" width="230" height="22" rx="11" fill="#b6d7ea"/>
+    <rect x="760" y="410" width="200" height="42" rx="14" fill="#0ea5e9"/>
+  </g>
+  <text x="144" y="594" fill="#075985" font-family="Arial, sans-serif" font-size="34" font-weight="700">REACT PRACTICE</text>
+</svg>

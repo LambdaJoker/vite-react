@@ -1,21 +1,90 @@
-import { FC, useState, useMemo, useCallback } from 'react';
+import { FC, useState, useMemo, useCallback, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 import RMD from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
+import rehypeKatex from 'rehype-katex';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import LazyImage from '../../lazyImage';
+import 'katex/dist/katex.min.css';
 import './index.css';
 
 const ReactMarkdown = (RMD as any).default || RMD;
 
-const markdownRemarkPlugins = [remarkGfm];
-const markdownRehypePlugins = [rehypeRaw];
+const markdownRemarkPlugins = [remarkGfm, remarkMath];
+const markdownRehypePlugins = [rehypeKatex, rehypeRaw];
 
 interface MarkdownRendererProps {
   children: string;
 }
+
+interface MermaidDiagramProps {
+  chart: string;
+}
+
+const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart }) => {
+  const reactId = useId();
+  const [svg, setSvg] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const renderDiagram = async () => {
+      setError('');
+      setSvg('');
+
+      try {
+        const mermaidModule = await import('mermaid');
+        const mermaid = mermaidModule.default;
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'loose',
+          theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+        });
+
+        const diagramId = `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}-${Date.now()}`;
+        const { svg: renderedSvg } = await mermaid.render(diagramId, chart);
+        if (isMounted) {
+          setSvg(renderedSvg);
+        }
+      } catch (err) {
+        console.error('Mermaid render failed:', err);
+        if (isMounted) {
+          setError('图表渲染失败，已保留原始代码。');
+        }
+      }
+    };
+
+    renderDiagram();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [chart, reactId]);
+
+  if (error) {
+    return (
+      <div className="mermaid-error">
+        <p>{error}</p>
+        <pre>{chart}</pre>
+      </div>
+    );
+  }
+
+  if (!svg) {
+    return <div className="mermaid-loading">图表渲染中...</div>;
+  }
+
+  return (
+    <div
+      className="mermaid-diagram"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+};
 
 const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -92,14 +161,21 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
   const markdownComponents = useMemo(() => ({
     code({ node, inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '');
+      const language = match?.[1]?.toLowerCase();
+      const codeValue = String(children).replace(/\n$/, '');
+
+      if (!inline && language === 'mermaid') {
+        return <MermaidDiagram chart={codeValue} />;
+      }
+
       return !inline && match ? (
         <SyntaxHighlighter
           style={atomDark}
-          language={match[1]}
+          language={language}
           PreTag="div"
           {...props}
         >
-          {String(children).replace(/\n$/, '')}
+          {codeValue}
         </SyntaxHighlighter>
       ) : (
         <code className={className} {...props}>
@@ -123,8 +199,14 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children }) => {
     img({ node, src, alt, ...props }: any) {
       if (!src) return null;
       return (
-        <span className="markdown-image-wrapper" style={{ display: 'block', margin: '1rem 0', borderRadius: '8px', overflow: 'hidden' }}>
-          <LazyImage src={src} alt={alt || ''} className="markdown-image" />
+        <span className="markdown-image-wrapper">
+          <LazyImage
+            src={src}
+            alt={alt || ''}
+            className="markdown-image"
+            fetchPriority="low"
+            rootMargin="360px 0px"
+          />
         </span>
       );
     }

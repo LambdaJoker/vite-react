@@ -42,21 +42,33 @@ const cheerio = __importStar(require("cheerio"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const isVercel = process.env.VERCEL === '1';
-const dataFile = isVercel
-    ? '/tmp/wallpapers-data.json'
-    : path_1.default.join(__dirname, '../../public/uploads/wallpapers-data.json');
+const tempFile = '/tmp/wallpapers-data.json';
+// Point to the specific file requested by the user
+const localFile = path_1.default.join(__dirname, '../../wallpapers-data.json');
 let currentWallpapers = [];
+// Helper function to read data
+const readWallpapersData = () => {
+    if (isVercel && fs_1.default.existsSync(tempFile)) {
+        return fs_1.default.readFileSync(tempFile, 'utf8');
+    }
+    else if (fs_1.default.existsSync(localFile)) {
+        return fs_1.default.readFileSync(localFile, 'utf8');
+    }
+    return null;
+};
 // Initialize data from file if exists
-if (fs_1.default.existsSync(dataFile)) {
+const initialData = readWallpapersData();
+if (initialData) {
     try {
-        const data = fs_1.default.readFileSync(dataFile, 'utf8');
-        currentWallpapers = JSON.parse(data);
+        currentWallpapers = JSON.parse(initialData);
         console.log(`[WallpaperService] Loaded ${currentWallpapers.length} wallpapers from cache.`);
     }
     catch (err) {
-        console.error('[WallpaperService] Failed to read cache:', err);
+        console.error('[WallpaperService] Failed to parse cache:', err);
     }
 }
+// [保留代码] 以下是实时获取模式 (Scrape Mode) 的核心逻辑
+// 现已通过 WALLPAPER_MODE 环境变量进行控制，不再强制每次启动执行
 const scrapeWallpapers = async () => {
     // Generate a random page number between 1 and 100 to get diverse wallpapers
     // haowallpaper.com/search 页面是 CSR 渲染的，直接请求 HTML 拿不到图片，我们需要修改一下策略
@@ -123,7 +135,8 @@ const scrapeWallpapers = async () => {
             const mergedWallpapers = [...new Set([...currentWallpapers, ...validUrls])];
             currentWallpapers = mergedWallpapers;
             try {
-                fs_1.default.writeFileSync(dataFile, JSON.stringify(currentWallpapers, null, 2));
+                const targetFile = isVercel ? tempFile : localFile;
+                fs_1.default.writeFileSync(targetFile, JSON.stringify(currentWallpapers, null, 2));
             }
             catch (err) {
                 console.error('[WallpaperService] Failed to write cache:', err);
@@ -139,23 +152,48 @@ const scrapeWallpapers = async () => {
     }
 };
 exports.scrapeWallpapers = scrapeWallpapers;
-const getRandomWallpaper = async () => {
+const getRandomWallpaper = async (isMobile = false) => {
+    // Allow overriding mode via env, default to local
+    const mode = process.env.WALLPAPER_MODE || 'local';
+    // 1. Video 模式 (vedio模式)
+    // 只有在非移动端才允许使用视频模式
+    if (!isMobile && (mode === 'video' || mode === 'vedio')) { // 兼容拼写错误
+        // 视频文件已放置在前端 public 目录下，以避开 Vercel Serverless 的体积限制
+        return '/bg-video.mp4';
+    }
+    // 3. 本地随机模式 (local模式) 或是 scrape 获取失败的兜底
+    if (currentWallpapers.length === 0 || mode === 'local') {
+        // 每次请求随机前重新读取一次文件，这样用户在外部修改 wallpapers-data.json 后会立即生效
+        const data = readWallpapersData();
+        if (data) {
+            try {
+                currentWallpapers = JSON.parse(data);
+            }
+            catch (err) {
+                console.error('[WallpaperService] Failed to parse cache:', err);
+            }
+        }
+    }
     if (currentWallpapers.length === 0) {
-        if (isVercel) {
-            await (0, exports.scrapeWallpapers)();
-        }
-        if (currentWallpapers.length === 0) {
-            // Default fallback - Use previewFileImg for higher quality
-            return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
-        }
+        // Default fallback - Use previewFileImg for higher quality
+        return 'https://haowallpaper.com/link/common/file/previewFileImg/18347080643104128';
     }
     const randomIndex = Math.floor(Math.random() * currentWallpapers.length);
     return currentWallpapers[randomIndex];
 };
 exports.getRandomWallpaper = getRandomWallpaper;
 const getAllWallpapers = async () => {
-    if (currentWallpapers.length === 0 && isVercel) {
-        await (0, exports.scrapeWallpapers)();
+    const mode = process.env.WALLPAPER_MODE || 'local';
+    if (currentWallpapers.length === 0) {
+        const data = readWallpapersData();
+        if (data) {
+            try {
+                currentWallpapers = JSON.parse(data);
+            }
+            catch (err) {
+                console.error('[WallpaperService] Failed to parse cache:', err);
+            }
+        }
     }
     return currentWallpapers;
 };

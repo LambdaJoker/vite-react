@@ -194,6 +194,7 @@ export const getArticle: RequestHandler = async (req, res) => {
       // 如果 tags 是 JSON 字符串，需要解析
       tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
     };
+    const formattedTags = Array.isArray(formattedArticle.tags) ? formattedArticle.tags : [];
 
     // 获取上一篇和下一篇文章的快捷导航信息 (只取 id 和 title)
     // 假设按照 date 倒序排列（最新发布的在最前），那么“上一篇”是日期更新的，“下一篇”是日期更旧的
@@ -215,6 +216,8 @@ export const getArticle: RequestHandler = async (req, res) => {
 
     res.json({
       ...formattedArticle,
+      tags: formattedTags,
+      isPinned: formattedTags.includes('置顶'),
       prevArticle,
       nextArticle
     });
@@ -232,11 +235,19 @@ export const getArticle: RequestHandler = async (req, res) => {
 // 获取文章列表
 export const getArticles: RequestHandler = async (req, res) => {
   try {
+    const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit as string, 10) || 8, 1), 50);
+    const skip = (page - 1) * limit;
+
+    const total = await prisma.articles.count();
+
     // 使用 select 避免查询全量 content 字段，减少数据传输
     const articles = await prisma.articles.findMany({
       orderBy: {
         date: 'desc',
       },
+      skip,
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -258,17 +269,26 @@ export const getArticles: RequestHandler = async (req, res) => {
 
     // 格式化数据
     const formattedArticles = articles.map(article => {
+      const tags = typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags;
+      const normalizedTags = Array.isArray(tags) ? tags : [];
       return {
         ...article,
         date: article.date.toISOString().split('T')[0],
         // 如果 tags 是 JSON 字符串，需要解析
-        tags: typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags,
+        tags: normalizedTags,
+        isPinned: normalizedTags.includes('置顶'),
         comment_count: article._count.comments,
         _count: undefined
       };
     });
 
-    res.json(formattedArticles);
+    res.json({
+      items: formattedArticles,
+      page,
+      limit,
+      total,
+      hasMore: skip + formattedArticles.length < total
+    });
   } catch (error) {
     console.error('❌ [SERVER] 获取文章列表失败:', error);
     res.status(500).json({ message: '服务器错误' });

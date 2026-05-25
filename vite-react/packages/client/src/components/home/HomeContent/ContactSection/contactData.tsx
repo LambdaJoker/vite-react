@@ -17,13 +17,14 @@ export interface Contact {
 }
 
 const EmojiIcon = ({ children }: { children: string }): ReactElement => <>{children}</>;
+const qqMailLink = 'https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=2667534364%40qq.com';
 
 export const contacts: Contact[] = [
   {
     icon: <EmojiIcon>📧</EmojiIcon>,
     title: '邮箱',
     content: '2667534364@qq.com',
-    link: 'mailto:2667534364@qq.com',
+    link: qqMailLink,
     linkText: '发送邮件',
   },
   {

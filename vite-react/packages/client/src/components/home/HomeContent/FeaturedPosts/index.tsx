@@ -8,9 +8,8 @@
 import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../../../store/articleStore';
-import { createExcerpt, getImageUrl } from '../../../../utils/helpers';
+import { getImageUrl, plainTextExcerpt } from '../../../../utils/helpers';
 import defaultCover from '../../../../assets/default-cover.svg';
-import MarkdownRenderer from '../../../common/MarkdownRenderer';
 import LazyImage from '../../../lazyImage';
 
 interface FeaturedPostsProps {
@@ -39,9 +38,7 @@ const FeaturedPosts: FC<FeaturedPostsProps> = ({ articles }) => {
             </div>
             <div className="post-content">
               <h3>{article.title}</h3>
-              <div className="article-excerpt markdown-preview">
-                <MarkdownRenderer>{article.excerpt || createExcerpt(article.content)}</MarkdownRenderer>
-              </div>
+              <p className="article-excerpt">{plainTextExcerpt(article.excerpt || article.content)}</p>
               <Link to={`/articles/${article.id}`} className="read-more">阅读更多</Link>
             </div>
           </div>

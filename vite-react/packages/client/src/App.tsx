@@ -14,7 +14,6 @@ import SkeletonLoader from './components/skeletonLoader';
 import DynamicBackground from './components/common/DynamicBackground';
 import ClickEffect from './components/common/ClickEffect';
 import './App.css';
-import { AnimatePresence, motion } from 'framer-motion';
 
 // 懒加载所有页面级组件，提升首屏加载速度
 const HomePage = lazy(() => import('./components/home/HomePage'));
@@ -27,19 +26,13 @@ const BookmarksContent = lazy(() => import('./components/bookmarks/BookmarksCont
 const ThoughtsContent = lazy(() => import('./components/thoughts/ThoughtsContent'));
 
 const AnimatedRoute = ({ children }: { children: React.ReactNode }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 15 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -15 }}
-    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-    style={{ width: '100%', position: 'relative' }}
-  >
+  <div className="route-view">
     {children}
-  </motion.div>
+  </div>
 );
 
 const MainApp: React.FC = () => {
-  const { fetchAppConfig, isReadOnly, isLoading } = useAppStore();
+  const { fetchAppConfig, isReadOnly } = useAppStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -52,12 +45,6 @@ const MainApp: React.FC = () => {
       <DynamicBackground />
       <Header />
       <main id="main-content" className="main-content" tabIndex={-1}>
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <motion.div key="loader" exit={{ opacity: 0 }} className="page-loader">
-              <SkeletonLoader type="card" count={3} />
-            </motion.div>
-          ) : (
             <Suspense fallback={<div className="page-loader"><SkeletonLoader type="card" count={3} /></div>}>
               <Routes location={location} key={location.pathname}>
                 <Route
@@ -118,8 +105,6 @@ const MainApp: React.FC = () => {
                 <Route path="/thoughts" element={<AnimatedRoute><ThoughtsContent /></AnimatedRoute>} />
               </Routes>
             </Suspense>
-          )}
-        </AnimatePresence>
       </main>
       <Footer />
     </div>

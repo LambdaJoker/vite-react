@@ -53,6 +53,20 @@
   font-size: 0.9rem;
 }
 
+.article-pin {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.24);
+}
+
 .article-content {
   padding: 1.8rem;
 }

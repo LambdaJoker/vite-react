@@ -82,15 +82,124 @@
   border-bottom: 1px solid #0056b3;
 }
 
-.markdown-image-wrapper .lazy-image-container {
-  min-height: 250px;
+.markdown-image-wrapper {
+  display: block;
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
   background: var(--secondary-bg, #f8f9fa);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.markdown-image-wrapper .lazy-image-container {
+  aspect-ratio: 16 / 9;
+  min-height: 220px;
+  max-height: 80vh;
+  background: linear-gradient(110deg, rgba(241, 245, 249, 0.9), rgba(226, 232, 240, 0.72), rgba(241, 245, 249, 0.9));
 }
 
 .markdown-image-wrapper .lazy-image {
   object-fit: contain;
   height: auto;
+  min-height: 100%;
   max-height: 80vh;
+  background: white;
+}
+
+[data-theme="dark"] .markdown-image-wrapper {
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: none;
+}
+
+[data-theme="dark"] .markdown-image-wrapper .lazy-image-container {
+  background: linear-gradient(110deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+}
+
+[data-theme="dark"] .markdown-image-wrapper .lazy-image {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.mermaid-diagram,
+.mermaid-loading,
+.mermaid-error {
+  margin: 1.5rem 0;
+  border: 1px solid rgba(0, 123, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.mermaid-diagram {
+  padding: 1.25rem;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-loading {
+  padding: 1.5rem;
+  color: #52616f;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.mermaid-error {
+  padding: 1rem;
+  color: #9f1239;
+}
+
+.mermaid-error p {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.mermaid-error pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+[data-theme="dark"] .mermaid-diagram,
+[data-theme="dark"] .mermaid-loading,
+[data-theme="dark"] .mermaid-error {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.68);
+}
+
+[data-theme="dark"] .mermaid-loading {
+  color: #cbd5e1;
+}
+
+.katex {
+  font-size: 1.05em;
+}
+
+.katex-display {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid rgba(0, 123, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.katex-display > .katex {
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .katex {
+  color: #e5edf7;
+}
+
+[data-theme="dark"] .katex-display {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.68);
+  box-shadow: none;
 }
 
 @keyframes fadeIn {

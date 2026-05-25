@@ -1,4 +1,8 @@
 import { Project } from './types.ts';
+import blogCover from '../../assets/img/project/blog-cover.svg';
+import chefAgentCover from '../../assets/img/project/chefagent-cover.svg';
+import multiAgentCover from '../../assets/img/project/multi-agent-cover.svg';
+import agriVisionCover from '../../assets/img/project/agrivision-cover.svg';
 
 export const projects: Project[] = [
   {
@@ -7,8 +11,7 @@ export const projects: Project[] = [
     description: "基于 React + TypeScript 的现代化博客系统，支持文章管理、技术栈展示等功能",
     category: "Web开发",
     technologies: ["React", "TypeScript", "Node.js", "Vercel"],
-    image: "/src/assets/img/project/project1.jpg",
-    demoUrl: "https://blog.example.com",
+    image: blogCover,
     githubUrl: "https://github.com/LambdaJoker/vite-react",
     highlights: [
       "使用 React Hooks 实现状态管理",
@@ -25,8 +28,7 @@ export const projects: Project[] = [
     description: "一个前后端分离的多模态智能体项目，支持图片食材识别、菜谱智能推荐、私厨对话及按需联网搜索，提供沉浸式流式对话体验。",
     category: "Agent",
     technologies: ["Vue 3", "FastAPI", "LangChain", "Minimax", "Qwen-VL", "OSS"],
-    image: "/src/assets/img/project/project4.jpg",
-    demoUrl: "https://chefagent.example.com",
+    image: chefAgentCover,
     githubUrl: "https://github.com/LambdaJoker/ChefAgent",
     highlights: [
       "结合视觉模型实现高精度的图片食材识别与分析",
@@ -43,8 +45,7 @@ export const projects: Project[] = [
     description: "一个基于任务规划和角色分配的自主智能体协作框架，能够自动拆解复杂任务并协同完成代码编写与测试。",
     category: "Agent",
     technologies: ["Python", "AutoGen", "Docker", "LLM"],
-    image: "/src/assets/img/project/project1.jpg",
-    demoUrl: "https://agent.example.com",
+    image: multiAgentCover,
     githubUrl: "https://github.com/example/multi-agent",
     highlights: [
       "设计了 Planner、Coder、Reviewer 等多角色 Agent 协同机制",
@@ -57,17 +58,16 @@ export const projects: Project[] = [
   },
   {
     id: 4,
-    title: "AgriVision - 基于改进型 YOLOv11 的农作物病虫害识别系统",
-    description: "致力于智慧农业的计算机视觉项目，基于最新的 YOLOv11 架构进行改进，实现对复杂自然环境下农作物病虫害的实时、高精度检测与分类。",
+    title: "融合坐标注意力机制的轻量化农作物病虫害识别方法研究与实现",
+    description: "面向智慧农业场景的轻量化视觉识别项目，在 YOLOv11 架构中融合坐标注意力机制，提升复杂自然环境下农作物病虫害目标的定位、检测与分类能力。",
     category: "计算机视觉",
-    technologies: ["YOLOv11", "PyTorch", "OpenCV", "Python"],
-    image: "/src/assets/img/project/project4.jpg",
-    demoUrl: "https://agrivision.example.com",
+    technologies: ["YOLOv11", "坐标注意力机制", "PyTorch", "OpenCV", "Python"],
+    image: agriVisionCover,
     githubUrl: "https://github.com/LambdaJoker/AgriVision-YOLOv11",
     highlights: [
-      "引入轻量化注意力机制，增强复杂背景下微小病虫害的特征提取能力",
+      "融合坐标注意力机制，增强复杂背景下微小病虫害区域的空间定位与特征表达能力",
       "构建并清洗了包含十余种农作物病虫害的大规模高质量图像数据集",
-      "针对边缘设备进行模型剪枝与量化，大幅提升端侧计算的推理帧率",
+      "围绕轻量化部署优化网络结构，降低模型参数量与计算开销，提升端侧推理效率",
       "在自建测试集上 mAP@0.5 达到 99.2%，满足真实农业场景的实时检测需求"
     ],
     period: "2025.01 - 2025.05",

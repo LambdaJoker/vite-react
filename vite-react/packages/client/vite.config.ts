@@ -40,17 +40,47 @@ export default defineConfig({
         // 自动分包：将 node_modules 中的依赖分别打包
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
+            const normalizedId = id.replace(/\\/g, '/');
+            const nodeModulesIndex = normalizedId.lastIndexOf('/node_modules/');
+            const packagePath = normalizedId.slice(nodeModulesIndex + '/node_modules/'.length);
+
+            if (
+              packagePath.startsWith('mermaid') ||
+              packagePath.startsWith('@mermaid-js') ||
+              packagePath.startsWith('d3') ||
+              packagePath.startsWith('dagre-d3-es') ||
+              packagePath.startsWith('cytoscape') ||
+              packagePath.startsWith('@braintree/sanitize-url') ||
+              packagePath.startsWith('@iconify') ||
+              packagePath.startsWith('@upsetjs') ||
+              packagePath.startsWith('dompurify') ||
+              packagePath.startsWith('katex') ||
+              packagePath.startsWith('khroma') ||
+              packagePath.startsWith('marked') ||
+              packagePath.startsWith('roughjs') ||
+              packagePath.startsWith('stylis') ||
+              packagePath.startsWith('ts-dedent') ||
+              packagePath.startsWith('uuid')
+            ) {
+              return 'vendor-mermaid';
             }
-            if (id.includes('@mui') || id.includes('@emotion')) {
+            if (packagePath.startsWith('react-markdown') || packagePath.startsWith('react-syntax-highlighter') || packagePath.startsWith('remark') || packagePath.startsWith('rehype')) {
+              return 'vendor-markdown';
+            }
+            if (packagePath.startsWith('react-mde') || packagePath.startsWith('react-quill')) {
+              return 'vendor-editor';
+            }
+            if (packagePath.startsWith('@mui') || packagePath.startsWith('@emotion')) {
               return 'vendor-mui';
             }
-            if (id.includes('framer-motion')) {
+            if (packagePath.startsWith('framer-motion')) {
               return 'vendor-framer';
             }
-            if (id.includes('react-markdown') || id.includes('react-syntax-highlighter') || id.includes('remark') || id.includes('rehype')) {
-              return 'vendor-markdown';
+            if (packagePath.startsWith('react-icons')) {
+              return 'vendor-icons';
+            }
+            if (packagePath.startsWith('react/') || packagePath.startsWith('react-dom') || packagePath.startsWith('react-router')) {
+              return 'vendor-react';
             }
             // 其他的库都打包到 vendor
             return 'vendor-others';

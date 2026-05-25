@@ -65,6 +65,24 @@
   min-height: calc(100vh - 60px);
 }
 
+.route-view {
+  width: 100%;
+  position: relative;
+  animation: routeFadeIn 0.24s ease-out;
+}
+
+@keyframes routeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* 添加主题相关样式 */
 :root {
   --bg-color: #ffffff;

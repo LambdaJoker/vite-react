@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import defaultCover from '../../assets/default-cover.svg';
 import SkeletonLoader from '../skeletonLoader';
 import './index.css';
 
@@ -19,6 +20,10 @@ interface LazyImageProps {
   onLoad?: () => void;
   // 加载失败时的替代图片
   errorFallback?: string;
+  // 图片加载优先级
+  fetchPriority?: 'high' | 'low' | 'auto';
+  // 提前多少距离开始加载
+  rootMargin?: string;
 }
 
 /**
@@ -34,7 +39,9 @@ const LazyImage: React.FC<LazyImageProps> = ({
   width,
   height,
   onLoad,
-  errorFallback
+  errorFallback = defaultCover,
+  fetchPriority = 'low',
+  rootMargin = '240px 0px'
 }) => {
   // 图片加载完成状态
   const [isLoaded, setIsLoaded] = useState(false);
@@ -53,8 +60,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
           observer.disconnect();
         }
       },
-      // 设置阈值为 0.1，即元素 10% 进入视口时触发
-      { threshold: 0.1 }
+      // 提前一点加载，减少用户滚动到图片时的等待
+      { rootMargin, threshold: 0.01 }
     );
 
     // 开始观察容器元素
@@ -64,7 +71,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
 
     // 组件卸载时清理观察器
     return () => observer.disconnect();
-  }, []);
+  }, [rootMargin]);
 
   return (
     <div
@@ -78,6 +85,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
           src={src}
           alt={alt}
           loading="lazy"
+          decoding="async"
+          fetchPriority={fetchPriority}
           className={`lazy-image ${isLoaded ? 'loaded' : ''}`}
           onLoad={() => {
             setIsLoaded(true);

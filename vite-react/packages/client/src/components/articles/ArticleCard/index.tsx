@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import LazyImage from '../../lazyImage';
-import MarkdownRenderer from '../../common/MarkdownRenderer';
-import { getImageUrl } from '../../../utils/helpers';
+import { getImageUrl, plainTextExcerpt } from '../../../utils/helpers';
 import { type Article } from '../../store/articleStore';
 import './index.css';
 
@@ -18,6 +17,7 @@ const ArticleCard: FC<ArticleCardProps> = ({ article }) => {
           src={getImageUrl(article.image)} 
           alt={article.title}
         />
+        {article.isPinned && <div className="article-pin">置顶</div>}
         <div className="article-category">{article.category}</div>
       </div>
       <div className="article-content">
@@ -27,9 +27,7 @@ const ArticleCard: FC<ArticleCardProps> = ({ article }) => {
           <span className="read-count">{article.read_count} 次阅读</span>
         </div>
         <h2>{article.title}</h2>
-        <div className="article-excerpt markdown-preview">
-          <MarkdownRenderer>{article.excerpt || ''}</MarkdownRenderer>
-        </div>
+        <p className="article-excerpt">{plainTextExcerpt(article.excerpt || article.content)}</p>
         {article.tags && article.tags.length > 0 && (
           <div className="article-tags">
             {article.tags.map(tag => (

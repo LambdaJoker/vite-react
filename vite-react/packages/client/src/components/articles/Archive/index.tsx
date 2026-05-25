@@ -12,7 +12,7 @@ const Archive: FC = () => {
 
   useEffect(() => {
     setIsInitialLoad(true);
-    fetchArticles().finally(() => setIsInitialLoad(false));
+    fetchArticles({ reset: true, limit: 100 }).finally(() => setIsInitialLoad(false));
     setIsAnimated(true);
   }, [fetchArticles]);
 

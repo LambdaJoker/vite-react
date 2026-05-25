@@ -1,7 +1,29 @@
 import defaultCover from '../assets/default-cover.svg';
+import databaseCover from '../assets/img/article/database-cover.svg';
+import aiAgentCover from '../assets/img/article/ai-agent-cover.svg';
+import aiContextCover from '../assets/img/article/ai-context-cover.svg';
+import aiRagCover from '../assets/img/article/ai-rag-cover.svg';
+import aiSeriesCover from '../assets/img/article/ai-series-cover.svg';
+import nodeCover from '../assets/img/article/node-cover.svg';
+import reactCover from '../assets/img/article/react-cover.svg';
+import vueCover from '../assets/img/article/vue-cover.svg';
+
+const articleImageMap: Record<string, string> = {
+  '/src/assets/article1.jpg': reactCover,
+  '/src/assets/img/article/article1.jpg': reactCover,
+  '/src/assets/img/article/react-cover.svg': reactCover,
+  '/src/assets/img/article/vue-cover.svg': vueCover,
+  '/src/assets/img/article/node-cover.svg': nodeCover,
+  '/src/assets/img/article/database-cover.svg': databaseCover,
+  '/src/assets/img/article/ai-series-cover.svg': aiSeriesCover,
+  '/src/assets/img/article/ai-agent-cover.svg': aiAgentCover,
+  '/src/assets/img/article/ai-rag-cover.svg': aiRagCover,
+  '/src/assets/img/article/ai-context-cover.svg': aiContextCover
+};
 
 export const getImageUrl = (imagePath: string | undefined | null): string => {
   if (!imagePath) return defaultCover;
+  if (articleImageMap[imagePath]) return articleImageMap[imagePath];
   if (imagePath.startsWith('/src/')) return imagePath;
   if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
   return `${import.meta.env.VITE_API_BASE_URL}${imagePath}`;
@@ -40,6 +62,20 @@ export const createExcerpt = (content: string): string => {
   }
 
   return firstSentence;
+};
+
+export const plainTextExcerpt = (content: string | undefined | null, maxLength = 120): string => {
+  if (!content) return '';
+
+  const text = content
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[`*_>#~-]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return text.length > maxLength ? `${text.slice(0, maxLength).trim()}...` : text;
 };
 
 // 防抖函数

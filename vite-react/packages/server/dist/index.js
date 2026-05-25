@@ -32,12 +32,18 @@ if (!isVercel) {
                 console.log(`🚀 Server is running on port ${PORT}`);
                 console.log(`✅ Application Mode: ${process.env.APP_MODE || 'production'}`);
             });
-            // Start initial wallpaper scrape
-            await (0, wallpaper_service_1.scrapeWallpapers)();
-            // Set interval to scrape every 10 minutes (600,000 ms)
-            setInterval(() => {
-                (0, wallpaper_service_1.scrapeWallpapers)();
-            }, 10 * 60 * 1000);
+            // Start initial wallpaper scrape ONLY if mode is 'scrape'
+            const mode = process.env.WALLPAPER_MODE || 'local';
+            if (mode === 'scrape') {
+                await (0, wallpaper_service_1.scrapeWallpapers)();
+                // Set interval to scrape every 10 minutes (600,000 ms)
+                setInterval(() => {
+                    (0, wallpaper_service_1.scrapeWallpapers)();
+                }, 10 * 60 * 1000);
+            }
+            else {
+                console.log(`[WallpaperService] Running in '${mode}' mode. Real-time scraping is disabled.`);
+            }
         }
         catch (error) {
             console.error('❌ Error starting server:', error);

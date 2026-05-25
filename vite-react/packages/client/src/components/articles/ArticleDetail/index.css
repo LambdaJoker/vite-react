@@ -17,11 +17,21 @@
 .article-detail-container .article-cover {
   width: 100%;
   height: 350px;
-  background-size: cover;
-  background-position: center;
   margin-bottom: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: var(--secondary-bg, #f8f9fa);
+}
+
+.article-detail-container .article-cover-image,
+.article-detail-container .article-cover-image .lazy-image {
+  width: 100%;
+  height: 100%;
+}
+
+.article-detail-container .article-cover-image .lazy-image {
+  object-fit: cover;
 }
 
 .article-detail-container .article-info h1 {
@@ -114,6 +124,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0,0,0,0.05);
   z-index: 10;
+  text-align: left;
 }
 
 .toc-title {
@@ -122,26 +133,30 @@
   color: #333;
   border-bottom: 1px solid #eee;
   padding-bottom: 0.5rem;
+  text-align: left;
 }
 
 .toc-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: left;
 }
 
 .toc-item {
   margin-bottom: 0.5rem;
   line-height: 1.4;
+  text-align: left;
 }
 
 .toc-item.level-2 {
   font-weight: bold;
   margin-top: 0.8rem;
+  padding-left: 0;
 }
 
 .toc-item.level-3 {
-  padding-left: 1.2rem;
+  padding-left: 1.35rem;
   font-size: 0.95rem;
   color: #666;
 }
@@ -151,10 +166,32 @@
   color: inherit;
   transition: color 0.3s;
   display: block;
+  position: relative;
+  padding-left: 0.85rem;
+  text-align: left;
 }
 
 .toc-item a:hover {
   color: #007bff;
+}
+
+.toc-item a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.42;
+  transform: translateY(-50%);
+}
+
+.toc-item.level-3 a::before {
+  width: 0.28rem;
+  height: 0.28rem;
+  opacity: 0.32;
 }
 
 /* 当屏幕宽度在 1200px 到 1500px 之间时，将目录固定在右侧边缘 */

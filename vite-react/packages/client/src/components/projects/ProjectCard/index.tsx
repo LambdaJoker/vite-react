@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
 import LazyImage from '../../lazyImage';
 import { Project } from '../types';
 import './index.css';
@@ -8,8 +9,10 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
+  const hasLinks = Boolean(project.demoUrl || project.githubUrl);
+
   return (
-    <div className="project-card">
+    <div id={`project-${project.id}`} className="project-card">
       <div className="project-image">
         <LazyImage src={project.image} alt={project.title} />
         <div className="project-category">{project.category}</div>
@@ -36,18 +39,22 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
             <span key={index} className="tech-tag">{tech}</span>
           ))}
         </div>
-        <div className="project-links">
-          {project.demoUrl && (
-            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="project-link demo">
-              查看演示
-            </a>
-          )}
-          {project.githubUrl && (
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link github">
-              源代码
-            </a>
-          )}
-        </div>
+        {hasLinks && (
+          <div className="project-links">
+            {project.demoUrl && (
+              <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="project-link demo">
+                <FaExternalLinkAlt aria-hidden="true" />
+                <span>查看演示</span>
+              </a>
+            )}
+            {project.githubUrl && (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link github">
+                <FaGithub aria-hidden="true" />
+                <span>GitHub 源码</span>
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

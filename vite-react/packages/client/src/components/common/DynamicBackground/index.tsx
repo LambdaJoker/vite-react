@@ -2,7 +2,8 @@ import { FC, useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import useAppStore from '../../store/appStore';
 import './index.css';
-import bgVideo from '../../../assets/video/bg-video.mp4';
+
+const bgVideo = '/bg-video.mp4';
 
 const DynamicBackground: FC = () => {
   const [bgUrl, setBgUrl] = useState<string>('');
