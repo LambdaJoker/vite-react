@@ -1,4 +1,5 @@
 import { FC, useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import useAppStore from '../../store/appStore';
 import './index.css';
 import bgVideo from '../../../assets/video/bg-video.mp4';
@@ -65,7 +66,7 @@ const DynamicBackground: FC = () => {
     }
   }, [bgMode, isMobile]);
 
-  return (
+  return createPortal(
     <>
       {bgMode === 'static' && !isMobile ? (
         <div className="dynamic-background video-background">
@@ -89,7 +90,7 @@ const DynamicBackground: FC = () => {
           bgUrl.endsWith('.mp4') || bgUrl.endsWith('.webm') ? (
             <div className="dynamic-background video-background">
               <video 
-                key={bgUrl} /* 使用 key 强制重新渲染 video 元素加载新源 */
+                key={bgUrl}
                 autoPlay 
                 loop 
                 muted 
@@ -111,7 +112,8 @@ const DynamicBackground: FC = () => {
           )
         )
       )}
-    </>
+    </>,
+    document.body
   );
 };
 
