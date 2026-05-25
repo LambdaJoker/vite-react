@@ -58,6 +58,10 @@
   min-height: calc(100vh - 60px);
 }
 
+.article-page-main {
+  background: #ffffff;
+}
+
 /* 添加主题相关样式 */
 :root {
   --bg-color: #ffffff;
