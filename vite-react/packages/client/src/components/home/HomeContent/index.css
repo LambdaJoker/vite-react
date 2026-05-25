@@ -851,6 +851,56 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* 首页卡片按钮对齐：标题/简介换行不同时，按钮仍固定在同一底线。 */
+.home-container .posts-grid,
+.home-container .projects-grid {
+  align-items: stretch;
+}
+
+.home-container .post-card,
+.home-container .project-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-container .post-content,
+.home-container .project-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-container .post-content h3,
+.home-container .project-content h3 {
+  min-height: 3.9rem;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.home-container .post-content p,
+.home-container .project-content p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.home-container .read-more,
+.home-container .project-link {
+  width: fit-content;
+  min-width: 126px;
+  min-height: 44px;
+  margin-top: auto;
+  align-self: center;
+}
+
+.home-container .project-tech {
+  min-height: 2rem;
+}
+
 /* 响应式调整 - 必须放在最后以覆盖上面的样式 */
 @media screen and (max-width: 768px) {
   .home-container {
