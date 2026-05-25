@@ -168,5 +168,55 @@ export const bookmarksData: Bookmark[] = [
     url: 'https://docs.openclaw.ai/zh-CN',
     icon: '🦞',
     category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-4',
+    title: 'CC Switch',
+    description: '统一管理 AI 编程工具工作流，支持 Claude Code、Codex 等七大应用的供应商配置、自动故障转移与用量追踪。',
+    url: 'https://www.ccswitch.io/zh/',
+    icon: '🔀',
+    category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-5',
+    title: 'SkillHub',
+    description: '专为中国用户优化的 AI Skills 社区，收录 7.4 万个 AI Skills，轻松查找和安装智能体技能。',
+    url: 'https://www.skillhub.cn/',
+    icon: '🎯',
+    category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-6',
+    title: 'ModelScope',
+    description: '阿里达摩院推出的 AI 开源社区，汇聚模型库、数据集、创空间与 MCP 广场，构建持续创新的 AI 开源生态。',
+    url: 'https://www.modelscope.cn/home',
+    icon: '🏛️',
+    category: '大模型 & Agent'
+  },
+  {
+    id: 'ai-7',
+    title: 'OpenHarness',
+    description: '港大开源的轻量级 Agent 基础设施，提供工具调用、技能加载、持久记忆与多智能体协作，一条命令启动。',
+    url: 'https://github.com/HKUDS/OpenHarness',
+    icon: '🏇',
+    category: '大模型 & Agent'
+  },
+
+  // --- 技术沉淀 ---
+  {
+    id: 'learn-5',
+    title: '小智聊天助手',
+    description: '一个基于小智模型的智能助手，支持多模态交互，如语音、文本、图片等。',
+    url: 'https://my.feishu.cn/wiki/F5krwD16viZoF0kKkvDcrZNYnhb',
+    icon: '📝',
+    category: '技术沉淀'
+  },
+  {
+    id: 'learn-6',
+    title: 'Xiaomi Vela 快应用',
+    description: '小米 Vela JS 应用开发指南，基于 Vela OS 的轻量级跨平台应用开发，支持智能穿戴等多端设备。',
+    url: 'https://iot.mi.com/vela/quickapp/zh/guide/',
+    icon: '📱',
+    category: '技术沉淀'
   }
 ];
