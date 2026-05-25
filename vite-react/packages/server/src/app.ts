@@ -51,7 +51,7 @@ app.use('/api', readOnlyMiddleware);
 app.use('/api', apiRoutes);
 
 // 全局错误处理中间件
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, _req: any, res: any, _next: any) => {
   console.error('❌ [Global Error Handler]:', err);
 
   const statusCode = err.status || err.statusCode || 500;

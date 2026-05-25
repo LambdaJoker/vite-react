@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
-const validate = (schema) => async (req, res, next) => {
+const validate = (schema) => (async (req, res, next) => {
     try {
         await schema.parseAsync({
             body: req.body,
@@ -18,5 +18,5 @@ const validate = (schema) => async (req, res, next) => {
             res.status(500).json({ message: 'Internal Server Error during validation' });
         }
     }
-};
+});
 exports.default = validate;

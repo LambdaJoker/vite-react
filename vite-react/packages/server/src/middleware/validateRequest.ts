@@ -5,11 +5,11 @@
  * @Date: 2025-06-18 20:10:24
  * @LastEditTime: 2025-06-18 20:10:38
  */
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
 
 const validate = (schema: AnyZodObject) =>
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  (async (req: any, res: any, next: any): Promise<void> => {
     try {
       await schema.parseAsync({
         body: req.body,
@@ -24,6 +24,6 @@ const validate = (schema: AnyZodObject) =>
         res.status(500).json({ message: 'Internal Server Error during validation' });
       }
     }
-  };
+  }) as RequestHandler;
 
 export default validate; 

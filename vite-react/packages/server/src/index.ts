@@ -7,13 +7,12 @@
  */
 import 'dotenv/config';
 import app from './app';
-import { Request, Response, NextFunction } from 'express';
 import { scrapeWallpapers } from './services/wallpaper.service';
 
 const PORT = process.env.PORT || 3000;
 
 // 全局错误处理中间件
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: any, res: any, _next: any) => {
   console.error(err.stack);
   res.status(500).json({
     message: '服务器发生未知错误',

@@ -15,7 +15,7 @@ const app_1 = __importDefault(require("./app"));
 const wallpaper_service_1 = require("./services/wallpaper.service");
 const PORT = process.env.PORT || 3000;
 // 全局错误处理中间件
-app_1.default.use((err, req, res, next) => {
+app_1.default.use((err, _req, res, _next) => {
     console.error(err.stack);
     res.status(500).json({
         message: '服务器发生未知错误',

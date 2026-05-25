@@ -47,7 +47,7 @@ app.use('/api', mode_middleware_1.readOnlyMiddleware);
 // Express 会按顺序执行匹配的中间件和路由
 app.use('/api', routes_1.default);
 // 全局错误处理中间件
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
     console.error('❌ [Global Error Handler]:', err);
     const statusCode = err.status || err.statusCode || 500;
     const message = err.message || 'Internal Server Error';
