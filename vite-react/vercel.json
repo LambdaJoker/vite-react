@@ -3,15 +3,23 @@
   "functions": {
     "api/**/*.ts": {
       "includeFiles": "packages/server/src/generated/prisma/**"
+    },
+    "api/card-service/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "rewrites": [
+    {
+      "source": "/api/card-service/:path*",
+      "destination": "/api/card-service/:path*"
+    },
     {
       "source": "/api/(.*)",
       "destination": "/api"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!admin|activate).*)",
       "destination": "/index.html"
     }
   ]
