@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+﻿import crypto from 'crypto'
 
 var redis = require('./lib/redis')
 
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '该卡密已被其他设备使用，一个卡密只能激活一台设备' })
     }
 
-    var str = nk + nd + SECRET
+    var str = nd + SECRET
     var hash = crypto.createHash('md5').update(str).digest('hex').toUpperCase()
     var activationCode = hash.substring(0, 8)
 
@@ -67,3 +67,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: '服务暂时不可用，请稍后重试' })
   }
 }
+

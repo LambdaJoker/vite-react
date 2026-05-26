@@ -1,4 +1,4 @@
-var redis = require('./lib/redis')
+﻿var redis = require('./lib/redis')
 
 var ADMIN_KEY = process.env.ADMIN_KEY
 
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         if (!cardData) {
           return res.status(404).json({ error: '卡密不存在' })
         }
-        await redis.redisSet('card:' + nk, { used: false, deviceCode: null, usedAt: null })
+        await redis.redisSet('card:' + nk, { used: false, deviceCode: null, activationCode: '', usedAt: null })
         return res.status(200).json({ success: true, message: '卡密已重置，可重新使用' })
       } catch (e) {
         console.error('Redis error:', e)
@@ -100,3 +100,4 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' })
 }
+
