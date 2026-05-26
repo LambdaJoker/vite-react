@@ -19,6 +19,14 @@
       "destination": "/api"
     },
     {
+      "source": "/activate",
+      "destination": "/activate.html"
+    },
+    {
+      "source": "/activate/:deviceCode",
+      "destination": "/activate.html"
+    },
+    {
       "source": "/((?!admin|activate).*)",
       "destination": "/index.html"
     }

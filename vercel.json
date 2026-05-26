@@ -4,5 +4,19 @@
       "memory": 1024,
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/card-service/:path*",
+      "destination": "/api/card-service/:path*"
+    },
+    {
+      "source": "/activate",
+      "destination": "/vite-react/packages/client/dist/activate.html"
+    },
+    {
+      "source": "/activate/:deviceCode",
+      "destination": "/vite-react/packages/client/dist/activate.html"
+    }
+  ]
 }

@@ -532,15 +532,43 @@
     });
 
     function normalizeDeviceCode(value) {
-      return (value || "").toString().replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 8);
+      return (value || "").toString().replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    }
+
+    function toDeviceCode(value) {
+      var code = normalizeDeviceCode(value);
+      return code.length >= 8 ? code.slice(0, 8) : "";
     }
 
     function getDeviceCodeFromParams(params) {
-      var names = ["d", "deviceCode", "device_code", "device", "code", "dev", "sn"];
+      var names = ["d", "deviceCode", "device_code", "device", "code", "dev", "sn", "id", "mac"];
       for (var i = 0; i < names.length; i++) {
         var value = params.get(names[i]);
-        var code = normalizeDeviceCode(value);
-        if (code.length === 8) return code;
+        var code = toDeviceCode(value);
+        if (code) return code;
+      }
+      return "";
+    }
+
+    function getDeviceCodeFromText(text) {
+      var raw = text || "";
+      var decoded = raw;
+      try {
+        decoded = decodeURIComponent(raw);
+      } catch (e) {}
+
+      var labelMatch = decoded.match(/(?:deviceCode|device_code|device|code|dev|sn|id|mac|设备码|設備碼|设备|設備)\s*[:=：]\s*([A-Za-z0-9][A-Za-z0-9\-_ ]{7,})/i);
+      if (labelMatch) {
+        var labeled = toDeviceCode(labelMatch[1]);
+        if (labeled) return labeled;
+      }
+
+      var candidates = decoded.match(/[A-Za-z0-9][A-Za-z0-9\-_ ]{7,}/g) || [];
+      for (var i = candidates.length - 1; i >= 0; i--) {
+        var code = toDeviceCode(candidates[i]);
+        if (code && !/^(ACTIVATE|RANDOMGL|HTTPSWWW|HTTPWWW|HTTPS|HTTP)$/.test(code)) {
+          return code;
+        }
       }
       return "";
     }
@@ -551,17 +579,24 @@
       if (!code && window.location.hash) {
         var hash = window.location.hash.slice(1);
         var hashQuery = hash.indexOf("?") >= 0 ? hash.slice(hash.indexOf("?") + 1) : hash;
-        code = getDeviceCodeFromParams(new URLSearchParams(hashQuery));
+        code = getDeviceCodeFromParams(new URLSearchParams(hashQuery)) || getDeviceCodeFromText(hash);
       }
 
       if (!code) {
-        var pathMatch = window.location.pathname.match(/([A-Za-z0-9][A-Za-z0-9\-_ ]{7,})$/);
-        code = pathMatch ? normalizeDeviceCode(pathMatch[1]) : "";
+        var segments = window.location.pathname.split("/");
+        for (var i = segments.length - 1; i >= 0; i--) {
+          code = getDeviceCodeFromText(segments[i]);
+          if (code) break;
+        }
       }
 
       if (!code) {
         var urlMatch = window.location.href.match(/(?:deviceCode|device_code|device|code|dev|sn|d)=([^&#?/]+)/i);
-        code = urlMatch ? normalizeDeviceCode(decodeURIComponent(urlMatch[1])) : "";
+        code = urlMatch ? toDeviceCode(urlMatch[1]) : "";
+      }
+
+      if (!code) {
+        code = getDeviceCodeFromText(window.location.href);
       }
 
       if (code.length === 8) {
