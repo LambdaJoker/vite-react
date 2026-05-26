@@ -177,6 +177,33 @@
       margin-top: 4px;
     }
 
+    .scan-status {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: left;
+      word-break: break-all;
+    }
+
+    .scan-status.visible {
+      display: block;
+    }
+
+    .scan-status-error {
+      color: var(--error);
+      background: var(--error-dim);
+      border: 1px solid rgba(255, 77, 79, 0.18);
+    }
+
+    .scan-status-success {
+      color: var(--primary);
+      background: var(--primary-dim);
+      border: 1px solid var(--primary-border);
+    }
+
     .form-group {
       margin-bottom: 14px;
     }
@@ -372,6 +399,7 @@
       <div class="card-label">📱 设备码（在手环上查看）</div>
       <div class="device-code" id="deviceCodeDisplay">—</div>
       <div class="device-code-hint">手环 设置 → 激活 → 查看8位设备码</div>
+      <div class="scan-status" id="scanStatus"></div>
     </div>
 
     <div class="card">
@@ -529,7 +557,20 @@
     document.getElementById("deviceCode").addEventListener("input", function() {
       document.getElementById("deviceCodeError").classList.remove("visible");
       document.getElementById("deviceCode").classList.remove("form-input-error");
+      hideScanStatus();
     });
+
+    function setScanStatus(type, message) {
+      var status = document.getElementById("scanStatus");
+      status.textContent = message;
+      status.className = "scan-status visible scan-status-" + type;
+    }
+
+    function hideScanStatus() {
+      var status = document.getElementById("scanStatus");
+      status.className = "scan-status";
+      status.textContent = "";
+    }
 
     function normalizeDeviceCode(value) {
       return (value || "").toString().replace(/[^A-Za-z0-9]/g, "").toUpperCase();
@@ -606,6 +647,12 @@
         document.getElementById("deviceCodeError").classList.remove("visible");
         input.classList.remove("form-input-error");
         input.dispatchEvent(new Event("input", { bubbles: true }));
+        setScanStatus("success", "已从二维码链接自动识别设备码：" + code);
+      } else {
+        setScanStatus(
+          "error",
+          "当前二维码链接没有携带设备码。请把二维码内容改成：https://www.randomglow.top/activate.html?d=你的8位设备码，例如 https://www.randomglow.top/activate.html?d=AB12CD34"
+        );
       }
     }
 
