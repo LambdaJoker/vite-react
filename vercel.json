@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/card-service/:match*",
+      "destination": "https://card-service.vercel.app/:match*"
+    }
+  ]
+}
