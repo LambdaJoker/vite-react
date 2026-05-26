@@ -318,7 +318,7 @@
         <p>请输入管理员密钥以继续</p>
         <div class="form-row" style="max-width:400px;margin:0 auto;">
           <div class="form-group">
-            <input class="form-input" id="adminKeyInput" type="password" placeholder="管理员密钥" autocomplete="off" />
+            <input class="form-input" id="adminKeyInput" type="password" placeholder="管理员密钥" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
           </div>
           <button class="btn btn-accent" onclick="doLogin()">验证</button>
         </div>
@@ -326,6 +326,9 @@
     </div>
 
     <div id="mainSection" class="hidden">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button class="btn btn-outline btn-sm" onclick="doLogout()">退出登录</button>
+      </div>
       <div class="stats-row">
         <div class="stat-item">
           <div class="stat-value total" id="statTotal">-</div>
@@ -362,6 +365,7 @@
               <tr>
                 <th>卡密</th>
                 <th>状态</th>
+                <th>激活码</th>
                 <th>设备码</th>
                 <th>使用时间</th>
                 <th>操作</th>
@@ -404,9 +408,22 @@
       checkAuth();
     }
 
+    function doLogout() {
+      localStorage.removeItem("card_admin_key");
+      adminKey = "";
+      cachedCards = [];
+      document.getElementById("mainSection").classList.add("hidden");
+      document.getElementById("loginSection").classList.remove("hidden");
+      document.getElementById("adminKeyInput").value = "";
+      showToast("已退出登录");
+    }
+
     function checkAuth() {
       fetch(API_BASE + "/api/card-service/cards?adminKey=" + encodeURIComponent(adminKey))
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
         .then(function(data) {
           if (data.success) {
             document.getElementById("loginSection").classList.add("hidden");
@@ -416,11 +433,17 @@
           } else {
             localStorage.removeItem("card_admin_key");
             adminKey = "";
-            showToast("密钥错误", true);
+            document.getElementById("mainSection").classList.add("hidden");
+            document.getElementById("loginSection").classList.remove("hidden");
+            showToast("密钥错误，请重新输入", true);
           }
         })
         .catch(function() {
-          showToast("网络错误", true);
+          localStorage.removeItem("card_admin_key");
+          adminKey = "";
+          document.getElementById("mainSection").classList.add("hidden");
+          document.getElementById("loginSection").classList.remove("hidden");
+          showToast("验证失败，请检查网络", true);
         });
     }
 
@@ -453,11 +476,15 @@
         var statusBadge = c.used
           ? '<span class="badge badge-used">已使用</span>'
           : '<span class="badge badge-unused">未使用</span>';
+        var activationCode = c.activationCode
+          ? '<span class="card-key" style="color:var(--accent);">' + escapeHtml(c.activationCode) + '</span>'
+          : '-';
         var deviceCode = c.deviceCode || "-";
         var usedAt = c.usedAt ? new Date(c.usedAt).toLocaleString("zh-CN") : "-";
         html += '<tr>'
           + '<td><span class="card-key">' + escapeHtml(c.formatted) + '</span></td>'
           + '<td>' + statusBadge + '</td>'
+          + '<td>' + activationCode + '</td>'
           + '<td>' + escapeHtml(deviceCode) + '</td>'
           + '<td style="font-size:12px;">' + usedAt + '</td>'
           + '<td><div class="actions-cell">'

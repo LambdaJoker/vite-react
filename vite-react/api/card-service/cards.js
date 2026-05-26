@@ -35,6 +35,7 @@ export default async function handler(req, res) {
             formatted: formatCard(key),
             used: data.used,
             deviceCode: data.deviceCode || '',
+            activationCode: data.activationCode || '',
             usedAt: data.usedAt || ''
           })
         }

@@ -57,6 +57,7 @@ export default async function handler(req, res) {
     await redis.redisSet('card:' + nk, {
       used: true,
       deviceCode: nd,
+      activationCode: activationCode,
       usedAt: new Date().toISOString()
     })
 

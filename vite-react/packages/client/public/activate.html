@@ -379,6 +379,9 @@
         <label class="form-label">卡密<span class="required">*</span></label>
         <input class="form-input" id="cardKey" type="text" placeholder="购买后获得的卡密" maxlength="20" autocomplete="off" />
         <div class="form-error" id="cardKeyError">请输入卡密</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--text-muted);">
+          还没有卡密？<a href="https://ifdian.net/a/randomglow" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none;">去爱发电购买 →</a>
+        </div>
       </div>
 
       <div class="form-group">
@@ -527,6 +530,16 @@
       document.getElementById("deviceCodeError").classList.remove("visible");
       document.getElementById("deviceCode").classList.remove("form-input-error");
     });
+
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var d = params.get("d");
+      if (d && d.length === 8) {
+        d = d.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+        document.getElementById("deviceCode").value = d;
+        document.getElementById("deviceCodeDisplay").textContent = d;
+      }
+    })();
   </script>
 </body>
 </html>
