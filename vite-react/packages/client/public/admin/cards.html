@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卡密管理 - 腕上人生</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #F2F4F7;
+      --surface: #FFFFFF;
+      --surface-border: #E3E6EB;
+      --primary: #00B578;
+      --primary-dim: rgba(0, 181, 120, 0.08);
+      --primary-border: rgba(0, 181, 120, 0.25);
+      --accent: #1677FF;
+      --accent-dim: rgba(22, 119, 255, 0.06);
+      --accent-border: rgba(22, 119, 255, 0.2);
+      --text: #1A1D23;
+      --text-secondary: #5A5F68;
+      --text-muted: #8A8F98;
+      --text-dim: #B8BCC4;
+      --error: #FF4D4F;
+      --error-dim: rgba(255, 77, 79, 0.06);
+      --warning: #FAAD14;
+      --warning-dim: rgba(250, 173, 20, 0.08);
+      --warning-border: rgba(250, 173, 20, 0.25);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 24px 0 0;
+    }
+    .header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .login-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon {
+      font-size: 18px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-value.total { color: var(--accent); }
+    .stat-value.used { color: var(--warning); }
+    .stat-value.unused { color: var(--primary); }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1.5px solid var(--surface-border);
+      color: var(--text);
+      font-size: 15px;
+      padding: 0 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      -webkit-appearance: none;
+    }
+    .form-input::placeholder { color: var(--text-dim); }
+    .form-input:focus { border-color: var(--accent); }
+
+    .btn {
+      height: 42px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-appearance: none;
+      transition: opacity 0.15s ease, transform 0.1s ease;
+      padding: 0 18px;
+      white-space: nowrap;
+    }
+    .btn:active { opacity: 0.85; transform: scale(0.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--primary); color: #FFF; }
+    .btn-accent { background: var(--accent); color: #FFF; }
+    .btn-outline {
+      background: var(--primary-dim);
+      border: 1px solid var(--primary-border);
+      color: var(--primary);
+    }
+    .btn-danger {
+      background: var(--error-dim);
+      border: 1px solid rgba(255,77,79,0.25);
+      color: var(--error);
+    }
+    .btn-sm {
+      height: 32px;
+      font-size: 12px;
+      padding: 0 12px;
+      border-radius: 8px;
+    }
+    .btn-full { width: 100%; }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--surface-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--surface-border);
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    .card-key {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 1px;
+      user-select: all;
+      -webkit-user-select: all;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-unused {
+      background: var(--primary-dim);
+      color: var(--primary);
+    }
+    .badge-used {
+      background: var(--warning-dim);
+      color: #D48806;
+    }
+    .actions-cell {
+      display: flex;
+      gap: 6px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--text);
+      color: #FFF;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.error {
+      background: var(--error);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stat-item { padding: 12px 8px; }
+      .stat-value { font-size: 22px; }
+      .form-row { flex-direction: column; }
+      .form-row .btn { width: 100%; }
+      table { font-size: 12px; }
+      th, td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-icon">🔑</div>
+      <h1>卡密管理</h1>
+      <p>腕上人生 · 卡密生成与管理</p>
+    </div>
+
+    <div id="loginSection">
+      <div class="login-card">
+        <p>请输入管理员密钥以继续</p>
+        <div class="form-row" style="max-width:400px;margin:0 auto;">
+          <div class="form-group">
+            <input class="form-input" id="adminKeyInput" type="password" placeholder="管理员密钥" autocomplete="off" />
+          </div>
+          <button class="btn btn-accent" onclick="doLogin()">验证</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mainSection" class="hidden">
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-value total" id="statTotal">-</div>
+          <div class="stat-label">总数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value used" id="statUsed">-</div>
+          <div class="stat-label">已使用</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value unused" id="statUnused">-</div>
+          <div class="stat-label">未使用</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">➕</span> 生成卡密</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">生成数量</label>
+            <input class="form-input" id="genCount" type="number" value="10" min="1" max="100" placeholder="1-100" />
+          </div>
+          <button class="btn btn-primary" id="btnGenerate" onclick="generateCards()">生成</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">📋</span> 卡密列表</div>
+        <div id="tableLoading" class="loading">加载中...</div>
+        <div id="tableEmpty" class="empty-state hidden">暂无卡密，点击上方生成</div>
+        <div id="tableWrapper" class="table-wrapper hidden">
+          <table>
+            <thead>
+              <tr>
+                <th>卡密</th>
+                <th>状态</th>
+                <th>设备码</th>
+                <th>使用时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="cardTableBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="loadCards()">刷新列表</button>
+          <button class="btn btn-accent btn-sm" onclick="copyAllUnused()">复制未使用卡密</button>
+          <button class="btn btn-outline btn-sm" onclick="copyAllCards()">复制全部卡密</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">腕上人生 · 卡密管理系统</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var API_BASE = "https://www.randomglow.top";
+    var adminKey = localStorage.getItem("card_admin_key") || "";
+    var cachedCards = [];
+
+    function showToast(msg, isError) {
+      var t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className = "toast" + (isError ? " error" : "");
+      setTimeout(function() { t.classList.add("visible"); }, 10);
+      setTimeout(function() { t.classList.remove("visible"); }, 2500);
+    }
+
+    function doLogin() {
+      var key = document.getElementById("adminKeyInput").value.trim();
+      if (!key) { showToast("请输入密钥", true); return; }
+      adminKey = key;
+      localStorage.setItem("card_admin_key", key);
+      checkAuth();
+    }
+
+    function checkAuth() {
+      fetch(API_BASE + "/api/card-service/cards?adminKey=" + encodeURIComponent(adminKey))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("mainSection").classList.remove("hidden");
+            renderStats(data);
+            renderTable(data.cards);
+          } else {
+            localStorage.removeItem("card_admin_key");
+            adminKey = "";
+            showToast("密钥错误", true);
+          }
+        })
+        .catch(function() {
+          showToast("网络错误", true);
+        });
+    }
+
+    function renderStats(data) {
+      document.getElementById("statTotal").textContent = data.total;
+      document.getElementById("statUsed").textContent = data.used;
+      document.getElementById("statUnused").textContent = data.unused;
+    }
+
+    function renderTable(cards) {
+      cachedCards = cards || [];
+      document.getElementById("tableLoading").classList.add("hidden");
+      var tbody = document.getElementById("cardTableBody");
+      if (!cards || cards.length === 0) {
+        document.getElementById("tableEmpty").classList.remove("hidden");
+        document.getElementById("tableWrapper").classList.add("hidden");
+        return;
+      }
+      document.getElementById("tableEmpty").classList.add("hidden");
+      document.getElementById("tableWrapper").classList.remove("hidden");
+
+      var sorted = cards.slice().sort(function(a, b) {
+        if (a.used !== b.used) return a.used ? 1 : -1;
+        return 0;
+      });
+
+      var html = "";
+      for (var i = 0; i < sorted.length; i++) {
+        var c = sorted[i];
+        var statusBadge = c.used
+          ? '<span class="badge badge-used">已使用</span>'
+          : '<span class="badge badge-unused">未使用</span>';
+        var deviceCode = c.deviceCode || "-";
+        var usedAt = c.usedAt ? new Date(c.usedAt).toLocaleString("zh-CN") : "-";
+        html += '<tr>'
+          + '<td><span class="card-key">' + escapeHtml(c.formatted) + '</span></td>'
+          + '<td>' + statusBadge + '</td>'
+          + '<td>' + escapeHtml(deviceCode) + '</td>'
+          + '<td style="font-size:12px;">' + usedAt + '</td>'
+          + '<td><div class="actions-cell">'
+          + (c.used ? '<button class="btn btn-outline btn-sm" onclick="resetCard(\'' + c.key + '\')">重置</button>' : '')
+          + '<button class="btn btn-danger btn-sm" onclick="deleteCard(\'' + c.key + '\')">删除</button>'
+          + '</div></td>'
+          + '</tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function loadCards() {
+      document.getElementById("tableLoading").classList.remove("hidden");
+      document.getElementById("tableWrapper").classList.add("hidden");
+      document.getElementById("tableEmpty").classList.add("hidden");
+      fetch(API_BASE + "/api/card-service/cards?adminKey=" + encodeURIComponent(adminKey))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            renderStats(data);
+            renderTable(data.cards);
+          } else {
+            showToast(data.error || "加载失败", true);
+          }
+        })
+        .catch(function() {
+          showToast("网络错误", true);
+        });
+    }
+
+    function generateCards() {
+      var count = parseInt(document.getElementById("genCount").value) || 10;
+      count = Math.min(Math.max(1, count), 100);
+      var btn = document.getElementById("btnGenerate");
+      btn.disabled = true;
+      btn.textContent = "生成中...";
+
+      fetch(API_BASE + "/api/card-service/generate-cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminKey: adminKey, count: count })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled = false;
+        btn.textContent = "生成";
+        if (data.success) {
+          showToast("成功生成 " + data.count + " 张卡密");
+          loadCards();
+        } else {
+          showToast(data.error || "生成失败", true);
+        }
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = "生成";
+        showToast("网络错误", true);
+      });
+    }
+
+    function resetCard(key) {
+      if (!confirm("确定重置该卡密？重置后可重新使用。")) return;
+      fetch(API_BASE + "/api/card-service/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminKey: adminKey, cardKey: key, action: "reset" })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          showToast("卡密已重置");
+          loadCards();
+        } else {
+          showToast(data.error || "重置失败", true);
+        }
+      })
+      .catch(function() { showToast("网络错误", true); });
+    }
+
+    function deleteCard(key) {
+      if (!confirm("确定删除该卡密？此操作不可恢复。")) return;
+      fetch(API_BASE + "/api/card-service/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminKey: adminKey, cardKey: key, action: "delete" })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          showToast("卡密已删除");
+          loadCards();
+        } else {
+          showToast(data.error || "删除失败", true);
+        }
+      })
+      .catch(function() { showToast("网络错误", true); });
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          showToast("已复制到剪贴板");
+        });
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("已复制到剪贴板");
+        } catch (e) {
+          showToast("复制失败", true);
+        }
+        document.body.removeChild(ta);
+      }
+    }
+
+    function copyAllUnused() {
+      var unused = cachedCards.filter(function(c) { return !c.used; });
+      if (unused.length === 0) {
+        showToast("没有未使用的卡密", true);
+        return;
+      }
+      var text = unused.map(function(c) { return c.formatted; }).join("\n");
+      copyToClipboard(text);
+    }
+
+    function copyAllCards() {
+      if (cachedCards.length === 0) {
+        showToast("没有卡密", true);
+        return;
+      }
+      var text = cachedCards.map(function(c) {
+        return c.formatted + (c.used ? " (已使用)" : "");
+      }).join("\n");
+      copyToClipboard(text);
+    }
+
+    if (adminKey) {
+      checkAuth();
+    }
+  </script>
+</body>
+</html>
