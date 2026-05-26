@@ -531,15 +531,50 @@
       document.getElementById("deviceCode").classList.remove("form-input-error");
     });
 
-    (function() {
-      var params = new URLSearchParams(window.location.search);
-      var d = params.get("d");
-      if (d && d.length === 8) {
-        d = d.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-        document.getElementById("deviceCode").value = d;
-        document.getElementById("deviceCodeDisplay").textContent = d;
+    function normalizeDeviceCode(value) {
+      return (value || "").toString().replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 8);
+    }
+
+    function getDeviceCodeFromParams(params) {
+      var names = ["d", "deviceCode", "device_code", "device", "code", "dev", "sn"];
+      for (var i = 0; i < names.length; i++) {
+        var value = params.get(names[i]);
+        var code = normalizeDeviceCode(value);
+        if (code.length === 8) return code;
       }
-    })();
+      return "";
+    }
+
+    function fillDeviceCodeFromScan() {
+      var code = getDeviceCodeFromParams(new URLSearchParams(window.location.search));
+
+      if (!code && window.location.hash) {
+        var hash = window.location.hash.slice(1);
+        var hashQuery = hash.indexOf("?") >= 0 ? hash.slice(hash.indexOf("?") + 1) : hash;
+        code = getDeviceCodeFromParams(new URLSearchParams(hashQuery));
+      }
+
+      if (!code) {
+        var pathMatch = window.location.pathname.match(/([A-Za-z0-9][A-Za-z0-9\-_ ]{7,})$/);
+        code = pathMatch ? normalizeDeviceCode(pathMatch[1]) : "";
+      }
+
+      if (!code) {
+        var urlMatch = window.location.href.match(/(?:deviceCode|device_code|device|code|dev|sn|d)=([^&#?/]+)/i);
+        code = urlMatch ? normalizeDeviceCode(decodeURIComponent(urlMatch[1])) : "";
+      }
+
+      if (code.length === 8) {
+        var input = document.getElementById("deviceCode");
+        input.value = code;
+        document.getElementById("deviceCodeDisplay").textContent = code;
+        document.getElementById("deviceCodeError").classList.remove("visible");
+        input.classList.remove("form-input-error");
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }
+
+    fillDeviceCodeFromScan();
   </script>
 </body>
 </html>
