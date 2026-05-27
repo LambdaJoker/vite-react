@@ -1,0 +1,260 @@
+.activate-page,
+.activate-page *,
+.activate-page *::before,
+.activate-page *::after {
+  box-sizing: border-box;
+}
+
+.activate-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+  color: #132238;
+  padding: 18px 14px 32px;
+  overflow-x: hidden;
+}
+
+.activate-wrap {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activate-hero {
+  text-align: center;
+  padding: 8px 8px 2px;
+}
+
+.activate-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #e9f2ff;
+  color: #2b6de0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activate-hero h1 {
+  margin: 9px 0 6px;
+  font-size: 27px;
+  line-height: 1.15;
+  color: #102033;
+}
+
+.activate-hero p {
+  margin: 0;
+  color: #6b7c93;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.activate-card {
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(36, 63, 105, 0.06);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.activate-card.secondary {
+  background: #fbfcfe;
+}
+
+.activate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+}
+
+.activate-field span,
+.section-title p,
+.activate-guide span,
+.search-result span {
+  color: #6b7c93;
+  font-size: 12px;
+}
+
+.activate-field input,
+.activate-field select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+  background: #fff;
+  color: #132238;
+  padding: 0 14px;
+  font-size: 15px;
+  outline: none;
+  min-width: 0;
+}
+
+.activate-field input:focus,
+.activate-field select:focus {
+  border-color: #6ea8ff;
+  box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.15);
+}
+
+.activate-guide {
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: #f3f7fd;
+  border: 1px solid #e4edf8;
+  text-align: left;
+}
+
+.activate-guide span {
+  display: block;
+  margin-bottom: 4px;
+  color: #4374c2;
+  font-weight: 700;
+}
+
+.activate-guide p {
+  margin: 0;
+  color: #5e6f86;
+  font-size: 13px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.activate-primary,
+.activate-secondary,
+.activate-result button {
+  min-height: 48px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.activate-primary {
+  background: linear-gradient(135deg, #4f8cff, #6fd3a7);
+  color: #fff;
+}
+
+.activate-secondary {
+  background: #eef3fb;
+  color: #1f4f99;
+}
+
+.activate-primary:disabled,
+.activate-secondary:disabled {
+  opacity: 0.65;
+}
+
+.activate-alert {
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.activate-alert.neutral {
+  background: #f2f5fa;
+  color: #52647d;
+}
+
+.activate-alert.success {
+  background: #eefaf2;
+  color: #18794e;
+}
+
+.activate-alert.error {
+  background: #fff1f2;
+  color: #c53b4e;
+}
+
+.activate-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #f6fbff;
+  border: 1px solid #dcecff;
+}
+
+.activate-result strong {
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: #1e4fa3;
+  word-break: break-all;
+}
+
+.activate-result button {
+  background: #dfeeff;
+  color: #1e4fa3;
+}
+
+.section-title h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #132238;
+}
+
+.section-title p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.search-result {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.search-result > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf1f7;
+}
+
+.search-result > div:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.search-result strong {
+  font-size: 14px;
+  color: #132238;
+  word-break: break-all;
+}
+
+@media (max-width: 720px) {
+  .activate-page {
+    padding: 12px 10px 22px;
+  }
+
+  .activate-card {
+    border-radius: 15px;
+    padding: 13px;
+  }
+
+  .activate-hero h1 {
+    font-size: 24px;
+  }
+
+  .activate-hero p {
+    font-size: 13px;
+  }
+
+  .activate-result strong {
+    font-size: 22px;
+  }
+}

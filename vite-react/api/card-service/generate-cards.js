@@ -4,6 +4,9 @@ var redis = require('./lib/redis')
 
 var ADMIN_KEY = process.env.ADMIN_KEY
 var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+var ALL_KEY = 'admin:card_keys'
+var UNUSED_KEY = 'admin:unused_card_keys'
+var LEGACY_KEY = 'admin:all_cards'
 
 function generateOne() {
   var bytes = crypto.randomBytes(8)
@@ -42,7 +45,7 @@ export default async function handler(req, res) {
   var n = Math.min(Math.max(1, parseInt(count) || 10), 100)
 
   try {
-    var allCards = await redis.redisGet('admin:all_cards')
+    var allCards = await redis.redisGet(LEGACY_KEY)
     if (!allCards) allCards = []
 
     var newCards = []
@@ -56,15 +59,20 @@ export default async function handler(req, res) {
       } while ((allCards.indexOf(cardKey) >= 0 || newCards.indexOf(cardKey) >= 0) && attempts < 50)
 
       newCards.push(cardKey)
-      await redis.redisSet('card:' + cardKey, {
-        used: false,
-        deviceCode: null,
-        usedAt: null
-      })
     }
 
+    var commands = []
+    for (var j = 0; j < newCards.length; j++) {
+      commands.push(["SET", "card:" + newCards[j], JSON.stringify({ used: false, deviceCode: null, activationCode: '', usedAt: null })])
+    }
+    if (newCards.length) {
+      commands.push(["LPUSH", ALL_KEY].concat(newCards))
+      commands.push(["LPUSH", UNUSED_KEY].concat(newCards))
+    }
+    await redis.redisExec(commands)
+
     var updated = allCards.concat(newCards)
-    await redis.redisSet('admin:all_cards', updated)
+    await redis.redisSet(LEGACY_KEY, updated)
 
     return res.status(200).json({
       success: true,

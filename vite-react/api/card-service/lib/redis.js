@@ -12,6 +12,10 @@ function redis(commands) {
   }).then(function(r) { return r.json() })
 }
 
+function redisExec(commands) {
+  return redis(commands)
+}
+
 function redisGet(key) {
   return redis([["GET", key]]).then(function(r) {
     var val = r && r[0] && r[0].result
@@ -28,4 +32,4 @@ function redisDel(key) {
   return redis([["DEL", key]])
 }
 
-module.exports = { redisGet: redisGet, redisSet: redisSet, redisDel: redisDel }
+module.exports = { redisGet: redisGet, redisSet: redisSet, redisDel: redisDel, redisExec: redisExec }

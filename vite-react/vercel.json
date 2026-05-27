@@ -20,11 +20,19 @@
     },
     {
       "source": "/activate",
-      "destination": "/activate.html"
+      "destination": "/index.html"
+    },
+    {
+      "source": "/activate/search",
+      "destination": "/index.html"
     },
     {
       "source": "/activate/:deviceCode",
-      "destination": "/activate.html"
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/cards",
+      "destination": "/index.html"
     },
     {
       "source": "/((?!admin|activate).*)",
