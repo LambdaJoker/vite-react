@@ -5,6 +5,9 @@ var ALL_KEY = 'admin:card_keys'
 var USED_KEY = 'admin:used_card_keys'
 var UNUSED_KEY = 'admin:unused_card_keys'
 var LEGACY_KEY = 'admin:all_cards'
+var INDEX_VERSION_KEY = 'admin:card_indexes_version'
+var INDEX_VERSION = '2'
+var INDEX_CHUNK_SIZE = 80
 
 function normalizeKey(key) {
   return (key || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
@@ -31,29 +34,79 @@ function toCard(key, data) {
 }
 
 async function ensureIndexes() {
-  var sizes = await redis.redisExec([["LLEN", ALL_KEY], ["GET", LEGACY_KEY]])
+  var sizes = await redis.redisExec([
+    ["LLEN", ALL_KEY],
+    ["LLEN", USED_KEY],
+    ["LLEN", UNUSED_KEY],
+    ["GET", LEGACY_KEY],
+    ["GET", INDEX_VERSION_KEY]
+  ])
   var listCount = parseInt(sizes[0] && sizes[0].result, 10) || 0
-  if (listCount > 0) return
+  var usedCount = parseInt(sizes[1] && sizes[1].result, 10) || 0
+  var unusedCount = parseInt(sizes[2] && sizes[2].result, 10) || 0
+  var legacy = parseRedisValue(sizes[3] && sizes[3].result)
+  var indexVersion = parseRedisValue(sizes[4] && sizes[4].result)
 
-  var legacy = parseRedisValue(sizes[1] && sizes[1].result)
-  if (!legacy || !legacy.length) return
+  if (indexVersion === INDEX_VERSION && listCount > 0 && usedCount + unusedCount >= listCount) return
 
-  var commands = []
-  commands.push(["RPUSH", ALL_KEY].concat(legacy))
-  for (var i = 0; i < legacy.length; i++) {
-    commands.push(["GET", "card:" + legacy[i]])
+  if (listCount === 0 && legacy && legacy.length) {
+    var legacySeen = {}
+    var legacyKeys = []
+    for (var l = 0; l < legacy.length; l++) {
+      var lk = normalizeKey(legacy[l])
+      if (lk && !legacySeen[lk]) {
+        legacySeen[lk] = true
+        legacyKeys.push(lk)
+      }
+    }
+    if (legacyKeys.length) {
+      await redis.redisExec([["RPUSH", ALL_KEY].concat(legacyKeys)])
+      listCount = legacyKeys.length
+    }
   }
-  var rows = await redis.redisExec(commands)
-  var updateCommands = []
-  for (var j = 0; j < legacy.length; j++) {
-    var key = legacy[j]
-    var data = parseRedisValue(rows[j + 1] && rows[j + 1].result)
-    if (!data) continue
-    updateCommands.push([data.used ? "RPUSH" : "RPUSH", data.used ? USED_KEY : UNUSED_KEY, key])
-    if (data.deviceCode) updateCommands.push(["SET", "device:" + normalizeKey(data.deviceCode), JSON.stringify(key)])
-    if (data.activationCode) updateCommands.push(["SET", "activation:" + normalizeKey(data.activationCode), JSON.stringify(key)])
+
+  if (listCount === 0) return
+
+  var keyRows = await redis.redisExec([["LRANGE", ALL_KEY, 0, -1]])
+  var rawKeys = (keyRows[0] && keyRows[0].result) || []
+  var seen = {}
+  var keys = []
+  for (var i = 0; i < rawKeys.length; i++) {
+    var nk = normalizeKey(rawKeys[i])
+    if (nk && !seen[nk]) {
+      seen[nk] = true
+      keys.push(nk)
+    }
   }
-  if (updateCommands.length) await redis.redisExec(updateCommands)
+
+  if (keys.length !== rawKeys.length) {
+    var allCommands = [["DEL", ALL_KEY]]
+    if (keys.length) allCommands.push(["RPUSH", ALL_KEY].concat(keys))
+    await redis.redisExec(allCommands)
+  }
+
+  await redis.redisExec([["DEL", USED_KEY], ["DEL", UNUSED_KEY]])
+
+  for (var start = 0; start < keys.length; start += INDEX_CHUNK_SIZE) {
+    var chunk = keys.slice(start, start + INDEX_CHUNK_SIZE)
+    var getCommands = []
+    for (var j = 0; j < chunk.length; j++) {
+      getCommands.push(["GET", "card:" + chunk[j]])
+    }
+    var rows = await redis.redisExec(getCommands)
+    var updateCommands = []
+    for (var r = 0; r < chunk.length; r++) {
+      var key = chunk[r]
+      var data = parseRedisValue(rows[r] && rows[r].result)
+      if (!data) continue
+      updateCommands.push(["RPUSH", data.used ? USED_KEY : UNUSED_KEY, key])
+      if (data.deviceCode) updateCommands.push(["SET", "device:" + normalizeKey(data.deviceCode), JSON.stringify(key)])
+      if (data.activationCode) updateCommands.push(["SET", "activation:" + normalizeKey(data.activationCode), JSON.stringify(key)])
+    }
+    if (updateCommands.length) await redis.redisExec(updateCommands)
+  }
+
+  await redis.redisSet(INDEX_VERSION_KEY, INDEX_VERSION)
 }
 
 async function getCardsByKeys(keys) {
@@ -113,7 +166,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     var adminKey = req.query.adminKey
-    if (adminKey !== ADMIN_KEY) {
+    if (!ADMIN_KEY || adminKey !== ADMIN_KEY) {
       return res.status(403).json({ error: '无权限' })
     }
 
@@ -177,7 +230,7 @@ export default async function handler(req, res) {
     var cardKey = body.cardKey
     var action = body.action
 
-    if (adminKey2 !== ADMIN_KEY) {
+    if (!ADMIN_KEY || adminKey2 !== ADMIN_KEY) {
       return res.status(403).json({ error: '无权限' })
     }
 

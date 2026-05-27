@@ -37,6 +37,11 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, error: '卡密记录不存在' })
     }
 
+    if (normalizeKey(cardData.deviceCode) !== deviceCode) {
+      await redis.redisDel('device:' + deviceCode)
+      return res.status(404).json({ success: false, error: '没有找到该设备码的激活记录' })
+    }
+
     return res.status(200).json({
       success: true,
       card: {

@@ -48,6 +48,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '卡密不存在，请检查是否输入正确' })
     }
 
+    var boundKey = await redis.redisGet('device:' + nd)
+    if (boundKey && boundKey !== nk) {
+      var boundCard = await redis.redisGet('card:' + boundKey)
+      if (boundCard && normalizeKey(boundCard.deviceCode) === nd) {
+        return res.status(400).json({ error: '该设备已绑定其他卡密，请先联系管理员重置' })
+      }
+      await redis.redisDel('device:' + nd)
+    }
+
     if (cardData.used && cardData.deviceCode !== nd) {
       return res.status(400).json({ error: '该卡密已被其他设备使用，一个卡密只能激活一台设备' })
     }
@@ -56,7 +65,7 @@ export default async function handler(req, res) {
     var hash = crypto.createHash('md5').update(str).digest('hex').toUpperCase()
     var activationCode = hash.substring(0, 8)
 
-    await redis.redisExec([
+    var commands = [
       ["SET", "card:" + nk, JSON.stringify({
         used: true,
         deviceCode: nd,
@@ -70,7 +79,11 @@ export default async function handler(req, res) {
       ["LREM", USED_KEY, 0, nk],
       ["LREM", UNUSED_KEY, 0, nk],
       ["LPUSH", USED_KEY, nk]
-    ])
+    ]
+    if (cardData.activationCode && cardData.activationCode !== activationCode) {
+      commands.splice(2, 0, ["DEL", "activation:" + normalizeKey(cardData.activationCode)])
+    }
+    await redis.redisExec(commands)
 
     return res.status(200).json({ success: true, activationCode: activationCode })
   } catch (e) {

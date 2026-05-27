@@ -126,6 +126,19 @@ const ActivatePage: React.FC = () => {
     }
   };
 
+  const copyActivationCode = async () => {
+    if (!activationCode) return;
+
+    try {
+      await navigator.clipboard.writeText(activationCode);
+      setError('');
+      setNotice('已复制激活码');
+    } catch {
+      setNotice('');
+      setError('复制失败，请手动长按复制激活码');
+    }
+  };
+
   return (
     <div className="activate-page">
       <main className="activate-wrap">
@@ -187,7 +200,7 @@ const ActivatePage: React.FC = () => {
             <div className="activate-result">
               <span>激活码</span>
               <strong>{activationCode}</strong>
-              <button type="button" onClick={() => navigator.clipboard.writeText(activationCode)}>
+              <button type="button" onClick={copyActivationCode}>
                 复制
               </button>
             </div>

@@ -6,7 +6,6 @@ var ADMIN_KEY = process.env.ADMIN_KEY
 var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 var ALL_KEY = 'admin:card_keys'
 var UNUSED_KEY = 'admin:unused_card_keys'
-var LEGACY_KEY = 'admin:all_cards'
 
 function generateOne() {
   var bytes = crypto.randomBytes(8)
@@ -38,27 +37,31 @@ export default async function handler(req, res) {
   var adminKey = body.adminKey
   var count = body.count
 
-  if (adminKey !== ADMIN_KEY) {
+  if (!ADMIN_KEY || adminKey !== ADMIN_KEY) {
     return res.status(403).json({ error: '无权限' })
   }
 
   var n = Math.min(Math.max(1, parseInt(count) || 10), 100)
 
   try {
-    var allCards = await redis.redisGet(LEGACY_KEY)
-    if (!allCards) allCards = []
-
     var newCards = []
+    var seen = {}
+    var guard = 0
 
-    for (var i = 0; i < n; i++) {
+    while (newCards.length < n && guard < n * 80) {
+      guard++
       var cardKey
-      var attempts = 0
       do {
         cardKey = generateOne()
-        attempts++
-      } while ((allCards.indexOf(cardKey) >= 0 || newCards.indexOf(cardKey) >= 0) && attempts < 50)
+      } while (seen[cardKey])
 
-      newCards.push(cardKey)
+      seen[cardKey] = true
+      var exists = await redis.redisGet('card:' + cardKey)
+      if (!exists) newCards.push(cardKey)
+    }
+
+    if (!newCards.length) {
+      return res.status(500).json({ error: '生成卡密失败，请重试' })
     }
 
     var commands = []
@@ -70,9 +73,6 @@ export default async function handler(req, res) {
       commands.push(["LPUSH", UNUSED_KEY].concat(newCards))
     }
     await redis.redisExec(commands)
-
-    var updated = allCards.concat(newCards)
-    await redis.redisSet(LEGACY_KEY, updated)
 
     return res.status(200).json({
       success: true,
