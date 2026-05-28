@@ -165,6 +165,10 @@ const ActivatePage: React.FC = () => {
             <p>在手环 App 到 激活 页面查看 8 位设备码，输入卡密后获取激活码。支持链接直接传设备码：/activate/ABCDEFGH 或 /activate?d=ABCDEFGH。</p>
           </div>
 
+          <div className="activate-contact">
+            若爱发电没有及时回复，请联系邮箱 2667534364@qq.com
+          </div>
+
           <label className="activate-field">
             <span>设备码</span>
             <input
