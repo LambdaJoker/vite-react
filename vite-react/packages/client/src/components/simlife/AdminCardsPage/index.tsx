@@ -140,6 +140,64 @@ const AdminCardsPage: React.FC = () => {
     }
   };
 
+  const exportParams = () => ({
+    adminKey,
+    status,
+    query: query.trim(),
+    deviceCode: deviceCode.trim().toUpperCase(),
+  });
+
+  const copyAllKeys = async () => {
+    if (!adminKey) return;
+    setLoading(true);
+    try {
+      const res = await apiClient.get('/card-service/cards', {
+        params: {
+          ...exportParams(),
+          exportMode: 'keys',
+        },
+      });
+      const keys = res.data?.keys || [];
+      if (!keys.length) {
+        setMessage('当前条件下没有可复制的卡密');
+        return;
+      }
+      await navigator.clipboard.writeText(keys.join('\n'));
+      setMessage(`已复制 ${keys.length} 个卡密`);
+    } catch (e: any) {
+      setMessage(e?.error || e?.message || '复制失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const exportCsv = async () => {
+    if (!adminKey) return;
+    setLoading(true);
+    try {
+      const res = await apiClient.get('/card-service/cards', {
+        params: {
+          ...exportParams(),
+          exportMode: 'csv',
+        },
+        responseType: 'blob',
+      });
+      const url = URL.createObjectURL(res.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `simlife-cards-${status}-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setMessage('已导出 CSV 文件');
+    } catch (e: any) {
+      setMessage(e?.error || e?.message || '导出失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderStatus = (usedFlag: boolean) => (usedFlag ? <span className="badge used">已使用</span> : <span className="badge unused">未使用</span>);
 
   return (
@@ -213,8 +271,14 @@ const AdminCardsPage: React.FC = () => {
 
             <section className="table-card">
               <div className="table-head">
-                <strong>卡密列表</strong>
-                <span>每页 {PAGE_SIZE} 条</span>
+                <div>
+                  <strong>卡密列表</strong>
+                  <span>每页 {PAGE_SIZE} 条</span>
+                </div>
+                <div className="table-tools">
+                  <button className="ghost-btn small" onClick={copyAllKeys} disabled={loading}>复制全部卡密</button>
+                  <button className="primary-btn small" onClick={exportCsv} disabled={loading}>导出 CSV</button>
+                </div>
               </div>
               {message ? <div className="state error">{message}</div> : null}
               {loading && cards.length === 0 ? <div className="state">加载中...</div> : null}

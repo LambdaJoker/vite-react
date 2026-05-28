@@ -33,6 +33,36 @@ function toCard(key, data) {
   }
 }
 
+function csvCell(value) {
+  var text = value == null ? '' : String(value)
+  return '"' + text.replace(/"/g, '""') + '"'
+}
+
+function cardsToCsv(cards) {
+  var lines = [['卡密', '状态', '激活码', '设备码', '使用时间'].map(csvCell).join(',')]
+  for (var i = 0; i < cards.length; i++) {
+    var c = cards[i]
+    lines.push([
+      c.formatted,
+      c.used ? '已使用' : '未使用',
+      c.activationCode || '',
+      c.deviceCode || '',
+      c.usedAt || ''
+    ].map(csvCell).join(','))
+  }
+  return '\uFEFF' + lines.join('\n')
+}
+
+async function getCardsByKeysChunked(keys) {
+  var cards = []
+  for (var start = 0; start < keys.length; start += INDEX_CHUNK_SIZE) {
+    var chunk = keys.slice(start, start + INDEX_CHUNK_SIZE)
+    var chunkCards = await getCardsByKeys(chunk)
+    for (var i = 0; i < chunkCards.length; i++) cards.push(chunkCards[i])
+  }
+  return cards
+}
+
 async function ensureIndexes() {
   var sizes = await redis.redisExec([
     ["LLEN", ALL_KEY],
@@ -175,6 +205,7 @@ export default async function handler(req, res) {
       var pageSize = Math.min(Math.max(parseInt(req.query.pageSize, 10) || 10, 1), 50)
       var page = Math.max(parseInt(req.query.page, 10) || 1, 1)
       var status = req.query.status === 'used' || req.query.status === 'unused' ? req.query.status : 'all'
+      var exportMode = req.query.exportMode === 'keys' || req.query.exportMode === 'csv' ? req.query.exportMode : ''
       var searchKeys = await lookupKeys(req.query.query, req.query.deviceCode)
 
       var statsRows = await redis.redisExec([["LLEN", ALL_KEY], ["LLEN", USED_KEY], ["LLEN", UNUSED_KEY]])
@@ -185,6 +216,18 @@ export default async function handler(req, res) {
         var found = await getCardsByKeys(searchKeys)
         if (status === 'used') found = found.filter(function(c) { return c.used })
         if (status === 'unused') found = found.filter(function(c) { return !c.used })
+        if (exportMode === 'keys') {
+          return res.status(200).json({
+            success: true,
+            total: found.length,
+            keys: found.map(function(c) { return c.formatted })
+          })
+        }
+        if (exportMode === 'csv') {
+          res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+          res.setHeader('Content-Disposition', 'attachment; filename="simlife-cards.csv"')
+          return res.status(200).send(cardsToCsv(found))
+        }
         return res.status(200).json({
           success: true,
           total: found.length,
@@ -199,6 +242,21 @@ export default async function handler(req, res) {
       var listKey = status === 'used' ? USED_KEY : status === 'unused' ? UNUSED_KEY : ALL_KEY
       var countRows = await redis.redisExec([["LLEN", listKey]])
       var total = parseInt(countRows[0] && countRows[0].result, 10) || 0
+      if (exportMode) {
+        var allKeyRows = await redis.redisExec([["LRANGE", listKey, 0, -1]])
+        var allKeys = (allKeyRows[0] && allKeyRows[0].result) || []
+        if (exportMode === 'keys') {
+          return res.status(200).json({
+            success: true,
+            total: allKeys.length,
+            keys: allKeys.map(formatCard)
+          })
+        }
+        var allCards = await getCardsByKeysChunked(allKeys)
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+        res.setHeader('Content-Disposition', 'attachment; filename="simlife-cards.csv"')
+        return res.status(200).send(cardsToCsv(allCards))
+      }
       var start = (page - 1) * pageSize
       if (start >= total && total > 0) {
         page = Math.ceil(total / pageSize)
