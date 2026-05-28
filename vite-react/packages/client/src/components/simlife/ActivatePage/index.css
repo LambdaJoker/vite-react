@@ -141,6 +141,19 @@
   word-break: break-word;
 }
 
+.activate-buy-tip {
+  color: #5e6f86;
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.activate-buy-tip a {
+  color: #2b6de0;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .activate-primary,
 .activate-secondary,
 .activate-result button {

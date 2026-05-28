@@ -1,4 +1,4 @@
-﻿var redis = require('./lib/redis')
+﻿﻿var redis = require('./lib/redis')
 
 var ADMIN_KEY = process.env.ADMIN_KEY
 var ALL_KEY = 'admin:card_keys'

@@ -193,6 +193,14 @@ const ActivatePage: React.FC = () => {
             />
           </label>
 
+          <div className="activate-buy-tip">
+            没有卡密？
+            <a href="https://ifdian.net/item/edc5efce590a11f1a91652540025c377" target="_blank" rel="noreferrer">
+              前往爱发电购买
+            </a>
+            。私信太久没回，可以联系邮箱 2667534364@qq.com
+          </div>
+
           <button className="activate-primary" onClick={onGenerate} disabled={loading}>
             {loading ? '正在生成...' : '获取激活码'}
           </button>
