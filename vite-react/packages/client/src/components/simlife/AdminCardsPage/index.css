@@ -72,7 +72,8 @@ label {
   text-align: left;
 }
 
-input {
+input,
+select {
   height: 42px;
   border: 1px solid #d8dee8;
   border-radius: 10px;

@@ -1,15 +1,16 @@
 import crypto from 'crypto'
 
 var redis = require('./lib/redis')
+var products = require('./lib/products')
 
 var ADMIN_KEY = process.env.ADMIN_KEY
 var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 var ALL_KEY = 'admin:card_keys'
 var UNUSED_KEY = 'admin:unused_card_keys'
 
-function generateOne() {
+function generateOne(product) {
   var bytes = crypto.randomBytes(8)
-  var key = 'SL'
+  var key = product.prefix
   for (var i = 0; i < 8; i++) {
     key += CHARS[bytes[i] % CHARS.length]
   }
@@ -36,9 +37,14 @@ export default async function handler(req, res) {
   var body = req.body || {}
   var adminKey = body.adminKey
   var count = body.count
+  var product = products.getProductById(body.productId)
 
   if (!ADMIN_KEY || adminKey !== ADMIN_KEY) {
     return res.status(403).json({ error: '无权限' })
+  }
+
+  if (!product || !product.active) {
+    return res.status(400).json({ error: '请选择有效商品' })
   }
 
   var n = Math.min(Math.max(1, parseInt(count) || 10), 100)
@@ -52,7 +58,7 @@ export default async function handler(req, res) {
       guard++
       var cardKey
       do {
-        cardKey = generateOne()
+        cardKey = generateOne(product)
       } while (seen[cardKey])
 
       seen[cardKey] = true
@@ -66,16 +72,27 @@ export default async function handler(req, res) {
 
     var commands = []
     for (var j = 0; j < newCards.length; j++) {
-      commands.push(["SET", "card:" + newCards[j], JSON.stringify({ used: false, deviceCode: null, activationCode: '', usedAt: null })])
+      commands.push(["SET", "card:" + newCards[j], JSON.stringify({
+        productId: product.id,
+        productName: product.name,
+        used: false,
+        deviceCode: null,
+        activationCode: '',
+        usedAt: null
+      })])
     }
     if (newCards.length) {
       commands.push(["LPUSH", ALL_KEY].concat(newCards))
       commands.push(["LPUSH", UNUSED_KEY].concat(newCards))
+      commands.push(["LPUSH", products.getProductListKey(product, 'all')].concat(newCards))
+      commands.push(["LPUSH", products.getProductListKey(product, 'unused')].concat(newCards))
     }
     await redis.redisExec(commands)
 
     return res.status(200).json({
       success: true,
+      productId: product.id,
+      productName: product.name,
       count: newCards.length,
       cards: newCards.map(function(k) {
         return { key: k, formatted: formatCard(k) }

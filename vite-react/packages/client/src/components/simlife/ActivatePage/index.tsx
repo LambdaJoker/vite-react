@@ -6,6 +6,8 @@ import './index.css';
 type SearchResult = {
   key: string;
   formatted: string;
+  productId: string;
+  productName: string;
   used: boolean;
   deviceCode: string;
   activationCode: string;
@@ -30,6 +32,7 @@ const ActivatePage: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const [activeProduct, setActiveProduct] = useState(PRODUCTS[0].id);
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [cardKey, setCardKey] = useState('');
   const [deviceCode, setDeviceCode] = useState('');
   const [activationCode, setActivationCode] = useState('');
@@ -42,8 +45,8 @@ const ActivatePage: React.FC = () => {
   const [searchMessage, setSearchMessage] = useState('');
 
   const activeProductInfo = useMemo(
-    () => PRODUCTS.find((item) => item.id === activeProduct) || PRODUCTS[0],
-    [activeProduct],
+    () => products.find((item) => item.id === activeProduct) || products[0] || PRODUCTS[0],
+    [activeProduct, products],
   );
 
   const setDeviceValue = (value: string) => {
@@ -53,6 +56,23 @@ const ActivatePage: React.FC = () => {
   };
 
   useEffect(() => {
+    apiClient.get('/card-service/products').then((res) => {
+      if (res.data?.success && res.data.products?.length) {
+        const list = res.data.products
+          .filter((item: any) => item.active)
+          .map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            status: 'active' as const,
+            note: `${item.prefix} 卡密`,
+          }));
+        if (list.length) {
+          setProducts(list);
+          setActiveProduct((current) => list.some((item: Product) => item.id === current) ? current : list[0].id);
+        }
+      }
+    }).catch(() => {});
+
     const fromQuery = searchParams.get('d') || searchParams.get('deviceCode') || searchParams.get('device_code') || '';
     const rawDeviceCode = fromQuery || pathDeviceCode || '';
     const normalized = formatDeviceCode(rawDeviceCode);
@@ -111,7 +131,7 @@ const ActivatePage: React.FC = () => {
     setSearchLoading(true);
     try {
       const res = await apiClient.get('/card-service/search', {
-        params: { deviceCode: nd },
+        params: { deviceCode: nd, productId: activeProductInfo.id },
       });
       if (res.data?.success && res.data?.card) {
         setSearchResult(res.data.card);
@@ -152,7 +172,7 @@ const ActivatePage: React.FC = () => {
           <label className="activate-field">
             <span>商品</span>
             <select value={activeProduct} onChange={(event) => setActiveProduct(event.target.value)}>
-              {PRODUCTS.map((product) => (
+              {products.map((product) => (
                 <option key={product.id} value={product.id} disabled={product.status !== 'active'}>
                   {product.name} · {product.note}
                 </option>
@@ -245,6 +265,7 @@ const ActivatePage: React.FC = () => {
 
           {searchResult ? (
             <div className="search-result">
+              <div><span>商品</span><strong>{searchResult.productName || '-'}</strong></div>
               <div><span>卡密</span><strong>{searchResult.formatted}</strong></div>
               <div><span>状态</span><strong>{searchResult.used ? '已使用' : '未使用'}</strong></div>
               <div><span>设备码</span><strong>{searchResult.deviceCode || '-'}</strong></div>

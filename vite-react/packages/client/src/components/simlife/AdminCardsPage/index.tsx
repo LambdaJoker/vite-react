@@ -5,13 +5,23 @@ import './index.css';
 type CardRow = {
   key: string;
   formatted: string;
+  productId: string;
+  productName: string;
   used: boolean;
   activationCode: string;
   deviceCode: string;
   usedAt: string;
 };
 
+type Product = {
+  id: string;
+  name: string;
+  prefix: string;
+  active: boolean;
+};
+
 const PAGE_SIZE = 10;
+const FALLBACK_PRODUCTS: Product[] = [{ id: 'simlife-band', name: '腕上人生', prefix: 'SL', active: true }];
 
 const AdminCardsPage: React.FC = () => {
   const [adminKey, setAdminKey] = useState(localStorage.getItem('card_admin_key') || '');
@@ -24,6 +34,9 @@ const AdminCardsPage: React.FC = () => {
   const [unused, setUnused] = useState(0);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<'all' | 'used' | 'unused'>('all');
+  const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS);
+  const [productId, setProductId] = useState('simlife-band');
+  const [filterProductId, setFilterProductId] = useState('all');
   const [query, setQuery] = useState('');
   const [deviceCode, setDeviceCode] = useState('');
   const [message, setMessage] = useState('');
@@ -31,7 +44,21 @@ const AdminCardsPage: React.FC = () => {
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / PAGE_SIZE)), [total]);
 
-  const loadCards = async (nextPage = page, nextStatus = status, nextQuery = query, nextDeviceCode = deviceCode, keyOverride = adminKey) => {
+  const loadProducts = async () => {
+    try {
+      const res = await apiClient.get('/card-service/products');
+      if (res.data?.success) {
+        const list = res.data.products?.length ? res.data.products : FALLBACK_PRODUCTS;
+        setProducts(list);
+        const firstActive = list.find((item: Product) => item.active);
+        if (firstActive) setProductId(firstActive.id);
+      }
+    } catch {
+      setProducts(FALLBACK_PRODUCTS);
+    }
+  };
+
+  const loadCards = async (nextPage = page, nextStatus = status, nextQuery = query, nextDeviceCode = deviceCode, nextProductId = filterProductId, keyOverride = adminKey) => {
     if (!keyOverride) return;
     setLoading(true);
     try {
@@ -41,6 +68,7 @@ const AdminCardsPage: React.FC = () => {
           page: nextPage,
           pageSize: PAGE_SIZE,
           status: nextStatus,
+          productId: nextProductId,
           query: nextQuery.trim(),
           deviceCode: nextDeviceCode.trim().toUpperCase(),
         },
@@ -88,13 +116,14 @@ const AdminCardsPage: React.FC = () => {
   useEffect(() => {
     if (adminKey) {
       setIsAuthed(true);
-      loadCards(1, 'all', '', '');
+      loadProducts();
+      loadCards(1, 'all', '', '', 'all');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSearch = async () => {
-    await loadCards(1, status, query, deviceCode);
+    await loadCards(1, status, query, deviceCode, filterProductId);
   };
 
   const onGenerate = async () => {
@@ -103,10 +132,11 @@ const AdminCardsPage: React.FC = () => {
     try {
       const res = await apiClient.post('/card-service/generate-cards', {
         adminKey,
+        productId,
         count: Math.min(Math.max(1, Number(genCount) || 10), 100),
       });
       if (res.data?.success) {
-        await loadCards(1, status, query, deviceCode);
+        await loadCards(1, status, query, deviceCode, filterProductId);
       } else {
         setMessage(res.data?.error || '生成失败');
       }
@@ -129,7 +159,7 @@ const AdminCardsPage: React.FC = () => {
         action,
       });
       if (res.data?.success) {
-        await loadCards(page, status, query, deviceCode);
+        await loadCards(page, status, query, deviceCode, filterProductId);
       } else {
         setMessage(res.data?.error || '操作失败');
       }
@@ -143,6 +173,7 @@ const AdminCardsPage: React.FC = () => {
   const exportParams = () => ({
     adminKey,
     status,
+    productId: filterProductId,
     query: query.trim(),
     deviceCode: deviceCode.trim().toUpperCase(),
   });
@@ -243,6 +274,15 @@ const AdminCardsPage: React.FC = () => {
             <section className="controls-card">
               <div className="grid-2">
                 <label>
+                  商品筛选
+                  <select value={filterProductId} onChange={(e) => { setFilterProductId(e.target.value); loadCards(1, status, query, deviceCode, e.target.value); }}>
+                    <option value="all">全部商品</option>
+                    {products.map((product) => (
+                      <option key={product.id} value={product.id}>{product.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
                   卡密 / 设备码 / 激活码
                   <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="输入关键字" />
                 </label>
@@ -252,15 +292,23 @@ const AdminCardsPage: React.FC = () => {
                 </label>
               </div>
               <div className="filters">
-                <button className={status === 'all' ? 'filter active' : 'filter'} onClick={() => { setStatus('all'); loadCards(1, 'all', query, deviceCode); }}>全部</button>
-                <button className={status === 'used' ? 'filter active' : 'filter'} onClick={() => { setStatus('used'); loadCards(1, 'used', query, deviceCode); }}>已使用</button>
-                <button className={status === 'unused' ? 'filter active' : 'filter'} onClick={() => { setStatus('unused'); loadCards(1, 'unused', query, deviceCode); }}>未使用</button>
+                <button className={status === 'all' ? 'filter active' : 'filter'} onClick={() => { setStatus('all'); loadCards(1, 'all', query, deviceCode, filterProductId); }}>全部</button>
+                <button className={status === 'used' ? 'filter active' : 'filter'} onClick={() => { setStatus('used'); loadCards(1, 'used', query, deviceCode, filterProductId); }}>已使用</button>
+                <button className={status === 'unused' ? 'filter active' : 'filter'} onClick={() => { setStatus('unused'); loadCards(1, 'unused', query, deviceCode, filterProductId); }}>未使用</button>
                 <button className="primary-btn small" onClick={onSearch}>搜索</button>
               </div>
             </section>
 
             <section className="controls-card">
               <div className="grid-2">
+                <label>
+                  生成商品
+                  <select value={productId} onChange={(e) => setProductId(e.target.value)}>
+                    {products.filter((product) => product.active).map((product) => (
+                      <option key={product.id} value={product.id}>{product.name} · {product.prefix}</option>
+                    ))}
+                  </select>
+                </label>
                 <label>
                   生成数量
                   <input type="number" min={1} max={100} value={genCount} onChange={(e) => setGenCount(Number(e.target.value) || 10)} />
@@ -287,6 +335,7 @@ const AdminCardsPage: React.FC = () => {
                   <thead>
                     <tr>
                       <th>卡密</th>
+                      <th>商品</th>
                       <th>状态</th>
                       <th>激活码</th>
                       <th>设备码</th>
@@ -297,11 +346,12 @@ const AdminCardsPage: React.FC = () => {
                   <tbody>
                     {cards.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="empty">暂无数据</td>
+                        <td colSpan={7} className="empty">暂无数据</td>
                       </tr>
                     ) : cards.map((card) => (
                       <tr key={card.key}>
                         <td><span className="mono">{card.formatted}</span></td>
+                        <td>{card.productName || '-'}</td>
                         <td>{renderStatus(card.used)}</td>
                         <td><span className="mono accent">{card.activationCode || '-'}</span></td>
                         <td><span className="mono">{card.deviceCode || '-'}</span></td>
@@ -319,11 +369,11 @@ const AdminCardsPage: React.FC = () => {
               </div>
 
               <div className="pager">
-                <button className="ghost-btn" disabled={page <= 1 || loading} onClick={() => loadCards(page - 1, status, query, deviceCode)}>上一页</button>
+                <button className="ghost-btn" disabled={page <= 1 || loading} onClick={() => loadCards(page - 1, status, query, deviceCode, filterProductId)}>上一页</button>
                 <span>
                   第 {page} / {totalPages} 页，共 {total} 条
                 </span>
-                <button className="ghost-btn" disabled={page >= totalPages || loading} onClick={() => loadCards(page + 1, status, query, deviceCode)}>下一页</button>
+                <button className="ghost-btn" disabled={page >= totalPages || loading} onClick={() => loadCards(page + 1, status, query, deviceCode, filterProductId)}>下一页</button>
               </div>
             </section>
           </>

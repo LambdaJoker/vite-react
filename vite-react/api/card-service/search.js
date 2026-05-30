@@ -1,4 +1,5 @@
 var redis = require('./lib/redis')
+var products = require('./lib/products')
 
 function normalizeKey(key) {
   return (key || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
@@ -6,6 +7,11 @@ function normalizeKey(key) {
 
 function formatCard(k) {
   return k.slice(0, 2) + '-' + k.slice(2, 6) + '-' + k.slice(6, 10)
+}
+
+function parseRedisValue(val) {
+  if (!val) return null
+  try { return JSON.parse(val) } catch (e) { return val }
 }
 
 export default async function handler(req, res) {
@@ -27,7 +33,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    var key = await redis.redisGet('device:' + deviceCode)
+    var requestedProduct = products.getProductById(req.query.productId)
+    var productList = requestedProduct ? [requestedProduct] : products.getProducts()
+    var commands = []
+    for (var i = 0; i < productList.length; i++) {
+      commands.push(["GET", products.getDeviceIndexKey(productList[i], deviceCode)])
+    }
+    var rows = await redis.redisExec(commands)
+    var key = null
+    for (var r = 0; r < rows.length; r++) {
+      key = parseRedisValue(rows[r] && rows[r].result)
+      if (key) break
+    }
     if (!key) {
       return res.status(404).json({ success: false, error: '没有找到该设备码的激活记录' })
     }
@@ -38,15 +55,19 @@ export default async function handler(req, res) {
     }
 
     if (normalizeKey(cardData.deviceCode) !== deviceCode) {
-      await redis.redisDel('device:' + deviceCode)
+      var staleProduct = products.getCardProduct(key, cardData)
+      await redis.redisDel(products.getDeviceIndexKey(staleProduct, deviceCode))
       return res.status(404).json({ success: false, error: '没有找到该设备码的激活记录' })
     }
+    var product = products.getCardProduct(key, cardData)
 
     return res.status(200).json({
       success: true,
       card: {
         key: key,
         formatted: formatCard(key),
+        productId: product.id,
+        productName: product.name,
         used: !!cardData.used,
         deviceCode: cardData.deviceCode || '',
         activationCode: cardData.activationCode || '',
